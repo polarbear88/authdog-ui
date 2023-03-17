@@ -13,6 +13,7 @@ import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { UserType } from '@/api/login/types'
 import { useValidator } from '@/hooks/web/useValidator'
 import { FormSchema } from '@/types/form'
+import md5 from 'blueimp-md5'
 
 const { required } = useValidator()
 
@@ -43,7 +44,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'username',
     label: t('login.username'),
-    value: 'admin',
+    value: '',
     component: 'Input',
     colProps: {
       span: 24
@@ -55,7 +56,7 @@ const schema = reactive<FormSchema[]>([
   {
     field: 'password',
     label: t('login.password'),
-    value: 'admin',
+    value: '',
     component: 'InputPassword',
     colProps: {
       span: 24
@@ -80,14 +81,6 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
-    field: 'other',
-    component: 'Divider',
-    label: t('login.otherLogin'),
-    componentProps: {
-      contentPosition: 'center'
-    }
-  },
-  {
     field: 'otherIcon',
     colProps: {
       span: 24
@@ -95,15 +88,11 @@ const schema = reactive<FormSchema[]>([
   }
 ])
 
-const iconSize = 30
-
 const remember = ref(false)
 
 const { register, elFormRef, methods } = useForm()
 
 const loading = ref(false)
-
-const iconColor = '#999'
 
 const redirect = ref<string>('')
 
@@ -125,9 +114,10 @@ const signIn = async () => {
       loading.value = true
       const { getFormData } = methods
       const formData = await getFormData<UserType>()
-
       try {
-        const res = await loginApi(formData)
+        const data = { ...formData }
+        data.password = md5(formData.password)
+        const res = await loginApi(data)
 
         if (res) {
           wsCache.set(appStore.getUserInfo, res.data)
@@ -215,35 +205,6 @@ const toRegister = () => {
         <ElButton class="w-[100%]" @click="toRegister">
           {{ t('login.register') }}
         </ElButton>
-      </div>
-    </template>
-
-    <template #otherIcon>
-      <div class="flex justify-between w-[100%]">
-        <Icon
-          icon="ant-design:github-filled"
-          :size="iconSize"
-          class="cursor-pointer anticon"
-          :color="iconColor"
-        />
-        <Icon
-          icon="ant-design:wechat-filled"
-          :size="iconSize"
-          class="cursor-pointer anticon"
-          :color="iconColor"
-        />
-        <Icon
-          icon="ant-design:alipay-circle-filled"
-          :size="iconSize"
-          :color="iconColor"
-          class="cursor-pointer anticon"
-        />
-        <Icon
-          icon="ant-design:weibo-circle-filled"
-          :size="iconSize"
-          :color="iconColor"
-          class="cursor-pointer anticon"
-        />
       </div>
     </template>
   </Form>

@@ -11,16 +11,31 @@ import qs from 'qs'
 import { config } from './config'
 
 import { ElMessage } from 'element-plus'
+import { useCache } from '@/hooks/web/useCache'
+import { useAppStore } from '@/store/modules/app'
 
 const { result_code, base_url } = config
 
 export const PATH_URL = base_url[import.meta.env.VITE_API_BASEPATH]
+
+const { wsCache } = useCache()
+const appStore = useAppStore()
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
   baseURL: PATH_URL, // api 的 base_url
   timeout: config.request_timeout // 请求超时时间
 })
+
+const getToken = (): string | null => {
+  const userInfo = wsCache.get(appStore.getUserInfo)
+  console.log('userInfo', userInfo)
+
+  if (userInfo && userInfo.access_token) {
+    return userInfo.access_token
+  }
+  return null
+}
 
 // request拦截器
 service.interceptors.request.use(
@@ -47,6 +62,11 @@ service.interceptors.request.use(
       config.params = {}
       config.url = url
     }
+    // 设置请求token
+    const token = getToken()
+    if (token) {
+      config.headers.token = token
+    }
     return config
   },
   (error: AxiosError) => {
@@ -62,7 +82,7 @@ service.interceptors.response.use(
     if (response.config.responseType === 'blob') {
       // 如果是文件流，直接过
       return response
-    } else if (response.data.code === result_code) {
+    } else if (response.data.statusCode === result_code) {
       return response.data
     } else {
       ElMessage.error(response.data.message)

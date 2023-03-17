@@ -85,13 +85,15 @@ export default {
     small: '小'
   },
   login: {
-    welcome: '欢迎使用本系统',
-    message: '开箱即用的中后台管理系统',
-    username: '用户名',
+    welcome: '欢迎使用Authdog',
+    message: '免费强大的网络授权验证系统',
+    username: '用户名/手机号',
     password: '密码',
     register: '注册',
+    registerUsername: '用户名',
+    mobile: '手机号',
     checkPassword: '确认密码',
-    login: '登录',
+    login: '开发者登录',
     otherLogin: '其他登录方式',
     remember: '记住我',
     hasUser: '已有账号？去登录',
@@ -99,10 +101,13 @@ export default {
     usernamePlaceholder: '请输入用户名',
     passwordPlaceholder: '请输入密码',
     code: '验证码',
-    codePlaceholder: '请输入验证码'
+    codePlaceholder: '请输入验证码',
+    mobilePlaceholder: '请输入手机号',
+    passwordNotSame: '两次输入的密码不一致',
+    gobacklogin: '立即登录'
   },
   router: {
-    login: '登录',
+    login: '开发者登录',
     level: '多级菜单',
     menu: '菜单',
     menu1: '菜单1',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoginForm, RegisterForm } from './components'
+import { LoginForm, RegisterForm, RegisterSuccess } from './components'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
 import { LocaleDropdown } from '@/components/LocaleDropdown'
 import { useI18n } from '@/hooks/web/useI18n'
@@ -17,13 +17,20 @@ const appStore = useAppStore()
 const { t } = useI18n()
 
 const isLogin = ref(true)
+const isRegisterSuccess = ref(false)
 
 const toRegister = () => {
   isLogin.value = false
+  isRegisterSuccess.value = false
 }
 
 const toLogin = () => {
   isLogin.value = true
+  isRegisterSuccess.value = false
+}
+
+const toRegisterSuccess = () => {
+  isRegisterSuccess.value = true
 }
 </script>
 
@@ -71,12 +78,18 @@ const toLogin = () => {
             class="h-full flex items-center m-auto w-[100%] @2xl:max-w-500px @xl:max-w-500px @md:max-w-500px @lg:max-w-500px"
           >
             <LoginForm
-              v-if="isLogin"
+              v-if="isLogin && !isRegisterSuccess"
               class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
               @to-register="toRegister"
             />
             <RegisterForm
-              v-else
+              v-if="!isLogin && !isRegisterSuccess"
+              class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
+              @to-register-success="toRegisterSuccess"
+              @to-login="toLogin"
+            />
+            <RegisterSuccess
+              v-if="isRegisterSuccess"
               class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
               @to-login="toLogin"
             />

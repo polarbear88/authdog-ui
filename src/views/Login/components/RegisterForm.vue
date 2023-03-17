@@ -6,10 +6,13 @@ import { useForm } from '@/hooks/web/useForm'
 import { ElButton, ElInput, FormRules } from 'element-plus'
 import { useValidator } from '@/hooks/web/useValidator'
 import { FormSchema } from '@/types/form'
+import { RegisterType } from '@/api/login/types'
+import { registerApi } from '@/api/login'
+import { ElMessage } from 'element-plus'
 
-const emit = defineEmits(['to-login'])
+const emit = defineEmits(['to-register-success', 'to-login'])
 
-const { register, elFormRef } = useForm()
+const { register, elFormRef, methods } = useForm()
 
 const { t } = useI18n()
 
@@ -24,7 +27,7 @@ const schema = reactive<FormSchema[]>([
   },
   {
     field: 'username',
-    label: t('login.username'),
+    label: t('login.registerUsername'),
     value: '',
     component: 'Input',
     colProps: {
@@ -32,6 +35,19 @@ const schema = reactive<FormSchema[]>([
     },
     componentProps: {
       placeholder: t('login.usernamePlaceholder')
+    }
+  },
+  {
+    field: 'mobile',
+    label: t('login.mobile'),
+    value: '',
+    component: 'Input',
+    colProps: {
+      span: 24
+    },
+    componentProps: {
+      placeholder: t('login.mobilePlaceholder'),
+      type: 'number'
     }
   },
   {
@@ -66,13 +82,13 @@ const schema = reactive<FormSchema[]>([
       placeholder: t('login.passwordPlaceholder')
     }
   },
-  {
-    field: 'code',
-    label: t('login.code'),
-    colProps: {
-      span: 24
-    }
-  },
+  // {
+  //   field: 'code',
+  //   label: t('login.code'),
+  //   colProps: {
+  //     span: 24
+  //   }
+  // },
   {
     field: 'register',
     colProps: {
@@ -85,7 +101,12 @@ const rules: FormRules = {
   username: [required()],
   password: [required()],
   check_password: [required()],
-  code: [required()]
+  mobile: [required()]
+  // code: [required()]
+}
+
+const toRegisterSuccess = () => {
+  emit('to-register-success')
 }
 
 const toLogin = () => {
@@ -100,7 +121,17 @@ const loginRegister = async () => {
     if (valid) {
       try {
         loading.value = true
-        toLogin()
+        const { getFormData } = methods
+        const formData = await getFormData<RegisterType>()
+        if (formData.password !== (formData as any).check_password) {
+          ElMessage.error(t('login.passwordNotSame'))
+          return
+        }
+        const res = await registerApi(formData)
+        if (res) {
+          // 注册成功
+          toRegisterSuccess()
+        }
       } finally {
         loading.value = false
       }

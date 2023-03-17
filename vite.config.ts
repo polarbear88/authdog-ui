@@ -7,7 +7,6 @@ import WindiCSS from 'vite-plugin-windicss'
 import progress from 'vite-plugin-progress'
 import EslintPlugin from 'vite-plugin-eslint'
 import { ViteEjsPlugin } from "vite-plugin-ejs"
-import { viteMockServe } from 'vite-plugin-mock'
 import PurgeIcons from 'vite-plugin-purge-icons'
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite"
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
@@ -61,17 +60,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         svgoOptions: true
       }),
       PurgeIcons(),
-      viteMockServe({
-        ignore: /^\_/,
-        mockPath: 'mock',
-        localEnabled: !isBuild,
-        prodEnabled: isBuild,
-        injectCode: `
-          import { setupProdMockServer } from '../mock/_createProductionServer'
-
-          setupProdMockServer()
-          `
-      }),
       DefineOptions(),
       ViteEjsPlugin({
         title: env.VITE_APP_TITLE
@@ -113,14 +101,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     server: {
       port: 4000,
-      proxy: {
-        // 选项写法
-        '/api': {
-          target: 'http://127.0.0.1:8000',
-          changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, '')
-        }
-      },
       hmr: {
         overlay: false
       },

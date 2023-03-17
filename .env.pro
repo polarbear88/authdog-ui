@@ -2,7 +2,7 @@
 NODE_ENV=production
 
 # 接口前缀
-VITE_API_BASEPATH=api/v1
+VITE_API_BASEPATH=pro
 
 # 打包路径
 VITE_BASE_PATH=/
