@@ -6,6 +6,8 @@ import { resetRouter } from '@/router'
 import { useRouter } from 'vue-router'
 import { useDesign } from '@/hooks/web/useDesign'
 import { useTagsViewStore } from '@/store/modules/tagsView'
+import { useAppStoreWithOut } from '@/store/modules/app'
+import { ref } from 'vue'
 
 const tagsViewStore = useTagsViewStore()
 
@@ -18,6 +20,10 @@ const { t } = useI18n()
 const { wsCache } = useCache()
 
 const { replace } = useRouter()
+const appStore = useAppStoreWithOut()
+const userInfo = wsCache.get(appStore.getUserInfo)
+
+const userName = ref(userInfo?.name)
 
 const loginOut = () => {
   ElMessageBox.confirm(t('common.loginOutMessage'), t('common.reminder'), {
@@ -34,9 +40,9 @@ const loginOut = () => {
     .catch(() => {})
 }
 
-const toDocument = () => {
-  window.open('https://element-plus-admin-doc.cn/')
-}
+// const toDocument = () => {
+//   window.open('https://element-plus-admin-doc.cn/')
+// }
 </script>
 
 <template>
@@ -47,14 +53,16 @@ const toDocument = () => {
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />
-      <span class="<lg:hidden text-14px pl-[5px] text-[var(--top-header-text-color)]">Archer</span>
+      <span class="<lg:hidden text-14px pl-[5px] text-[var(--top-header-text-color)]">{{
+        userName
+      }}</span>
     </div>
     <template #dropdown>
       <ElDropdownMenu>
-        <ElDropdownItem>
+        <!-- <ElDropdownItem>
           <div @click="toDocument">{{ t('common.document') }}</div>
-        </ElDropdownItem>
-        <ElDropdownItem divided>
+        </ElDropdownItem> -->
+        <ElDropdownItem>
           <div @click="loginOut">{{ t('common.loginOut') }}</div>
         </ElDropdownItem>
       </ElDropdownMenu>

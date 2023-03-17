@@ -36,3 +36,7 @@ export const getAdminRoleApi = (
 export const getTestRoleApi = (params: RoleParams): Promise<IResponse<string[]>> => {
   return request.get({ url: '/role/list', params })
 }
+
+export const getDeveloperRoleApi = (params: RoleParams): Promise<IResponse<string[]>> => {
+  return request.get({ url: '/role/list', params })
+}

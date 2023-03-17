@@ -9,7 +9,7 @@ export default {
     loginOut: '退出系统',
     document: '项目文档',
     reminder: '温馨提示',
-    loginOutMessage: '是否退出本系统？',
+    loginOutMessage: '是否退出登录？',
     back: '返回',
     ok: '确定',
     cancel: '取消',

@@ -2,7 +2,7 @@
 import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/components/Collapse'
 import { LocaleDropdown } from '@/components/LocaleDropdown'
-import { SizeDropdown } from '@/components/SizeDropdown'
+// import { SizeDropdown } from '@/components/SizeDropdown'
 import { UserInfo } from '@/components/UserInfo'
 import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -25,7 +25,7 @@ const hamburger = computed(() => appStore.getHamburger)
 const screenfull = computed(() => appStore.getScreenfull)
 
 // 尺寸图标
-const size = computed(() => appStore.getSize)
+// const size = computed(() => appStore.getSize)
 
 // 布局
 const layout = computed(() => appStore.getLayout)
@@ -57,9 +57,9 @@ export default defineComponent({
           {screenfull.value ? (
             <Screenfull class="hover-trigger" color="var(--top-header-text-color)"></Screenfull>
           ) : undefined}
-          {size.value ? (
+          {/* {size.value ? (
             <SizeDropdown class="hover-trigger" color="var(--top-header-text-color)"></SizeDropdown>
-          ) : undefined}
+          ) : undefined} */}
           {locale.value ? (
             <LocaleDropdown
               class="hover-trigger"

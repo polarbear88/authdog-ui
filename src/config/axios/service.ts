@@ -29,8 +29,6 @@ const service: AxiosInstance = axios.create({
 
 const getToken = (): string | null => {
   const userInfo = wsCache.get(appStore.getUserInfo)
-  console.log('userInfo', userInfo)
-
   if (userInfo && userInfo.access_token) {
     return userInfo.access_token
   }
