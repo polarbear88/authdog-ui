@@ -70,7 +70,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
       {
         path: 'analysis',
         component: () => import('@/views/Dashboard/Analysis.vue'),
-        name: 'Analysis',
+        name: 'Dashboard-Analysis',
         meta: {
           title: t('router.analysis'),
           noCache: true,
@@ -80,10 +80,42 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
       {
         path: 'workplace',
         component: () => import('@/views/Dashboard/Workplace.vue'),
-        name: 'Workplace',
+        name: 'Dashboard-Workplace',
         meta: {
           title: t('router.workplace'),
           noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/app',
+    component: Layout,
+    redirect: '/app/list',
+    name: 'Application',
+    meta: {
+      title: t('router.application'),
+      icon: 'icon-park-solid:all-application',
+      alwaysShow: true
+    },
+    roles: ['developer'],
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/Application/List.vue'),
+        name: 'Application-List',
+        meta: {
+          title: t('router.applist')
+        }
+      },
+      {
+        path: 'detail/:id',
+        component: () => import('@/views/Application/Detail.vue'),
+        name: 'Application-Detail',
+        meta: {
+          title: '应用详情',
+          hidden: true,
+          canTo: true
         }
       }
     ]
