@@ -76,7 +76,7 @@ const actionFn = (data: TableSlotDefault) => {
   <ContentWrap>
     <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
       <template #authMode="data">
-        {{ data.row.authMode === 'user' ? '用户模式' : '机器码模式' }}
+        {{ data.row.authMode === 'user' ? '用户模式' : '设备ID模式' }}
       </template>
       <template #cryptoMode="data">
         {{ data.row.cryptoMode === 'none' ? '无' : data.row.cryptoMode.toUpperCase() }}

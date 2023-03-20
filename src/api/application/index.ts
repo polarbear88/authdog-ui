@@ -79,3 +79,34 @@ export const setMaxUnbindCount = (id: string, maxUnbindCount: number): Promise<I
     data: { appid: id, maxUnbindCount }
   })
 }
+
+export const setAllowMultiDevice = (id: string, allowUnbind: boolean): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-allowMultiDevice`,
+    data: { appid: id, allowUnbind }
+  })
+}
+
+export const setMaxMultiDevice = (id: string, maxUnbindCount: number): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-maxMultiDevice`,
+    data: { appid: id, maxUnbindCount }
+  })
+}
+
+export const setUseCountMode = (id: string, useCountMode: boolean): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-useCountMode`,
+    data: { appid: id, useCountMode }
+  })
+}
+
+export const setAllowLoginWhenCountUsedUp = (
+  id: string,
+  allowLoginWhenCountUsedUp: boolean
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-allowLoginWhenCountUsedUp`,
+    data: { appid: id, allowLoginWhenCountUsedUp }
+  })
+}

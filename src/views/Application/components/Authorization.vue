@@ -9,7 +9,8 @@ import {
   ElInput,
   ElButton,
   ElDialog,
-  ElMessage
+  ElMessage,
+  ElText
 } from 'element-plus'
 import {
   setIsFree,
@@ -18,7 +19,11 @@ import {
   setAllowUnbind,
   setUnbindDeductTime,
   setUnbindDeductCount,
-  setMaxUnbindCount
+  setMaxUnbindCount,
+  setAllowMultiDevice,
+  setMaxMultiDevice,
+  setUseCountMode,
+  setAllowLoginWhenCountUsedUp
 } from '@/api/application'
 import { DateUtils } from '@/utils/dateUtils'
 
@@ -65,6 +70,27 @@ const bindDeviceSchema_on = [
 
 let bindDeviceSchema = reactive(bindDeviceSchema_on)
 
+const multiDeviceSchema = reactive([
+  {
+    field: 'allowMultiDevice',
+    label: '多设备登录'
+  },
+  {
+    field: 'maxMultiDevice',
+    label: '最大同时登录数'
+  }
+])
+
+const countModeSchema = reactive([
+  {
+    field: 'useCountMode',
+    label: '按次收费'
+  },
+  {
+    field: 'allowLoginWhenCountUsedUp',
+    label: '次数用尽后允许登录'
+  }
+])
 const getAuthModeTooltip = () => {
   if (props.app.authMode === 'deviceid') {
     return '设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用 不可修改'
@@ -263,6 +289,62 @@ const onSetMaxUnbindCount = () => {
     })
     .catch(() => {})
 }
+
+const onSetAllowMultiDevice = () => {
+  setAllowMultiDevice(props.app.id + '', props.app.allowMultiDevice)
+    .then(() => {
+      getAppData()
+    })
+    .catch(() => {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.app.allowMultiDevice = !props.app.allowMultiDevice
+    })
+}
+
+const onSetUseCountMode = () => {
+  setUseCountMode(props.app.id + '', props.app.useCountMode)
+    .then(() => {
+      getAppData()
+    })
+    .catch(() => {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.app.useCountMode = !props.app.useCountMode
+    })
+}
+
+const onSetAllowLoginWhenCountUsedUp = () => {
+  setAllowLoginWhenCountUsedUp(props.app.id + '', props.app.allowLoginWhenCountUsedUp)
+    .then(() => {
+      getAppData()
+    })
+    .catch(() => {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.app.allowLoginWhenCountUsedUp = !props.app.allowLoginWhenCountUsedUp
+    })
+}
+const onSetMaxMultiDevice = () => {
+  ElMessageBox.confirm('输入0则为不限制', '请输入最大同时登录设备数：', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputType: 'number'
+  })
+    .then(async (res) => {
+      if (res.value) {
+        const count = parseInt(res.value)
+        if (count < 0 || isNaN(count)) {
+          ElMessage.error('请输入正确的整数')
+          return
+        }
+        setMaxMultiDevice(props.app.id + '', count).then(() => {
+          getAppData()
+        })
+        return
+      }
+      ElMessage.error('请输入内容')
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -337,6 +419,35 @@ const onSetMaxUnbindCount = () => {
           /></ElButton>
         </template>
       </Descriptions>
+    </div>
+    <div v-if="app.authMode === 'user' && !app.bindDevice">
+      <Descriptions :collapse="false" title="多设备登录" :data="app" :schema="multiDeviceSchema">
+        <template #allowMultiDevice="data"
+          ><ElSwitch @change="onSetAllowMultiDevice" v-model="data.row.allowMultiDevice" />
+        </template>
+        <template #maxMultiDevice="data">
+          {{ data.row.maxMultiDevice ? data.row.maxMultiDevice + '台' : '不限制' }}
+          <ElButton @click="onSetMaxMultiDevice" type="primary" link
+            ><Icon icon="mdi:circle-edit-outline"
+          /></ElButton>
+        </template>
+      </Descriptions>
+    </div>
+    <div>
+      <Descriptions :collapse="false" title="按次收费" :data="app" :schema="countModeSchema">
+        <template #useCountMode="data">
+          <ElSwitch @change="onSetUseCountMode" v-model="data.row.useCountMode" />
+        </template>
+        <template #allowLoginWhenCountUsedUp="data">
+          <ElSwitch
+            @change="onSetAllowLoginWhenCountUsedUp"
+            v-model="data.row.allowLoginWhenCountUsedUp"
+          />
+        </template>
+      </Descriptions>
+      <ElText type="danger" style="margin-left: 10px"
+        >按次收费允许您在按日期收费之外在进行扣点式收费，可用于额外的某项功能单独的收费，当应用为免费模式时按次收费不受影响</ElText
+      >
     </div>
     <ElDialog
       width="500px"

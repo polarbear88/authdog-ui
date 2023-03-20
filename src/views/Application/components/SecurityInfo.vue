@@ -55,7 +55,20 @@ const onConfirmResetCryptoMode = () => {
           (app.cryptoMode === 'ecdh' ? '「HEX」' : '') +
           (app.cryptoMode === 'aes' ? '「字符串」' : '')
         }}</h2>
-        <ElText class="content">{{ app.cryptoSecret }}</ElText>
+        <ElText class="content">
+          {{ app.cryptoSecret }}<br />
+          <span v-if="app.cryptoMode === 'aes'" style="color: red"
+            >AES加密模式 aes-256-cbc iv 0000000000000000「字符串」autoPadding PKCS7
+            详见API文档</span
+          >
+          <span v-if="app.cryptoMode === 'ecdh'" style="color: red"
+            >EC曲线：secp521r1 协商密钥后使用aes-256-cbc iv 0000000000000000「字符串」autoPadding
+            PKCS7加密 详见API文档</span
+          >
+          <span v-if="app.cryptoMode === 'rsa'" style="color: red"
+            >RSA模式 rsa-2048 RSA_PKCS1_OAEP_PADDING 详见API文档</span
+          >
+        </ElText>
       </div>
       <div v-if="['rsa', 'ecdh'].includes(app.cryptoMode)" style="margin-top: 15px">
         <h2>加密公钥{{ app.cryptoMode === 'ecdh' ? '「HEX」' : '' }}</h2>
