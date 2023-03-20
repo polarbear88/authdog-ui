@@ -2,7 +2,7 @@
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, reactive } from 'vue'
 import { Descriptions } from '@/components/Descriptions'
-import { DateUtil } from '@/utils/dateUtils'
+import { DateUtils } from '@/utils/dateUtils'
 import { ElButton, ElMessage, ElMessageBox, ElTag } from 'element-plus'
 import { setDisable, setEnable, setNotice } from '@/api/application'
 import { useI18n } from '@/hooks/web/useI18n'
@@ -11,6 +11,11 @@ const props = defineProps({ app: { type: Object as PropType<ApplicationInfo>, de
 
 const { t } = useI18n()
 const schema = reactive([
+  {
+    field: 'name',
+    label: '应用名称',
+    span: 3
+  },
   {
     field: 'createdAt',
     label: '创建时间'
@@ -22,7 +27,7 @@ const schema = reactive([
   {
     field: 'nitice',
     label: '应用公告',
-    span: 12
+    span: 3
   }
 ])
 
@@ -84,9 +89,9 @@ const setNoticeApp = () => {
 
 <template>
   <div
-    ><Descriptions :collapse="false" :title="app.name" :data="app" :schema="schema">
+    ><Descriptions :collapse="false" title="基本信息" :data="app" :schema="schema">
       <template #createdAt="data">
-        {{ DateUtil.formatDateTime(new Date(data.row.createdAt)) }}
+        {{ DateUtils.formatDateTime(new Date(data.row.createdAt)) }}
       </template>
       <template #status="data">
         <ElTag v-if="data.row.status === 'published'" type="success">正常</ElTag>
@@ -109,7 +114,8 @@ const setNoticeApp = () => {
         >
       </template>
       <template #nitice="data">
-        {{ data.row.notice ? data.row.notice : '未设置' }}
+        <span v-if="!data.row.notice">未设置</span>
+        <span>{{ data.row.notice }}</span>
         <ElButton @click="setNoticeApp" type="primary" link
           ><Icon icon="mdi:circle-edit-outline"
         /></ElButton>

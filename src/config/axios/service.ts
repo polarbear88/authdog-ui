@@ -13,6 +13,13 @@ import { config } from './config'
 import { ElMessage } from 'element-plus'
 import { useCache } from '@/hooks/web/useCache'
 import { useAppStore } from '@/store/modules/app'
+import { useTagsViewStore } from '@/store/modules/tagsView'
+import { resetRouter } from '@/router'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const tagsViewStore = useTagsViewStore()
 
 const { result_code, base_url } = config
 
@@ -84,6 +91,12 @@ service.interceptors.response.use(
       return response.data
     } else {
       ElMessage.error(response.data.message)
+      if (response.data.statusCode === 401) {
+        wsCache.clear()
+        tagsViewStore.delAllViews()
+        resetRouter() // 重置静态路由表
+        router.replace('/login')
+      }
     }
   },
   (error: AxiosError) => {

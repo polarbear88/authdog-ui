@@ -3,7 +3,7 @@ import { ElTabPane, ElTabs } from 'element-plus'
 import { ref } from 'vue'
 import { getDetail } from '@/api/application'
 import { useRouter } from 'vue-router'
-import { BaseInfo } from './components'
+import { BaseInfo, VersionInfo, SecurityInfo, Authorization } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 
 const activeName = ref('info')
@@ -26,12 +26,16 @@ getAppData()
 <template>
   <div>
     <ElTabs type="border-card" v-model="activeName" class="demo-tabs" @tab-click="handleTabsClick">
-      <ElTabPane label="基本信息" name="info">
+      <ElTabPane label="应用信息" name="info">
         <BaseInfo @get-appdata="getAppData" :app="appinfo" />
+        <VersionInfo @get-appdata="getAppData" :app="appinfo" />
       </ElTabPane>
-      <ElTabPane label="授权" name="authorization">authorization</ElTabPane>
-      <ElTabPane label="版本" name="version">version</ElTabPane>
-      <ElTabPane label="安全" name="security">security</ElTabPane>
+      <ElTabPane label="授权" name="authorization">
+        <Authorization @get-appdata="getAppData" :app="appinfo" />
+      </ElTabPane>
+      <ElTabPane label="安全" name="security">
+        <SecurityInfo @get-appdata="getAppData" :app="appinfo" />
+      </ElTabPane>
     </ElTabs>
   </div>
 </template>
