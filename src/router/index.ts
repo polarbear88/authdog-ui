@@ -119,6 +119,28 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/clouddata',
+    component: Layout,
+    redirect: '/clouddata/var',
+    name: 'Clouddata',
+    meta: {
+      title: '云数据',
+      icon: 'material-symbols:cloud',
+      alwaysShow: true
+    },
+    roles: ['developer'],
+    children: [
+      {
+        path: 'var',
+        component: () => import('@/views/CloudData/Cloudvar.vue'),
+        name: 'Clouddata-Var',
+        meta: {
+          title: '云变量'
+        }
+      }
+    ]
   }
 
   // {

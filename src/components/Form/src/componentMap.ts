@@ -21,6 +21,7 @@ import {
 import { InputPassword } from '@/components/InputPassword'
 import { Editor } from '@/components/Editor'
 import { ComponentName } from '@/types/components'
+import { ApplicationSelect } from '@/components/ApplicationSelect'
 
 const componentMap: Recordable<Component, ComponentName> = {
   Radio: ElRadioGroup,
@@ -43,7 +44,8 @@ const componentMap: Recordable<Component, ComponentName> = {
   SelectV2: ElSelectV2,
   RadioButton: ElRadioGroup,
   InputPassword: InputPassword,
-  Editor: Editor
+  Editor: Editor,
+  ApplicationSelect: ApplicationSelect
 }
 
 export { componentMap }

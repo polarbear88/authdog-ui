@@ -110,3 +110,10 @@ export const setAllowLoginWhenCountUsedUp = (
     data: { appid: id, allowLoginWhenCountUsedUp }
   })
 }
+
+export const createApplication = (data: any): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/create`,
+    data
+  })
+}

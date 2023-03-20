@@ -2,11 +2,14 @@
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
 import { ref } from 'vue'
-import { ElButton, ElTag } from 'element-plus'
+import { ElButton, ElEmpty, ElTag } from 'element-plus'
 import { TableColumn, TableSlotDefault } from '@/types/table'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { getList } from '@/api/application'
 import { useRouter } from 'vue-router'
+import { CirclePlus } from '@element-plus/icons-vue'
+import { Dialog } from '@/components/Dialog'
+import { CreateApp } from './components'
 
 const columns: TableColumn[] = [
   {
@@ -40,18 +43,21 @@ const columns: TableColumn[] = [
 ]
 
 const loading = ref(true)
+const showCreateApp = ref(false)
 
 let tableDataList = ref<ApplicationInfo[]>([])
 
-const getTableList = async () => {
-  const res = await getList()
+const getTableList = () => {
+  getList()
     .catch(() => {})
     .finally(() => {
       loading.value = false
     })
-  if (res) {
-    tableDataList.value = res.data
-  }
+    .then((res) => {
+      if (res) {
+        tableDataList.value = res.data
+      }
+    })
 }
 
 getTableList()
@@ -73,21 +79,39 @@ const actionFn = (data: TableSlotDefault) => {
 </script>
 
 <template>
-  <ContentWrap>
-    <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
-      <template #authMode="data">
-        {{ data.row.authMode === 'user' ? '用户模式' : '设备ID模式' }}
-      </template>
-      <template #cryptoMode="data">
-        {{ data.row.cryptoMode === 'none' ? '无' : data.row.cryptoMode.toUpperCase() }}
-      </template>
-      <template #status="data">
-        <ElTag v-if="data.row.status === 'published'" type="success">正常</ElTag>
-        <ElTag v-if="data.row.status === 'disabled'" type="danger">禁用</ElTag>
-      </template>
-      <template #action="data">
-        <ElButton link type="primary" @click="actionFn(data as TableSlotDefault)">管理</ElButton>
-      </template>
-    </Table>
-  </ContentWrap>
+  <div>
+    <div>
+      <ElButton @click="showCreateApp = true" type="primary" :icon="CirclePlus">创建应用</ElButton>
+    </div>
+    <ContentWrap style="margin-top: 10px">
+      <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
+        <template #empty>
+          <ElEmpty description="快去创建应用吧" />
+        </template>
+        <template #authMode="data">
+          {{ data.row.authMode === 'user' ? '用户模式' : '设备ID模式' }}
+        </template>
+        <template #cryptoMode="data">
+          {{ data.row.cryptoMode === 'none' ? '无' : data.row.cryptoMode.toUpperCase() }}
+        </template>
+        <template #status="data">
+          <ElTag v-if="data.row.status === 'published'" type="success">正常</ElTag>
+          <ElTag v-if="data.row.status === 'disabled'" type="danger">禁用</ElTag>
+        </template>
+        <template #action="data">
+          <ElButton link type="primary" @click="actionFn(data as TableSlotDefault)">管理</ElButton>
+        </template>
+      </Table>
+    </ContentWrap>
+    <div>
+      <Dialog
+        :fullscreen="false"
+        style="width: 680px; max-width: 80%"
+        v-model="showCreateApp"
+        title="创建应用"
+      >
+        <CreateApp @success="getTableList" @closedialog="showCreateApp = false" />
+      </Dialog>
+    </div>
+  </div>
 </template>

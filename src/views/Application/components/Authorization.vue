@@ -95,7 +95,7 @@ const getAuthModeTooltip = () => {
   if (props.app.authMode === 'deviceid') {
     return '设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用 不可修改'
   } else {
-    return '用户模式：用户登录授权，适用于用户类应用 不可修改'
+    return '用户模式：用户账号密码登录授权，适用于用户类应用 不可修改'
   }
 }
 
@@ -358,7 +358,7 @@ const onSetMaxMultiDevice = () => {
         </template>
         <template #authMode-label>
           <ElTooltip
-            content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户登录授权，适用于用户类应用"
+            content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户账号密码登录授权且用户需要注册，适用于用户类应用"
             placement="top-start"
             raw-content
           >

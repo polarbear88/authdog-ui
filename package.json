@@ -27,6 +27,7 @@
     "analysis": "windicss-analysis"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@iconify/iconify": "^3.1.0",
     "@types/blueimp-md5": "^2.18.0",
     "@vueuse/core": "^9.13.0",

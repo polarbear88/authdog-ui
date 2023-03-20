@@ -280,7 +280,8 @@ export default defineComponent({
           {{
             default: () => rnderTableColumn(),
             // @ts-ignore
-            append: () => getSlot(slots, 'append')
+            append: () => getSlot(slots, 'append'),
+            empty: () => getSlot(slots, 'empty')
           }}
         </ElTable>
         {unref(getProps).pagination ? (
