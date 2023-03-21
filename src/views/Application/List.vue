@@ -99,7 +99,9 @@ const actionFn = (data: TableSlotDefault) => {
           <ElTag v-if="data.row.status === 'disabled'" type="danger">禁用</ElTag>
         </template>
         <template #action="data">
-          <ElButton link type="primary" @click="actionFn(data as TableSlotDefault)">管理</ElButton>
+          <ElButton size="small" type="primary" @click="actionFn(data as TableSlotDefault)"
+            >管理</ElButton
+          >
         </template>
       </Table>
     </ContentWrap>

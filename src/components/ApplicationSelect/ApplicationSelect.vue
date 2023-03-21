@@ -11,7 +11,7 @@ const props = defineProps({
   zeroname: propTypes.string.def('')
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'change'])
 
 const value = ref(props.modelValue + '')
 
@@ -32,11 +32,15 @@ const getTableList = () => {
 if (props.applist.length === 0) {
   getTableList()
 }
+
+const onSelect = (val: string) => {
+  emit('change', parseInt(val))
+}
 </script>
 
 <template>
   <div>
-    <ElSelect v-model="value" placeholder="选择应用">
+    <ElSelect @change="onSelect" v-model="value" placeholder="选择应用">
       <ElOption v-if="zeroname" value="0" :label="zeroname" />
       <ElOption
         v-for="(item, index) in optionsData"
