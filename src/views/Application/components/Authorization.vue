@@ -23,7 +23,8 @@ import {
   setAllowMultiDevice,
   setMaxMultiDevice,
   setUseCountMode,
-  setAllowLoginWhenCountUsedUp
+  setAllowLoginWhenCountUsedUp,
+  setTrialCount
 } from '@/api/application'
 import { DateUtils } from '@/utils/dateUtils'
 
@@ -89,6 +90,10 @@ const countModeSchema = reactive([
   {
     field: 'allowLoginWhenCountUsedUp',
     label: '次数用尽后允许登录'
+  },
+  {
+    field: 'trialCount',
+    label: '试用次数'
   }
 ])
 const getAuthModeTooltip = () => {
@@ -345,6 +350,30 @@ const onSetMaxMultiDevice = () => {
     })
     .catch(() => {})
 }
+
+const onsetTrialCount = () => {
+  ElMessageBox.confirm('输入0则为不可试用', '请输入试用次数', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputType: 'number'
+  })
+    .then(async (res) => {
+      if (res.value) {
+        const count = parseInt(res.value)
+        if (count < 0 || isNaN(count)) {
+          ElMessage.error('请输入正确的整数')
+          return
+        }
+        setTrialCount(props.app.id + '', count).then(() => {
+          getAppData()
+        })
+        return
+      }
+      ElMessage.error('请输入内容')
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -358,7 +387,7 @@ const onSetMaxMultiDevice = () => {
         </template>
         <template #authMode-label>
           <ElTooltip
-            content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户账号密码登录授权且用户需要注册，适用于用户类应用"
+            content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户账号密码登录授权且用户需要注册，适用于用户类应用(用户模式支持绑定/解绑设备)"
             placement="top-start"
             raw-content
           >
@@ -388,7 +417,7 @@ const onSetMaxMultiDevice = () => {
         </template>
       </Descriptions>
     </div>
-    <div>
+    <div v-if="app.authMode === 'user'">
       <Descriptions :collapse="false" title="绑定设备设置" :data="app" :schema="bindDeviceSchema">
         <template #bindDevice="data"
           ><ElSwitch @change="onSetBindDevice" v-model="data.row.bindDevice" />
@@ -443,6 +472,12 @@ const onSetMaxMultiDevice = () => {
             @change="onSetAllowLoginWhenCountUsedUp"
             v-model="data.row.allowLoginWhenCountUsedUp"
           />
+        </template>
+        <template #trialCount="data">
+          {{ data.row.trialCount ? data.row.trialCount : '不可试用' }}
+          <ElButton @click="onsetTrialCount" type="primary" link
+            ><Icon icon="mdi:circle-edit-outline"
+          /></ElButton>
         </template>
       </Descriptions>
       <ElText type="danger" style="margin-left: 10px"

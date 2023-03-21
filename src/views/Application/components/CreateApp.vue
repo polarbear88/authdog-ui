@@ -133,7 +133,7 @@ const submit = async () => {
     >
       <template #authMode-label>
         <ElTooltip
-          content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户账号密码登录授权且用户需要注册，适用于用户类应用"
+          content="设备ID模式：设备ID授权，不需要用户登录，适用于设备类应用<br />用户模式：用户账号密码登录授权且用户需要注册，适用于用户类应用(用户模式支持绑定/解绑设备)"
           placement="top-start"
           raw-content
         >

@@ -117,3 +117,7 @@ export const createApplication = (data: any): Promise<IResponse<any>> => {
     data
   })
 }
+
+export const setTrialCount = (id: string, trialCount: number): Promise<IResponse<any>> => {
+  return request.post({ url: `/developer/app/set-trialCount`, data: { appid: id, trialCount } })
+}
