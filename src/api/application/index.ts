@@ -121,3 +121,13 @@ export const createApplication = (data: any): Promise<IResponse<any>> => {
 export const setTrialCount = (id: string, trialCount: number): Promise<IResponse<any>> => {
   return request.post({ url: `/developer/app/set-trialCount`, data: { appid: id, trialCount } })
 }
+
+export const setAllowForceLogin = (
+  id: string,
+  allowForceLogin: boolean
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-allowForceLogin`,
+    data: { appid: id, allowForceLogin }
+  })
+}

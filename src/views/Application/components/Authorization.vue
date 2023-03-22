@@ -24,7 +24,8 @@ import {
   setMaxMultiDevice,
   setUseCountMode,
   setAllowLoginWhenCountUsedUp,
-  setTrialCount
+  setTrialCount,
+  setAllowForceLogin
 } from '@/api/application'
 import { DateUtils } from '@/utils/dateUtils'
 
@@ -79,6 +80,10 @@ const multiDeviceSchema = reactive([
   {
     field: 'maxMultiDevice',
     label: '最大同时登录数'
+  },
+  {
+    field: 'allowForceLogin',
+    label: '允许强制登录'
   }
 ])
 
@@ -374,6 +379,17 @@ const onsetTrialCount = () => {
     })
     .catch(() => {})
 }
+
+const onSetAllowForceLogin = () => {
+  setAllowForceLogin(props.app.id + '', props.app.allowForceLogin)
+    .then(() => {
+      getAppData()
+    })
+    .catch(() => {
+      // eslint-disable-next-line vue/no-mutating-props
+      props.app.allowForceLogin = !props.app.allowForceLogin
+    })
+}
 </script>
 
 <template>
@@ -459,6 +475,20 @@ const onsetTrialCount = () => {
           <ElButton @click="onSetMaxMultiDevice" type="primary" link
             ><Icon icon="mdi:circle-edit-outline"
           /></ElButton>
+        </template>
+        <template #allowForceLogin-label>
+          <ElTooltip
+            content="如果打开那么当设备数达到上限时新设备登录会踢掉旧设备，否则新设备登录会被拒绝"
+            placement="top-start"
+            raw-content
+          >
+            <span
+              >允许强制登录<Icon style="margin-left: 3px" icon="entypo:info-with-circle"
+            /></span>
+          </ElTooltip>
+        </template>
+        <template #allowForceLogin="data">
+          <ElSwitch @change="onSetAllowForceLogin" v-model="data.row.allowForceLogin" />
         </template>
       </Descriptions>
     </div>
