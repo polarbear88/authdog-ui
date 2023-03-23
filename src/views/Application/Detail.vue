@@ -3,15 +3,23 @@ import { ElTabPane, ElTabs } from 'element-plus'
 import { ref } from 'vue'
 import { getDetail } from '@/api/application'
 import { useRouter } from 'vue-router'
-import { BaseInfo, VersionInfo, SecurityInfo, Authorization } from './components'
+import { BaseInfo, VersionInfo, SecurityInfo, Authorization, User } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 
 const activeName = ref('info')
 const topActiveName = ref('application')
 
-// const handleTabsClick = (tab: any, event: any) => {
-//   console.log(tab, event)
-// }
+const handleTabsClick = (tab: any, _event: any) => {
+  if (callbacks[tab.paneName]) {
+    callbacks[tab.paneName]()
+  }
+}
+
+const setTabClickCallback = (paneName: string, callback: () => void) => {
+  callbacks[paneName] = callback
+}
+
+const callbacks = {}
 
 const router = useRouter()
 
@@ -26,7 +34,12 @@ getAppData()
 </script>
 <template>
   <div>
-    <ElTabs tabPosition="top" type="border-card" v-model="topActiveName">
+    <ElTabs
+      tabPosition="top"
+      type="border-card"
+      v-model="topActiveName"
+      @tab-click="handleTabsClick"
+    >
       <ElTabPane label="应用管理" name="application">
         <ElTabs tabPosition="top" v-model="activeName">
           <ElTabPane label="应用信息" name="info">
@@ -41,7 +54,9 @@ getAppData()
           </ElTabPane>
         </ElTabs>
       </ElTabPane>
-      <ElTabPane label="用户管理" name="user" />
+      <ElTabPane label="用户管理" name="user">
+        <User @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
+      </ElTabPane>
       <ElTabPane label="设备管理" name="deviceid" />
       <ElTabPane label="激活卡管理" name="activateCard" />
       <ElTabPane label="生产激活卡" name="makeActivateCard" />

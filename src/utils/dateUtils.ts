@@ -11,10 +11,18 @@ export class DateUtils {
     if (!date) {
       date = new Date()
     }
-    if (typeof date == 'number') {
+    if (typeof date == 'number' || typeof date == 'string') {
       date = new Date(date)
     }
     return moment(date).format(format)
+  }
+
+  public static formatDateTimeAll(data: any, parr: string[], format = 'yyyy-MM-DD HH:mm:ss') {
+    for (const key of parr) {
+      if (data[key]) {
+        data[key] = this.formatDateTime(data[key], format)
+      }
+    }
   }
 
   public static getDHMSFromMinutes(minutes: number) {
