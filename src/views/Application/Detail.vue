@@ -58,7 +58,7 @@ getAppData()
       "
     >
       <template #content>
-        <ApplicationSelect @change="getAppData" v-model="currentId" :zeroname="''" />
+        <ApplicationSelect size="small" @change="getAppData" v-model="currentId" :zeroname="''" />
       </template>
     </ElPageHeader>
     <ElTabs

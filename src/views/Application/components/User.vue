@@ -27,6 +27,7 @@ import { StringUtils } from '@/utils/stringUtils'
 import { NumberUtils } from '@/utils/numberUtils'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useTable } from '@/hooks/web/useTable'
+import { Descriptions } from '@/components/Descriptions'
 
 const props = defineProps({ app: { type: Object as PropType<ApplicationInfo>, default: () => {} } })
 
@@ -71,14 +72,14 @@ const columns: TableColumn[] = [
     field: 'isTrial',
     label: '试用中'
   },
-  {
-    field: 'lastLoginTime',
-    label: '最后登录'
-  },
-  {
-    field: 'currentDeviceId',
-    label: '绑定'
-  },
+  // {
+  //   field: 'lastLoginTime',
+  //   label: '最后登录'
+  // },
+  // {
+  //   field: 'currentDeviceId',
+  //   label: '绑定'
+  // },
   {
     field: 'action',
     label: '操作'
@@ -106,7 +107,12 @@ const getTableList = async () => {
   const { getFormData } = methods
   const formData = await getFormData()
   const data = StringUtils.deleteObjectEmptyProperty(formData)
-  DateUtils.formatDateTimeAll(data, ['expirationTimeStart', 'expirationTimeEnd'])
+  DateUtils.formatDateTimeAll(data, [
+    'expirationTimeStart',
+    'expirationTimeEnd',
+    'createdAtStart',
+    'createdAtEnd'
+  ])
   const isTrial = data.isTrial
   delete data.isTrial
   if (isTrial !== undefined && isTrial !== null) {
@@ -233,6 +239,24 @@ const schema = reactive<FormSchema[]>([
     component: 'DatePicker',
     componentProps: {
       placeholder: '到期结束',
+      type: 'datetime'
+    }
+  },
+  {
+    field: 'createdAtStart',
+    label: '注册开始',
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: '注册开始',
+      type: 'datetime'
+    }
+  },
+  {
+    field: 'createdAtEnd',
+    label: '注册结束',
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: '注册结束',
       type: 'datetime'
     }
   },
@@ -455,6 +479,57 @@ const onConfirmChangeTime = () => {
       showSelectTime.value = false
     })
 }
+
+const schemaDesc = reactive([
+  {
+    field: 'name',
+    label: '用户名'
+  },
+  {
+    field: 'createdAt',
+    label: '注册时间'
+  },
+  {
+    field: 'status',
+    label: '状态'
+  },
+  {
+    field: 'mobile',
+    label: '手机号'
+  },
+  {
+    field: 'otherInfo',
+    label: '其他信息'
+  },
+  {
+    field: 'balance',
+    label: '剩余次数'
+  },
+  {
+    field: 'currentDeviceId',
+    label: '当前设备'
+  },
+  {
+    field: 'unbindCount',
+    label: '解绑计数'
+  },
+  {
+    field: 'expirationTime',
+    label: '到期时间'
+  },
+  {
+    field: 'trialExpiration',
+    label: '试用截止'
+  },
+  {
+    field: 'lastLoginTime',
+    label: '最后登录'
+  },
+  {
+    field: 'useDeviceName',
+    label: '设备名称'
+  }
+])
 </script>
 
 <template>
@@ -503,6 +578,7 @@ const onConfirmChangeTime = () => {
           :loading="loading"
           reserveSelection
           row-key="id"
+          expand
         >
           <template #empty>
             <ElEmpty description="暂时没有用户哦" />
@@ -542,6 +618,31 @@ const onConfirmChangeTime = () => {
               </template>
             </ElDropdown>
           </template>
+          <template #expand="data">
+            <Descriptions
+              :collapse="false"
+              :title="data.row.name + '的详细信息'"
+              :data="data.row"
+              :schema="schemaDesc"
+            >
+              <template #createdAt="row">
+                {{ DateUtils.formatDateTime(row.row.createdAt) }}
+              </template>
+              <template #lastLoginTime="row">
+                {{ DateUtils.formatDateTime(row.row.lastLoginTime) }}
+              </template>
+              <template #trialExpiration="row">
+                {{ DateUtils.formatDateTime(row.row.trialExpiration) }}
+              </template>
+              <template #expirationTime="row">
+                {{ DateUtils.formatDateTime(row.row.expirationTime) }}
+              </template>
+              <template #status="row">
+                <ElTag v-if="row.row.status === 'normal'" type="success">正常</ElTag>
+                <ElTag v-if="row.row.status !== 'normal'" type="danger">禁用</ElTag>
+              </template>
+            </Descriptions></template
+          >
         </Table>
         <ElPagination
           style="margin-top: 30px"

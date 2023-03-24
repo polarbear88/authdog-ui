@@ -8,7 +8,8 @@ import { ElSelect, ElOption } from 'element-plus'
 const props = defineProps({
   modelValue: propTypes.number.def(0),
   applist: propTypes.array.def([]),
-  zeroname: propTypes.string.def('')
+  zeroname: propTypes.string.def(''),
+  size: propTypes.string.def('default')
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -40,7 +41,7 @@ const onSelect = (val: string) => {
 
 <template>
   <div>
-    <ElSelect @change="onSelect" v-model="value" placeholder="选择应用">
+    <ElSelect :size="size as any" @change="onSelect" v-model="value" placeholder="选择应用">
       <ElOption v-if="zeroname" value="0" :label="zeroname" />
       <ElOption
         v-for="(item, index) in optionsData"
