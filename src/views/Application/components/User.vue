@@ -26,10 +26,13 @@ import { useForm } from '@/hooks/web/useForm'
 import { StringUtils } from '@/utils/stringUtils'
 import { NumberUtils } from '@/utils/numberUtils'
 import { ArrowDown } from '@element-plus/icons-vue'
+import { useTable } from '@/hooks/web/useTable'
 
 const props = defineProps({ app: { type: Object as PropType<ApplicationInfo>, default: () => {} } })
 
 const emit = defineEmits(['set-tab-click-callback'])
+
+const rTable = useTable()
 
 const columns: TableColumn[] = [
   {
@@ -93,6 +96,10 @@ const pageSize = ref(10)
 const currentPage = ref(1)
 
 const total = ref(0)
+
+const currentActionIds = ref<Array<number>>([])
+
+const batchAction = ref(false)
 
 const getTableList = async () => {
   loading.value = true
@@ -282,7 +289,9 @@ const isaddCount = ref(true)
 
 const onChangeCount = (user: any) => {
   ElMessageBox.confirm(
-    `您正在${isaddCount.value ? '增加' : '减少'}用户${user.name}的次数`,
+    `您正为${
+      batchAction.value ? `${currentActionIds.value.length}个用户` : currentUser.value.name
+    }${isaddCount.value ? '增加' : '减少'}次数`,
     (isaddCount.value ? '增加' : '减少') + '用户次数',
     {
       confirmButtonText: '确定',
@@ -299,10 +308,15 @@ const onChangeCount = (user: any) => {
           ElMessage.error('请输入正确的整数')
           return
         }
-        addBanlance(props.app.id, user.id, isaddCount.value ? count : -count).then(() => {
-          getTableList()
-          ElMessage.success('修改成功')
-        })
+        const data = batchAction.value ? currentActionIds.value : [user.id]
+        addBanlance(props.app.id, data, isaddCount.value ? count : -count)
+          .then((res) => {
+            getTableList()
+            ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+          })
+          .catch(() => {
+            ElMessage.success('未影响任何用户')
+          })
         return
       }
       ElMessage.error('请输入内容')
@@ -310,7 +324,15 @@ const onChangeCount = (user: any) => {
     .catch(() => {})
 }
 
-const onAction = (user: any, item: string) => {
+const onAction = async (user: any, item: string, isBatch = false) => {
+  batchAction.value = isBatch
+  if (isBatch) {
+    currentActionIds.value = (await rTable.methods.getSelections()).map((item: any) => item.id)
+    if (currentActionIds.value.length === 0) {
+      ElMessage.error('请先选择用户')
+      return
+    }
+  }
   if (item === 'changePassword') {
     onChangePassword(user)
   }
@@ -339,17 +361,63 @@ const onAction = (user: any, item: string) => {
     onChangeCount(user)
   }
   if (item === 'unbind') {
-    unbind(props.app.id, user.id).then(() => {
-      getTableList()
-      ElMessage.success('修改成功')
-    })
+    if (isBatch) {
+      ElMessageBox.confirm(
+        `您正为${currentActionIds.value.length}个用户 解绑设备`,
+        '批量解绑设备',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        onUnbind(user)
+      })
+    } else {
+      onUnbind(user)
+    }
   }
   if (item === 'resetUnbindCount') {
-    resetUnbindCount(props.app.id, user.id).then(() => {
-      getTableList()
-      ElMessage.success('修改成功')
-    })
+    if (isBatch) {
+      ElMessageBox.confirm(
+        `您正为${currentActionIds.value.length}个用户 重置解绑计数`,
+        '批量重置解绑计数',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        onResetUnbindCount(user)
+      })
+    } else {
+      onResetUnbindCount(user)
+    }
   }
+}
+
+const onResetUnbindCount = (user: any) => {
+  const data = batchAction.value ? currentActionIds.value : [user.id]
+  resetUnbindCount(props.app.id, data)
+    .then((res) => {
+      getTableList()
+      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+    })
+    .catch(() => {
+      ElMessage.success('未影响任何用户')
+    })
+}
+
+const onUnbind = (user: any) => {
+  const data = batchAction.value ? currentActionIds.value : [user.id]
+  unbind(props.app.id, data)
+    .then((res) => {
+      getTableList()
+      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+    })
+    .catch(() => {
+      ElMessage.success('未影响任何用户')
+    })
 }
 
 const getInputTime = () => {
@@ -373,11 +441,19 @@ const onConfirmChangeTime = () => {
     ElMessage.error('请输入正确的时间')
     return
   }
-  addTime(props.app.id, currentUser.value.id, time).then(() => {
-    ElMessage.success('修改成功')
-    showSelectTime.value = false
-    getTableList()
-  })
+  const data = batchAction.value ? currentActionIds.value : [currentUser.value.id]
+
+  addTime(props.app.id, data, time)
+    .then((res) => {
+      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+      getTableList()
+    })
+    .catch(() => {
+      ElMessage.success('未影响任何用户')
+    })
+    .finally(() => {
+      showSelectTime.value = false
+    })
 }
 </script>
 
@@ -403,7 +479,7 @@ const onConfirmChangeTime = () => {
         </Form>
       </div>
       <ContentWrap style="margin-top: 10px">
-        <ElDropdown trigger="click">
+        <ElDropdown trigger="click" @command="(item) => onAction(null, item, true)">
           <span style="font-size: small" class="el-dropdown-link">
             批量操作<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
           </span>
@@ -419,7 +495,15 @@ const onConfirmChangeTime = () => {
           </template>
         </ElDropdown>
 
-        <Table style="margin-top: 8px" :columns="columns" :data="tableDataList" :loading="loading">
+        <Table
+          @register="rTable.register"
+          style="margin-top: 8px"
+          :columns="columns"
+          :data="tableDataList"
+          :loading="loading"
+          reserveSelection
+          row-key="id"
+        >
           <template #empty>
             <ElEmpty description="暂时没有用户哦" />
           </template>
@@ -474,7 +558,13 @@ const onConfirmChangeTime = () => {
     <ElDialog width="500px" style="max-width: 90%" v-model="showSelectTime" title="输入时间">
       <div>
         <h2 style="color: red">{{
-          isaddtime ? `您正在为${currentUser.name}增加时间` : `您正在为${currentUser.name}减少时间`
+          isaddtime
+            ? `您正在为${
+                batchAction ? `${currentActionIds.length}个用户` : currentUser.name
+              }增加时间`
+            : `您正在为${
+                batchAction ? `${currentActionIds.length}个用户` : currentUser.name
+              }减少时间`
         }}</h2>
         <h2 v-if="isaddtime">如果用户时间小于当前时间则会在当前时间基础上加时</h2>
         <ElInput

@@ -21,44 +21,48 @@ export const changePassword = (
   })
 }
 
-export const addTime = (appid: number, id: number, minutes: number): Promise<IResponse<any>> => {
+export const addTime = (appid: number, ids: number[], minutes: number): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/add-time',
     data: {
       appid,
-      id,
+      ids,
       minutes
     }
   })
 }
 
-export const addBanlance = (appid: number, id: number, money: number): Promise<IResponse<any>> => {
+export const addBanlance = (
+  appid: number,
+  ids: number[],
+  money: number
+): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/add-banlance',
     data: {
       appid,
-      id,
+      ids,
       money
     }
   })
 }
 
-export const unbind = (appid: number, id: number): Promise<IResponse<any>> => {
+export const unbind = (appid: number, ids: number[]): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/unbind',
     data: {
       appid,
-      id
+      ids
     }
   })
 }
 
-export const resetUnbindCount = (appid: number, id: number): Promise<IResponse<any>> => {
+export const resetUnbindCount = (appid: number, ids: number[]): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/reset-unbindCount',
     data: {
       appid,
-      id
+      ids
     }
   })
 }
