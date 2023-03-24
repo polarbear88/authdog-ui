@@ -33,6 +33,10 @@ export const setDownloadUrl = (id: string, downloadUrl: string): Promise<IRespon
   return request.post({ url: `/developer/app/set-downloadUrl`, data: { appid: id, downloadUrl } })
 }
 
+export const setVersion = (id: string, version: string): Promise<IResponse<any>> => {
+  return request.post({ url: `/developer/app/set-version`, data: { appid: id, version } })
+}
+
 export const resetCryptoMode = (id: string, cryptoMode: string): Promise<IResponse<any>> => {
   return request.post({ url: `/developer/app/reset-cryptoMode`, data: { appid: id, cryptoMode } })
 }

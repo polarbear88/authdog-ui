@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ElTabPane, ElTabs } from 'element-plus'
+import { ElPageHeader, ElTabPane, ElTabs } from 'element-plus'
 import { ref } from 'vue'
 import { getDetail } from '@/api/application'
 import { useRouter } from 'vue-router'
 import { BaseInfo, VersionInfo, SecurityInfo, Authorization, User } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
+import { ApplicationSelect } from '@/components/ApplicationSelect'
 
 const activeName = ref('info')
 const topActiveName = ref('application')
@@ -19,26 +20,53 @@ const setTabClickCallback = (paneName: string, callback: () => void) => {
   callbacks[paneName] = callback
 }
 
-const callbacks = {}
-
 const router = useRouter()
+
+const callbacks = {}
 
 const appinfo = ref<ApplicationInfo>({} as ApplicationInfo)
 
-const getAppData = () => {
+const getAppData = (val?: number) => {
+  if (val) {
+    router.push({
+      name: 'Application-Detail',
+      params: {
+        id: val
+      }
+    })
+    return
+  }
   getDetail(router.currentRoute.value.params.id as string).then((res) => {
     appinfo.value = res.data
   })
 }
+
+const getCurrentAppId = () => {
+  return parseInt(router.currentRoute.value.params.id + '')
+}
+
+const currentId = ref(getCurrentAppId())
 getAppData()
 </script>
 <template>
   <div>
+    <ElPageHeader
+      @back="
+        router.push({
+          name: 'Application'
+        })
+      "
+    >
+      <template #content>
+        <ApplicationSelect @change="getAppData" v-model="currentId" :zeroname="''" />
+      </template>
+    </ElPageHeader>
     <ElTabs
       tabPosition="top"
       type="border-card"
       v-model="topActiveName"
       @tab-click="handleTabsClick"
+      style="margin-top: 10px"
     >
       <ElTabPane label="应用管理" name="application">
         <ElTabs tabPosition="top" v-model="activeName">

@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router'
 import { CirclePlus } from '@element-plus/icons-vue'
 import { Dialog } from '@/components/Dialog'
 import { CreateApp } from './components'
+import { BaseInfo, VersionInfo } from './components'
 
 const columns: TableColumn[] = [
   {
@@ -84,7 +85,7 @@ const actionFn = (data: TableSlotDefault) => {
       <ElButton @click="showCreateApp = true" type="primary" :icon="CirclePlus">创建应用</ElButton>
     </div>
     <ContentWrap style="margin-top: 10px">
-      <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
+      <Table expand :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
         <template #empty>
           <ElEmpty description="快去创建应用吧" />
         </template>
@@ -102,6 +103,10 @@ const actionFn = (data: TableSlotDefault) => {
           <ElButton size="small" type="primary" @click="actionFn(data as TableSlotDefault)"
             >管理</ElButton
           >
+        </template>
+        <template #expand="data">
+          <BaseInfo notUpdate @get-appdata="getTableList" :app="data.row" />
+          <VersionInfo notUpdate @get-appdata="getTableList" :app="data.row" />
         </template>
       </Table>
     </ContentWrap>

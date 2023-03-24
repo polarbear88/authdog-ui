@@ -7,7 +7,10 @@ import { ElButton, ElMessage, ElMessageBox, ElTag } from 'element-plus'
 import { setDisable, setEnable, setNotice } from '@/api/application'
 import { useI18n } from '@/hooks/web/useI18n'
 
-const props = defineProps({ app: { type: Object as PropType<ApplicationInfo>, default: () => {} } })
+const props = defineProps({
+  app: { type: Object as PropType<ApplicationInfo>, default: () => {} },
+  notUpdate: { type: Boolean, default: false }
+})
 
 const { t } = useI18n()
 const schema = reactive([
@@ -98,7 +101,7 @@ const setNoticeApp = () => {
         <ElTag v-if="data.row.status === 'disabled'" type="danger">禁用</ElTag>
         <ElButton
           style="margin-left: 8px"
-          v-if="data.row.status === 'published'"
+          v-if="data.row.status === 'published' && !notUpdate"
           type="warning"
           @click="disableApp"
           link
@@ -106,7 +109,7 @@ const setNoticeApp = () => {
         >
         <ElButton
           style="margin-left: 8px"
-          v-if="data.row.status === 'disabled'"
+          v-if="data.row.status === 'disabled' && !notUpdate"
           type="success"
           link
           @click="enableApp"
@@ -116,7 +119,7 @@ const setNoticeApp = () => {
       <template #nitice="data">
         <span v-if="!data.row.notice">未设置</span>
         <span>{{ data.row.notice }}</span>
-        <ElButton @click="setNoticeApp" type="primary" link
+        <ElButton v-if="!notUpdate" @click="setNoticeApp" type="primary" link
           ><Icon icon="mdi:circle-edit-outline"
         /></ElButton>
       </template>

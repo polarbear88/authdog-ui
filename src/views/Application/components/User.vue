@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, reactive, ref, unref } from 'vue'
-import { getList } from '@/api/user'
-import { ElButton, ElEmpty, ElPagination, ElTag } from 'element-plus'
+import { getList, changePassword, addTime, unbind, resetUnbindCount, addBanlance } from '@/api/user'
+import {
+  ElButton,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
+  ElEmpty,
+  ElIcon,
+  ElMessage,
+  ElMessageBox,
+  ElPagination,
+  ElTag,
+  ElDialog,
+  ElInput
+} from 'element-plus'
 import { TableColumn } from '@/types/table'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
@@ -12,6 +25,7 @@ import { FormSchema } from '@/types/form'
 import { useForm } from '@/hooks/web/useForm'
 import { StringUtils } from '@/utils/stringUtils'
 import { NumberUtils } from '@/utils/numberUtils'
+import { ArrowDown } from '@element-plus/icons-vue'
 
 const props = defineProps({ app: { type: Object as PropType<ApplicationInfo>, default: () => {} } })
 
@@ -32,7 +46,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'balance',
-    label: '余额'
+    label: '次数'
   },
   {
     field: 'mobile',
@@ -220,6 +234,15 @@ const schema = reactive<FormSchema[]>([
   }
 ])
 
+const showSelectTime = ref(false)
+
+const inputDay = ref(0)
+const inputHour = ref(0)
+const inputMinute = ref(0)
+const currentUser = ref<any>(null)
+
+const isaddtime = ref(true)
+
 const { register, methods, elFormRef } = useForm()
 
 const handleQuery = () => {
@@ -230,6 +253,131 @@ const handleQuery = () => {
 const resetForm = () => {
   unref(elFormRef)?.resetFields()
   handleQuery()
+}
+
+const onChangePassword = (user: any) => {
+  ElMessageBox.confirm(`您正在修改用户${user.name}的密码`, '修改用户密码', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '请输入新密码'
+  })
+    .then(async (res) => {
+      if (res.value) {
+        if (res.value.length < 6) {
+          ElMessage.error('密码长度不能小于6位')
+          return
+        }
+        changePassword(props.app.id, user.id, res.value).then(() => {
+          ElMessage.success('修改成功')
+        })
+        return
+      }
+      ElMessage.error('请输入内容')
+    })
+    .catch(() => {})
+}
+
+const isaddCount = ref(true)
+
+const onChangeCount = (user: any) => {
+  ElMessageBox.confirm(
+    `您正在${isaddCount.value ? '增加' : '减少'}用户${user.name}的次数`,
+    (isaddCount.value ? '增加' : '减少') + '用户次数',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      showInput: true,
+      inputPlaceholder: '次数',
+      inputType: 'number'
+    }
+  )
+    .then(async (res) => {
+      if (res.value) {
+        const count = parseInt(res.value)
+        if (count < 0 || isNaN(count)) {
+          ElMessage.error('请输入正确的整数')
+          return
+        }
+        addBanlance(props.app.id, user.id, isaddCount.value ? count : -count).then(() => {
+          getTableList()
+          ElMessage.success('修改成功')
+        })
+        return
+      }
+      ElMessage.error('请输入内容')
+    })
+    .catch(() => {})
+}
+
+const onAction = (user: any, item: string) => {
+  if (item === 'changePassword') {
+    onChangePassword(user)
+  }
+  if (item === 'addTime') {
+    isaddtime.value = true
+    currentUser.value = user
+    inputDay.value = 0
+    inputHour.value = 0
+    inputMinute.value = 0
+    showSelectTime.value = true
+  }
+  if (item === 'subTime') {
+    isaddtime.value = false
+    currentUser.value = user
+    inputDay.value = 0
+    inputHour.value = 0
+    inputMinute.value = 0
+    showSelectTime.value = true
+  }
+  if (item === 'addCount') {
+    isaddCount.value = true
+    onChangeCount(user)
+  }
+  if (item === 'subCount') {
+    isaddCount.value = false
+    onChangeCount(user)
+  }
+  if (item === 'unbind') {
+    unbind(props.app.id, user.id).then(() => {
+      getTableList()
+      ElMessage.success('修改成功')
+    })
+  }
+  if (item === 'resetUnbindCount') {
+    resetUnbindCount(props.app.id, user.id).then(() => {
+      getTableList()
+      ElMessage.success('修改成功')
+    })
+  }
+}
+
+const getInputTime = () => {
+  const day = inputDay.value
+  const hour = inputHour.value
+  const minute = inputMinute.value
+  const time = day * 24 * 60 + hour * 60 + minute
+  if (time <= 0 || isNaN(time)) {
+    return 0
+  }
+  if (isaddtime.value) {
+    return time
+  } else {
+    return -time
+  }
+}
+
+const onConfirmChangeTime = () => {
+  const time = getInputTime()
+  if (time === 0) {
+    ElMessage.error('请输入正确的时间')
+    return
+  }
+  addTime(props.app.id, currentUser.value.id, time).then(() => {
+    ElMessage.success('修改成功')
+    showSelectTime.value = false
+    getTableList()
+  })
 }
 </script>
 
@@ -255,7 +403,23 @@ const resetForm = () => {
         </Form>
       </div>
       <ContentWrap style="margin-top: 10px">
-        <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
+        <ElDropdown trigger="click">
+          <span style="font-size: small" class="el-dropdown-link">
+            批量操作<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
+          </span>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem command="addTime">增加时间</ElDropdownItem>
+              <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
+              <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
+              <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+              <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
+              <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
+
+        <Table style="margin-top: 8px" :columns="columns" :data="tableDataList" :loading="loading">
           <template #empty>
             <ElEmpty description="暂时没有用户哦" />
           </template>
@@ -276,8 +440,23 @@ const resetForm = () => {
           <template #lastLoginTime="data">
             {{ DateUtils.formatDateTime(data.row.lastLoginTime, 'yyyy-MM-DD') }}
           </template>
-          <template #action>
-            <ElButton size="small" type="primary">管理</ElButton>
+          <template #action="data">
+            <ElDropdown @command="(item) => onAction(data.row, item)" trigger="click">
+              <span class="el-dropdown-link">
+                操作<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
+              </span>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="changePassword">修改密码</ElDropdownItem>
+                  <ElDropdownItem divided command="addTime">增加时间</ElDropdownItem>
+                  <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
+                  <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
+                  <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+                  <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
+                  <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
           </template>
         </Table>
         <ElPagination
@@ -292,5 +471,50 @@ const resetForm = () => {
         />
       </ContentWrap>
     </div>
+    <ElDialog width="500px" style="max-width: 90%" v-model="showSelectTime" title="输入时间">
+      <div>
+        <h2 style="color: red">{{
+          isaddtime ? `您正在为${currentUser.name}增加时间` : `您正在为${currentUser.name}减少时间`
+        }}</h2>
+        <h2 v-if="isaddtime">如果用户时间小于当前时间则会在当前时间基础上加时</h2>
+        <ElInput
+          type="number"
+          style="margin-top: 10px"
+          v-model="inputDay"
+          placeholder="Please input"
+        >
+          <template #append>天</template>
+        </ElInput>
+        <ElInput
+          type="number"
+          style="margin-top: 10px"
+          v-model="inputHour"
+          placeholder="Please input"
+        >
+          <template #append>时</template>
+        </ElInput>
+        <ElInput
+          type="number"
+          style="margin-top: 10px"
+          v-model="inputMinute"
+          placeholder="Please input"
+        >
+          <template #append>分</template>
+        </ElInput>
+        <div style="width: 100%; height: 40px"></div>
+        <div style="right: 20px; bottom: 10px; position: absolute">
+          <ElButton @click="showSelectTime = false">取消</ElButton>
+          <ElButton type="primary" @click="onConfirmChangeTime"> 确认 </ElButton>
+        </div>
+      </div>
+    </ElDialog>
   </div>
 </template>
+<style scoped>
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  align-items: center;
+  margin-top: 3.482px;
+}
+</style>

@@ -588,7 +588,7 @@ const onSetAllowForceLogin = () => {
         </ElInput>
         <div style="width: 100%; height: 40px"></div>
         <div style="right: 20px; bottom: 10px; position: absolute">
-          <ElButton @click="showSelectTrialTime = false">取消</ElButton>
+          <ElButton @click="showSelectUnbindDeductTime = false">取消</ElButton>
           <ElButton type="primary" @click="onConfirmSetUnbindDeductTime"> 确认 </ElButton>
         </div>
       </div>
