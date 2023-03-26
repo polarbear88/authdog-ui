@@ -97,6 +97,7 @@ service.interceptors.response.use(
         resetRouter() // 重置静态路由表
         window.location.href = '/login'
       }
+      throw new Error(response.data.message)
     }
   },
   (error: AxiosError) => {

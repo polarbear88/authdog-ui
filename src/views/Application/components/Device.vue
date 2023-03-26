@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, reactive, ref, unref } from 'vue'
-import {
-  getList,
-  changePassword,
-  addTime,
-  unbind,
-  resetUnbindCount,
-  addBanlance,
-  setStatus
-} from '@/api/user'
+import { getList, addTime, addBanlance, setStatus } from '@/api/device'
 import {
   ElButton,
   ElDropdown,
@@ -47,8 +39,12 @@ const rTable = useTable()
 
 const columns: TableColumn[] = [
   {
-    field: 'name',
-    label: '用户名'
+    field: 'deviceId',
+    label: '设备ID'
+  },
+  {
+    field: 'deviceName',
+    label: '设备名称'
   },
   {
     field: 'status',
@@ -63,16 +59,8 @@ const columns: TableColumn[] = [
     label: '次数'
   },
   {
-    field: 'mobile',
-    label: '手机号'
-  },
-  {
     field: 'createdAt',
     label: '注册时间'
-  },
-  {
-    field: 'useDeviceName',
-    label: '设备名称'
   },
   {
     field: 'otherInfo',
@@ -82,14 +70,6 @@ const columns: TableColumn[] = [
     field: 'isTrial',
     label: '试用中'
   },
-  // {
-  //   field: 'lastLoginTime',
-  //   label: '最后登录'
-  // },
-  // {
-  //   field: 'currentDeviceId',
-  //   label: '绑定'
-  // },
   {
     field: 'action',
     label: '操作'
@@ -111,6 +91,10 @@ const total = ref(0)
 const currentActionIds = ref<Array<number>>([])
 
 const batchAction = ref(false)
+
+const showSelectStatus = ref(false)
+
+const selectStatus = ref('normal')
 
 const getTableList = async () => {
   loading.value = true
@@ -148,7 +132,7 @@ const getTableList = async () => {
     })
 }
 
-emit('set-tab-click-callback', 'user', () => {
+emit('set-tab-click-callback', 'device', () => {
   if (!isFirstLoad) {
     isFirstLoad = true
     getTableList()
@@ -157,19 +141,11 @@ emit('set-tab-click-callback', 'user', () => {
 
 const schema = reactive<FormSchema[]>([
   {
-    field: 'name',
-    label: '用户名',
+    field: 'deviceId',
+    label: '设备ID',
     component: 'Input',
     componentProps: {
-      placeholder: '用户名'
-    }
-  },
-  {
-    field: 'mobile',
-    label: '手机号',
-    component: 'Input',
-    componentProps: {
-      placeholder: '手机号'
+      placeholder: '设备ID'
     }
   },
   {
@@ -280,7 +256,7 @@ const showSelectTime = ref(false)
 const inputDay = ref(0)
 const inputHour = ref(0)
 const inputMinute = ref(0)
-const currentUser = ref<any>(null)
+const currentDevice = ref<any>(null)
 
 const isaddtime = ref(true)
 
@@ -296,41 +272,14 @@ const resetForm = () => {
   handleQuery()
 }
 
-const onChangePassword = (user: any) => {
-  ElMessageBox.confirm(`您正在修改用户${user.name}的密码`, '修改用户密码', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    showInput: true,
-    inputPlaceholder: '请输入新密码'
-  })
-    .then(async (res) => {
-      if (res.value) {
-        if (res.value.length < 6) {
-          ElMessage.error('密码长度不能小于6位')
-          return
-        }
-        changePassword(props.app.id, user.id, res.value).then(() => {
-          ElMessage.success('修改成功')
-        })
-        return
-      }
-      ElMessage.error('请输入内容')
-    })
-    .catch(() => {})
-}
-
 const isaddCount = ref(true)
 
-const showSelectStatus = ref(false)
-
-const selectStatus = ref('normal')
-
-const onChangeCount = (user: any) => {
+const onChangeCount = (device: any) => {
   ElMessageBox.confirm(
-    `您正为${
-      batchAction.value ? `${currentActionIds.value.length}个用户` : currentUser.value.name
-    }${isaddCount.value ? '增加' : '减少'}次数`,
-    (isaddCount.value ? '增加' : '减少') + '用户次数',
+    `您正为${batchAction.value ? `${currentActionIds.value.length}个设备` : device.deviceId}${
+      isaddCount.value ? '增加' : '减少'
+    }次数`,
+    (isaddCount.value ? '增加' : '减少') + '设备次数',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -346,14 +295,14 @@ const onChangeCount = (user: any) => {
           ElMessage.error('请输入正确的整数')
           return
         }
-        const data = batchAction.value ? currentActionIds.value : [user.id]
+        const data = batchAction.value ? currentActionIds.value : [device.id]
         addBanlance(props.app.id, data, isaddCount.value ? count : -count)
           .then((res) => {
             getTableList()
-            ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+            ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')
           })
           .catch(() => {
-            ElMessage.success('未影响任何用户')
+            ElMessage.success('未影响任何设备')
           })
         return
       }
@@ -362,21 +311,18 @@ const onChangeCount = (user: any) => {
     .catch(() => {})
 }
 
-const onAction = async (user: any, item: string, isBatch = false) => {
+const onAction = async (device: any, item: string, isBatch = false) => {
   batchAction.value = isBatch
   if (isBatch) {
     currentActionIds.value = (await rTable.methods.getSelections()).map((item: any) => item.id)
     if (currentActionIds.value.length === 0) {
-      ElMessage.error('请先选择用户')
+      ElMessage.error('请先选择设备')
       return
     }
   }
-  if (item === 'changePassword') {
-    onChangePassword(user)
-  }
   if (item === 'addTime') {
     isaddtime.value = true
-    currentUser.value = user
+    currentDevice.value = device
     inputDay.value = 0
     inputHour.value = 0
     inputMinute.value = 0
@@ -384,7 +330,7 @@ const onAction = async (user: any, item: string, isBatch = false) => {
   }
   if (item === 'subTime') {
     isaddtime.value = false
-    currentUser.value = user
+    currentDevice.value = device
     inputDay.value = 0
     inputHour.value = 0
     inputMinute.value = 0
@@ -392,89 +338,31 @@ const onAction = async (user: any, item: string, isBatch = false) => {
   }
   if (item === 'addCount') {
     isaddCount.value = true
-    onChangeCount(user)
+    onChangeCount(device)
   }
   if (item === 'subCount') {
     isaddCount.value = false
-    onChangeCount(user)
-  }
-  if (item === 'unbind') {
-    if (isBatch) {
-      ElMessageBox.confirm(
-        `您正为${currentActionIds.value.length}个用户 解绑设备`,
-        '批量解绑设备',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(() => {
-        onUnbind(user)
-      })
-    } else {
-      onUnbind(user)
-    }
-  }
-  if (item === 'resetUnbindCount') {
-    if (isBatch) {
-      ElMessageBox.confirm(
-        `您正为${currentActionIds.value.length}个用户 重置解绑计数`,
-        '批量重置解绑计数',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(() => {
-        onResetUnbindCount(user)
-      })
-    } else {
-      onResetUnbindCount(user)
-    }
+    onChangeCount(device)
   }
   if (item === 'setStatus') {
-    currentUser.value = user
+    currentDevice.value = device
     showSelectStatus.value = true
   }
 }
 
 const onSetStatus = () => {
-  const data = batchAction.value ? currentActionIds.value : [currentUser.value.id]
+  const data = batchAction.value ? currentActionIds.value : [currentDevice.value.id]
   setStatus(props.app.id, data, selectStatus.value)
     .then((res) => {
       getTableList()
-      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')
     })
     .catch(() => {
-      ElMessage.success('未影响任何用户')
+      ElMessage.success('未影响任何设备')
     })
     .finally(() => {
       showSelectStatus.value = false
       selectStatus.value = 'normal'
-    })
-}
-
-const onResetUnbindCount = (user: any) => {
-  const data = batchAction.value ? currentActionIds.value : [user.id]
-  resetUnbindCount(props.app.id, data)
-    .then((res) => {
-      getTableList()
-      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
-    })
-    .catch(() => {
-      ElMessage.success('未影响任何用户')
-    })
-}
-
-const onUnbind = (user: any) => {
-  const data = batchAction.value ? currentActionIds.value : [user.id]
-  unbind(props.app.id, data)
-    .then((res) => {
-      getTableList()
-      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
-    })
-    .catch(() => {
-      ElMessage.success('未影响任何用户')
     })
 }
 
@@ -499,15 +387,15 @@ const onConfirmChangeTime = () => {
     ElMessage.error('请输入正确的时间')
     return
   }
-  const data = batchAction.value ? currentActionIds.value : [currentUser.value.id]
+  const data = batchAction.value ? currentActionIds.value : [currentDevice.value.id]
 
   addTime(props.app.id, data, time)
     .then((res) => {
-      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+      ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')
       getTableList()
     })
     .catch(() => {
-      ElMessage.success('未影响任何用户')
+      ElMessage.success('未影响任何设备')
     })
     .finally(() => {
       showSelectTime.value = false
@@ -516,8 +404,9 @@ const onConfirmChangeTime = () => {
 
 const schemaDesc = reactive([
   {
-    field: 'name',
-    label: '用户名'
+    field: 'deviceId',
+    label: '设备ID',
+    span: 24
   },
   {
     field: 'createdAt',
@@ -528,8 +417,16 @@ const schemaDesc = reactive([
     label: '状态'
   },
   {
-    field: 'mobile',
-    label: '手机号'
+    field: 'brand',
+    label: '设备品牌'
+  },
+  {
+    field: 'model',
+    label: '设备型号'
+  },
+  {
+    field: 'osType',
+    label: '系统类型'
   },
   {
     field: 'otherInfo',
@@ -538,14 +435,6 @@ const schemaDesc = reactive([
   {
     field: 'balance',
     label: '剩余次数'
-  },
-  {
-    field: 'currentDeviceId',
-    label: '当前设备'
-  },
-  {
-    field: 'unbindCount',
-    label: '解绑计数'
   },
   {
     field: 'expirationTime',
@@ -558,10 +447,6 @@ const schemaDesc = reactive([
   {
     field: 'lastLoginTime',
     label: '最后登录'
-  },
-  {
-    field: 'useDeviceName',
-    label: '设备名称'
   },
   {
     field: 'registerIp',
@@ -606,8 +491,6 @@ const schemaDesc = reactive([
               <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
               <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
               <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
-              <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
-              <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
               <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
             </ElDropdownMenu>
           </template>
@@ -624,7 +507,10 @@ const schemaDesc = reactive([
           expand
         >
           <template #empty>
-            <ElEmpty description="暂时没有用户哦" />
+            <ElEmpty description="暂时没有设备哦" />
+          </template>
+          <template #deviceName="data">
+            {{ data.row.brand || '' + '-' + data.row.model || '' }}
           </template>
           <template #status="data">
             <ElTag v-if="data.row.status === 'normal'" type="success">正常</ElTag>
@@ -650,13 +536,10 @@ const schemaDesc = reactive([
               </span>
               <template #dropdown>
                 <ElDropdownMenu>
-                  <ElDropdownItem command="changePassword">修改密码</ElDropdownItem>
-                  <ElDropdownItem divided command="addTime">增加时间</ElDropdownItem>
+                  <ElDropdownItem command="addTime">增加时间</ElDropdownItem>
                   <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
                   <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
                   <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
-                  <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
-                  <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
                   <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
                 </ElDropdownMenu>
               </template>
@@ -665,7 +548,7 @@ const schemaDesc = reactive([
           <template #expand="data">
             <Descriptions
               :collapse="false"
-              :title="data.row.name + '的详细信息'"
+              :title="'设备详细信息'"
               :data="data.row"
               :schema="schemaDesc"
             >
@@ -711,10 +594,10 @@ const schemaDesc = reactive([
         <h2 style="color: red">{{
           isaddtime
             ? `您正在为${
-                batchAction ? `${currentActionIds.length}个用户` : currentUser.name
+                batchAction ? `${currentActionIds.length}个设备` : currentDevice.deviceId
               }增加时间`
             : `您正在为${
-                batchAction ? `${currentActionIds.length}个用户` : currentUser.name
+                batchAction ? `${currentActionIds.length}个设备` : currentDevice.deviceId
               }减少时间`
         }}</h2>
         <h2 v-if="isaddtime">如果用户时间小于当前时间则会在当前时间基础上加时</h2>
@@ -751,7 +634,9 @@ const schemaDesc = reactive([
     </ElDialog>
     <ElDialog width="500px" style="max-width: 90%" v-model="showSelectStatus" title="选择状态">
       <h2 style="color: red">{{
-        `您正在为${batchAction ? `${currentActionIds.length}个用户` : currentUser.name}修改状态`
+        `您正在为${
+          batchAction ? `${currentActionIds.length}个设备` : currentDevice.deviceId
+        }修改状态`
       }}</h2>
       <ElSelect style="margin-top: 10px" v-model="selectStatus" placeholder="请选择">
         <ElOption label="正常" value="normal" />

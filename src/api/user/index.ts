@@ -66,3 +66,18 @@ export const resetUnbindCount = (appid: number, ids: number[]): Promise<IRespons
     }
   })
 }
+
+export const setStatus = (
+  appid: number,
+  ids: number[],
+  status: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/user/set-status',
+    data: {
+      appid,
+      ids,
+      status
+    }
+  })
+}
