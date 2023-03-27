@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createRecgargeType, updateRecgargeType } from '@/api/rechargeCardType'
+import { createRechargeType, updateRechargeType } from '@/api/rechargeCardType'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { Form } from '@/components/Form'
 import { useForm } from '@/hooks/web/useForm'
@@ -141,7 +141,7 @@ const submit = async () => {
     }
     if (props.isUpdate) {
       data.id = props.data.id
-      updateRecgargeType(props.app.id, data)
+      updateRechargeType(props.app.id, data)
         .then(() => {
           emit('success')
           emit('closedialog')
@@ -150,7 +150,7 @@ const submit = async () => {
           loading.value = false
         })
     } else {
-      createRecgargeType(props.app.id, data)
+      createRechargeType(props.app.id, data)
         .then(() => {
           emit('success')
           emit('closedialog')

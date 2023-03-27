@@ -10,7 +10,8 @@ import {
   Authorization,
   User,
   Device,
-  RechargeCardType
+  RechargeCardType,
+  CreateRechargeCard
 } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
@@ -102,7 +103,9 @@ getAppData()
           <ElTabPane label="卡类型管理" name="rechargeCardType">
             <RechargeCardType @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
           </ElTabPane>
-          <ElTabPane label="生产卡" name="security" />
+          <ElTabPane label="生产卡" name="createRechargeCard">
+            <CreateRechargeCard @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
+          </ElTabPane>
         </ElTabs>
       </ElTabPane>
     </ElTabs>

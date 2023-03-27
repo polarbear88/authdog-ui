@@ -8,6 +8,7 @@ import Device from './Device.vue'
 import RechargeCard from './RechargeCard.vue'
 import RechargeCardType from './RechargeCardType.vue'
 import CreateRechargeType from './CreateRechargeType.vue'
+import CreateRechargeCard from './CreateRechargeCard.vue'
 
 export {
   BaseInfo,
@@ -19,5 +20,6 @@ export {
   Device,
   RechargeCard,
   RechargeCardType,
-  CreateRechargeType
+  CreateRechargeType,
+  CreateRechargeCard
 }

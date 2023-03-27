@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { deleteRecgargeType, getList } from '@/api/rechargeCardType'
+import { deleteRechargeType, getList } from '@/api/rechargeCardType'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { TableColumn } from '@/types/table'
 import { ElButton, ElEmpty, ElMessage, ElMessageBox, ElSwitch } from 'element-plus'
@@ -88,7 +88,7 @@ const onDelete = (data: any) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    deleteRecgargeType(props.app.id, data.id).then(() => {
+    deleteRechargeType(props.app.id, data.id).then(() => {
       getTableList()
       ElMessage({
         type: 'success',

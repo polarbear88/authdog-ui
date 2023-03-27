@@ -22,6 +22,7 @@ export type ComponentName =
   | 'Editor'
   | 'ApplicationSelect'
   | 'YmdSelect'
+  | 'RechargeCardTypeSelect'
 
 export type ColProps = {
   span?: number

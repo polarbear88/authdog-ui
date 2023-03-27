@@ -4,7 +4,7 @@ export const getList = (appid: number): Promise<IResponse<any>> => {
   return request.get({ url: '/developer/recharge-card/type/list?appid=' + appid })
 }
 
-export const createRecgargeType = (appid: number, data: any): Promise<IResponse<any>> => {
+export const createRechargeType = (appid: number, data: any): Promise<IResponse<any>> => {
   data.appid = appid
   return request.post({
     url: '/developer/recharge-card/type/create',
@@ -12,7 +12,7 @@ export const createRecgargeType = (appid: number, data: any): Promise<IResponse<
   })
 }
 
-export const deleteRecgargeType = (appid: number, id: number): Promise<IResponse<any>> => {
+export const deleteRechargeType = (appid: number, id: number): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/recharge-card/type/delete',
     data: {
@@ -22,7 +22,7 @@ export const deleteRecgargeType = (appid: number, id: number): Promise<IResponse
   })
 }
 
-export const updateRecgargeType = (appid: number, data: any): Promise<IResponse<any>> => {
+export const updateRechargeType = (appid: number, data: any): Promise<IResponse<any>> => {
   data.appid = appid
   return request.post({
     url: '/developer/recharge-card/type/update',

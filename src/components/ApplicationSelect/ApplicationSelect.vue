@@ -16,6 +16,10 @@ const emit = defineEmits(['update:modelValue', 'change'])
 
 const value = ref(props.modelValue + '')
 
+if (!props.zeroname && value.value === '0') {
+  value.value = ''
+}
+
 watch(value, (val) => {
   emit('update:modelValue', parseInt(val))
 })
