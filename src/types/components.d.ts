@@ -21,6 +21,7 @@ export type ComponentName =
   | 'InputPassword'
   | 'Editor'
   | 'ApplicationSelect'
+  | 'YmdSelect'
 
 export type ColProps = {
   span?: number

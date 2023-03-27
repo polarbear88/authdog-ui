@@ -3,7 +3,15 @@ import { ElPageHeader, ElTabPane, ElTabs } from 'element-plus'
 import { ref } from 'vue'
 import { getDetail } from '@/api/application'
 import { useRouter } from 'vue-router'
-import { BaseInfo, VersionInfo, SecurityInfo, Authorization, User, Device } from './components'
+import {
+  BaseInfo,
+  VersionInfo,
+  SecurityInfo,
+  Authorization,
+  User,
+  Device,
+  RechargeCardType
+} from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
 
@@ -88,8 +96,15 @@ getAppData()
       <ElTabPane label="设备管理" name="device" v-if="appinfo.authMode === 'deviceid'">
         <Device @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
       </ElTabPane>
-      <ElTabPane label="激活卡管理" name="activateCard" />
-      <ElTabPane label="生产激活卡" name="makeActivateCard" />
+      <ElTabPane label="充值卡管理" name="rechargeCard">
+        <ElTabs tabPosition="top" @tab-click="handleTabsClick">
+          <ElTabPane label="卡管理" name="info" />
+          <ElTabPane label="卡类型管理" name="rechargeCardType">
+            <RechargeCardType @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
+          </ElTabPane>
+          <ElTabPane label="生产卡" name="security" />
+        </ElTabs>
+      </ElTabPane>
     </ElTabs>
   </div>
 </template>
