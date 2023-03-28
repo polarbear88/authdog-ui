@@ -312,6 +312,7 @@ const onChangeCount = (device: any) => {
 }
 
 const onAction = async (device: any, item: string, isBatch = false) => {
+  currentDevice.value = device
   batchAction.value = isBatch
   if (isBatch) {
     currentActionIds.value = (await rTable.methods.getSelections()).map((item: any) => item.id)
@@ -322,7 +323,6 @@ const onAction = async (device: any, item: string, isBatch = false) => {
   }
   if (item === 'addTime') {
     isaddtime.value = true
-    currentDevice.value = device
     inputDay.value = 0
     inputHour.value = 0
     inputMinute.value = 0
@@ -330,7 +330,6 @@ const onAction = async (device: any, item: string, isBatch = false) => {
   }
   if (item === 'subTime') {
     isaddtime.value = false
-    currentDevice.value = device
     inputDay.value = 0
     inputHour.value = 0
     inputMinute.value = 0
