@@ -521,7 +521,7 @@ const onSetAllowForceLogin = () => {
       title="选择试用时间"
     >
       <div>
-        <h2 style="color: red">全部为零则禁止试用</h2>
+        <h2 style="color: #f56c6c">全部为零则禁止试用</h2>
         <ElInput
           type="number"
           style="margin-top: 10px"
@@ -561,7 +561,7 @@ const onSetAllowForceLogin = () => {
       title="选择解绑扣时"
     >
       <div>
-        <h2 style="color: red">全部为零则不扣时</h2>
+        <h2 style="color: #f56c6c">全部为零则不扣时</h2>
         <ElInput
           type="number"
           style="margin-top: 10px"

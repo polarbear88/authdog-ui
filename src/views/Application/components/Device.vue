@@ -591,7 +591,7 @@ const schemaDesc = reactive([
     </div>
     <ElDialog width="500px" style="max-width: 90%" v-model="showSelectTime" title="输入时间">
       <div>
-        <h2 style="color: red">{{
+        <h2 style="color: #f56c6c">{{
           isaddtime
             ? `您正在为${
                 batchAction ? `${currentActionIds.length}个设备` : currentDevice.deviceId
@@ -633,7 +633,7 @@ const schemaDesc = reactive([
       </div>
     </ElDialog>
     <ElDialog width="500px" style="max-width: 90%" v-model="showSelectStatus" title="选择状态">
-      <h2 style="color: red">{{
+      <h2 style="color: #f56c6c">{{
         `您正在为${
           batchAction ? `${currentActionIds.length}个设备` : currentDevice.deviceId
         }修改状态`

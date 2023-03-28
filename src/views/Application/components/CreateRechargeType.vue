@@ -162,7 +162,7 @@ if (props.isUpdate) {
 
 <template>
   <div>
-    <div style="margin-left: 10px; color: red" v-if="props.isUpdate"
+    <div style="margin-left: 10px; color: #f56c6c" v-if="props.isUpdate"
       >修改类型不会影响已生产的充值卡</div
     >
     <Form

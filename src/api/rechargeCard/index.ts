@@ -67,3 +67,46 @@ export const exportByEligible = (appid: number, where?: any): Promise<IResponse<
     data: where
   })
 }
+
+export const setStatusByCards = (
+  appid: number,
+  cards: string[],
+  status: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/recharge-card/set-status-by-cards',
+    data: {
+      appid,
+      cards,
+      status
+    }
+  })
+}
+
+export const rebuildByCards = (
+  appid: number,
+  cards: string[],
+  description: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/recharge-card/rebuild-by-cards',
+    data: {
+      appid,
+      cards,
+      description
+    }
+  })
+}
+
+export const deleteRechargeCardByCards = (
+  appid: number,
+  cards: string[]
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/recharge-card/delete-by-cards',
+    data: {
+      appid,
+      cards
+    }
+  })
+}

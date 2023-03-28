@@ -117,6 +117,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           hidden: true,
           canTo: true
         }
+      },
+      {
+        path: 'fastAction',
+        component: () => import('@/views/Application/FastAction.vue'),
+        name: 'Application-FastAction',
+        meta: {
+          title: '充值卡操作'
+        }
       }
     ]
   },

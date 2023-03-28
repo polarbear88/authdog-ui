@@ -467,7 +467,7 @@ const schemaDesc = reactive([
               <ElDropdownItem command="frozen">冻结</ElDropdownItem>
               <ElDropdownItem divided command="unfrozen">解冻</ElDropdownItem>
               <ElDropdownItem command="rebuild">重建卡号</ElDropdownItem>
-              <ElDropdownItem divided command="delete" style="color: red">删除</ElDropdownItem>
+              <ElDropdownItem divided command="delete" style="color: #f56c6c">删除</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -522,7 +522,9 @@ const schemaDesc = reactive([
                   <ElDropdownItem command="frozen">冻结</ElDropdownItem>
                   <ElDropdownItem divided command="unfrozen">解冻</ElDropdownItem>
                   <ElDropdownItem command="rebuild">重建卡号</ElDropdownItem>
-                  <ElDropdownItem divided command="delete" style="color: red">删除</ElDropdownItem>
+                  <ElDropdownItem divided command="delete" style="color: #f56c6c"
+                    >删除</ElDropdownItem
+                  >
                 </ElDropdownMenu>
               </template>
             </ElDropdown>

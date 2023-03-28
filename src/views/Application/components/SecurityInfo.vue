@@ -57,15 +57,15 @@ const onConfirmResetCryptoMode = () => {
         }}</h2>
         <ElText class="content">
           {{ app.cryptoSecret }}<br />
-          <span v-if="app.cryptoMode === 'aes'" style="color: red"
+          <span v-if="app.cryptoMode === 'aes'" style="color: #f56c6c"
             >AES加密模式 aes-256-cbc iv 0000000000000000「字符串」autoPadding PKCS7
             详见API文档</span
           >
-          <span v-if="app.cryptoMode === 'ecdh'" style="color: red"
+          <span v-if="app.cryptoMode === 'ecdh'" style="color: #f56c6c"
             >EC曲线：secp521r1 协商密钥后使用aes-256-cbc iv 0000000000000000「字符串」autoPadding
             PKCS7加密 详见API文档</span
           >
-          <span v-if="app.cryptoMode === 'rsa'" style="color: red"
+          <span v-if="app.cryptoMode === 'rsa'" style="color: #f56c6c"
             >RSA模式 rsa-2048 RSA_PKCS1_OAEP_PADDING 详见API文档</span
           >
         </ElText>
@@ -84,7 +84,9 @@ const onConfirmResetCryptoMode = () => {
       title="选择加密模式"
     >
       <div>
-        <h2 style="color: red">注意：重置之后可能造成该软件请求失败，需要客户端重新修改加密代码</h2>
+        <h2 style="color: #f56c6c"
+          >注意：重置之后可能造成该软件请求失败，需要客户端重新修改加密代码</h2
+        >
         <ElSelect
           style="margin-top: 15px; width: 100%"
           v-model="selectCryptoMode"
