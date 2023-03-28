@@ -31,7 +31,7 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
-    field: 'desc',
+    field: 'description',
     label: '描述',
     colProps: {
       span: 24
@@ -91,7 +91,7 @@ const submit = async () => {
 
     const data = {
       name: formData?.name,
-      desc: formData?.desc,
+      description: formData?.description,
       value: formData?.value,
       isPublic: formData?.isPublic,
       applicationId: formData?.applicationId,

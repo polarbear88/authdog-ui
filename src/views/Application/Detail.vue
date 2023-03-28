@@ -11,12 +11,14 @@ import {
   User,
   Device,
   RechargeCardType,
-  CreateRechargeCard
+  CreateRechargeCard,
+  RechargeCardList
 } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
 
 const activeName = ref('info')
+const activeNameRecharge = ref('rechargeCard')
 const topActiveName = ref('application')
 
 const handleTabsClick = (tab: any, _event: any) => {
@@ -98,8 +100,10 @@ getAppData()
         <Device @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
       </ElTabPane>
       <ElTabPane label="充值卡管理" name="rechargeCard">
-        <ElTabs tabPosition="top" @tab-click="handleTabsClick">
-          <ElTabPane label="卡管理" name="info" />
+        <ElTabs tabPosition="top" v-model="activeNameRecharge" @tab-click="handleTabsClick">
+          <ElTabPane label="卡管理" name="rechargeCard">
+            <RechargeCardList @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
+          </ElTabPane>
           <ElTabPane label="卡类型管理" name="rechargeCardType">
             <RechargeCardType @set-tab-click-callback="setTabClickCallback" :app="appinfo" />
           </ElTabPane>

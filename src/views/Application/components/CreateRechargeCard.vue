@@ -27,7 +27,7 @@ const cardresult = ref('')
 emit('set-tab-click-callback', 'createRechargeCard', () => {
   methods.delSchema('typeId')
   methods.delSchema('count')
-  methods.delSchema('desc')
+  methods.delSchema('description')
   methods.addSchema({
     field: 'typeId',
     label: '卡类型',
@@ -54,7 +54,7 @@ emit('set-tab-click-callback', 'createRechargeCard', () => {
     }
   })
   methods.addSchema({
-    field: 'desc',
+    field: 'description',
     label: '同批卡密描述 可通过描述快速找到该批次卡',
     colProps: {
       span: 24

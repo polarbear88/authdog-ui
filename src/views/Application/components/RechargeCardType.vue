@@ -38,6 +38,10 @@ const columns: TableColumn[] = [
     label: '代理价格'
   },
   {
+    field: 'prefix',
+    label: '卡前缀'
+  },
+  {
     field: 'isNeedPassword',
     label: '需要密码'
   },

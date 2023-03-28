@@ -16,8 +16,11 @@ const { t } = useI18n()
 const schema = reactive([
   {
     field: 'name',
-    label: '应用名称',
-    span: 3
+    label: '应用名称'
+  },
+  {
+    field: 'id',
+    label: '应用ID'
   },
   {
     field: 'createdAt',

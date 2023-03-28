@@ -21,7 +21,7 @@ const columns: TableColumn[] = [
     label: '名称'
   },
   {
-    field: 'desc',
+    field: 'description',
     label: '描述'
   },
   {

@@ -7,7 +7,7 @@ import { useValidator } from '@/hooks/web/useValidator'
 import { FormSchema } from '@/types/form'
 import { NumberUtils } from '@/utils/numberUtils'
 import { StringUtils } from '@/utils/stringUtils'
-import { ElButton, ElTooltip } from 'element-plus'
+import { ElButton } from 'element-plus'
 import { PropType, reactive, ref, unref } from 'vue'
 
 const props = defineProps({
@@ -19,7 +19,6 @@ const props = defineProps({
 const { required } = useValidator()
 const rules = {
   name: [required()],
-  cardFormat: [required()],
   price: [required()],
   salerPrice: [required()]
 }
@@ -40,28 +39,25 @@ const schema = reactive<FormSchema[]>([
     value: props.isUpdate ? props.data.name : ''
   },
   {
-    field: 'cardFormat',
-    label: '卡号格式',
+    field: 'prefix',
+    label: '卡号前缀',
     colProps: {
       span: 24
     },
     component: 'Input',
     componentProps: {
-      placeholder: '请输入卡号格式'
+      placeholder: '请输入卡号前缀'
     },
-    value: props.isUpdate ? props.data.cardFormat : ''
+    value: props.isUpdate ? props.data.prefix : ''
   },
   {
-    field: 'passwordFormat',
-    label: '卡密格式',
+    field: 'isNeedPassword',
+    label: '需要密码',
     colProps: {
       span: 24
     },
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入卡密格式'
-    },
-    value: props.isUpdate ? props.data.passwordFormat : ''
+    component: 'Switch',
+    value: props.isUpdate ? props.data.isNeedPassword : false
   },
   {
     field: 'time',
@@ -134,11 +130,6 @@ const submit = async () => {
     if (data.money === undefined) {
       data.money = 0
     }
-    if (data.passwordFormat !== undefined) {
-      data.isNeedPassword = true
-    } else {
-      data.isNeedPassword = false
-    }
     if (props.isUpdate) {
       data.id = props.data.id
       updateRechargeType(props.app.id, data)
@@ -171,26 +162,16 @@ if (props.isUpdate) {
 
 <template>
   <div>
-    <div style="margin-left: 10px" v-if="props.isUpdate">修改类型不会影响已生产的充值卡</div>
+    <div style="margin-left: 10px; color: red" v-if="props.isUpdate"
+      >修改类型不会影响已生产的充值卡</div
+    >
     <Form
       :schema="schema"
       :rules="rules"
       label-position="top"
       hide-required-asterisk
       @register="register"
-    >
-      <template #cardFormat-label>
-        <ElTooltip
-          content="卡号格式自定义，支持变量<br />不会使用直接填 ${randhex}[32]"
-          placement="top-start"
-          raw-content
-          ><div style="color: red"
-            >卡号格式: 变量 ${uuid} ${randhex}[数量] ${randnum}[数量] ${randletter}[数量]</div
-          ></ElTooltip
-        >
-      </template>
-      <template #passwordFormat-label> 卡密格式: 变量同上，留空则不使用密码 </template>
-    </Form>
+    />
     <div style="right: 20px; bottom: 10px; position: absolute">
       <ElButton @click="emit('closedialog')">取消</ElButton>
       <ElButton :loading="loading" type="primary" @click="submit"> 确认 </ElButton>
