@@ -155,6 +155,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '云变量'
         }
+      },
+      {
+        path: 'fun',
+        component: () => import('@/views/CloudData/Cloudfun.vue'),
+        name: 'Clouddata-Fun',
+        meta: {
+          title: '云函数'
+        }
       }
     ]
   }
