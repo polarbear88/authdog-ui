@@ -2,10 +2,18 @@
 import { CloudvarInfo } from '@/api/types/CloudvarInfo'
 import { TableColumn } from '@/types/table'
 import { ref } from 'vue'
-import { getList } from '@/api/clouddata/cloudvar'
+import { getList, deleteCloudvar } from '@/api/clouddata/cloudvar'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
-import { ElButton, ElEmpty, ElInput, ElMessage, ElSwitch, ElTooltip } from 'element-plus'
+import {
+  ElButton,
+  ElEmpty,
+  ElInput,
+  ElMessage,
+  ElMessageBox,
+  ElSwitch,
+  ElTooltip
+} from 'element-plus'
 import { CirclePlus } from '@element-plus/icons-vue'
 import { Dialog } from '@/components/Dialog'
 import { CreateCloudvar, UpdateCloudvar } from './components'
@@ -16,6 +24,10 @@ import { ApplicationSelect } from '@/components/ApplicationSelect'
 const { toClipboard } = useClipboard()
 
 const columns: TableColumn[] = [
+  {
+    field: 'id',
+    label: 'ID'
+  },
   {
     field: 'name',
     label: '名称'
@@ -43,7 +55,7 @@ const columns: TableColumn[] = [
 ]
 
 const loading = ref(true)
-const showCreateApp = ref(false)
+const showCreate = ref(false)
 let tableDataList = ref<CloudvarInfo[]>([])
 
 const currentCloudvar = ref({})
@@ -83,11 +95,27 @@ const onUpdateCloudvar = (data: any) => {
   currentCloudvar.value = data
   showUpdateCloudvar.value = true
 }
+
+const onDelete = async (data: any) => {
+  ElMessageBox.confirm('确定删除变量?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(async () => {
+      const res = await deleteCloudvar(data.id)
+      if (res) {
+        ElMessage.success('删除成功')
+        getTableList()
+      }
+    })
+    .catch(() => {})
+}
 </script>
 <template>
   <div>
     <div>
-      <ElButton @click="showCreateApp = true" type="primary" :icon="CirclePlus">添加变量</ElButton>
+      <ElButton @click="showCreate = true" type="primary" :icon="CirclePlus">添加变量</ElButton>
       <ElInput
         style="width: 200px; margin-left: 10px"
         v-model="searchWord"
@@ -120,9 +148,8 @@ const onUpdateCloudvar = (data: any) => {
             {{ data.row.isGlobal ? '全局' : data.row.applicationName }}
           </template>
           <template #action="data">
-            <ElButton @click="onUpdateCloudvar(data.row)" size="small" type="primary"
-              >修改</ElButton
-            >
+            <ElButton size="small" @click="onUpdateCloudvar(data.row)">编辑</ElButton>
+            <ElButton size="small" @click="onDelete(data.row)" type="danger">删除</ElButton>
           </template>
           <template #ascription-header>
             <ElTooltip
@@ -149,12 +176,12 @@ const onUpdateCloudvar = (data: any) => {
       <Dialog
         :fullscreen="false"
         style="width: 680px; max-width: 80%"
-        v-model="showCreateApp"
+        v-model="showCreate"
         title="添加变量"
       >
         <CreateCloudvar
           @success="searchWord == '' && getTableList()"
-          @closedialog="showCreateApp = false"
+          @closedialog="showCreate = false"
         />
       </Dialog>
     </div>

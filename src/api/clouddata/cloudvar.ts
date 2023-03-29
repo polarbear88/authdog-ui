@@ -12,3 +12,7 @@ export const createCloudvar = (data: any): Promise<IResponse<any>> => {
 export const updateCloudvar = (data: any): Promise<IResponse<any>> => {
   return request.post({ url: '/developer/cloudvar/update', data })
 }
+
+export const deleteCloudvar = (id: number): Promise<IResponse<any>> => {
+  return request.get({ url: '/developer/cloudvar/delete?id=' + id })
+}

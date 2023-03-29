@@ -163,6 +163,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '云函数'
         }
+      },
+      {
+        path: 'collect',
+        component: () => import('@/views/CloudData/DataCollect.vue'),
+        name: 'Clouddata-Collect',
+        meta: {
+          title: '数据收集'
+        }
       }
     ]
   }

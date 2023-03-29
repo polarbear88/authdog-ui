@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, unref } from 'vue'
-import { getList, getCount, setStatus } from '@/api/feedback'
+import { getList, getCount, setStatus, deleteByIds } from '@/api/feedback'
 import {
   ElButton,
   ElCol,
@@ -10,6 +10,7 @@ import {
   ElEmpty,
   ElIcon,
   ElMessage,
+  ElMessageBox,
   ElPagination,
   ElRow,
   ElTag
@@ -222,6 +223,27 @@ const onAction = async (feedback: any, item: string, isBatch = false) => {
   if (item === 'rejected') {
     onSetStatus('rejected', isBatch ? currentActionIds.value : [feedback.id])
   }
+  if (item === 'delete') {
+    ElMessageBox.confirm('确定删除?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      deleteByIds(isBatch ? currentActionIds.value : [feedback.id]).then(() => {
+        ElMessage.success('删除成功')
+        getTableList()
+        getCount()
+          .catch(() => {})
+          .then((res) => {
+            if (res) {
+              statCount.pending = res.data.pending
+              statCount.resolved = res.data.resolved
+              statCount.rejected = res.data.rejected
+            }
+          })
+      })
+    })
+  }
 }
 
 const schemaDesc = reactive([
@@ -312,6 +334,9 @@ const schemaDesc = reactive([
               <ElDropdownMenu>
                 <ElDropdownItem command="resolved">已处理</ElDropdownItem>
                 <ElDropdownItem command="rejected">拒绝</ElDropdownItem>
+                <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                  >删除</ElDropdownItem
+                >
               </ElDropdownMenu>
             </template>
           </ElDropdown>
@@ -349,6 +374,9 @@ const schemaDesc = reactive([
                   <ElDropdownMenu>
                     <ElDropdownItem command="resolved">已处理</ElDropdownItem>
                     <ElDropdownItem command="rejected">拒绝</ElDropdownItem>
+                    <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                      >删除</ElDropdownItem
+                    >
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>

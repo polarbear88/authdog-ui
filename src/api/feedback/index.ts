@@ -17,3 +17,12 @@ export const setStatus = (ids: number[], status: string): Promise<IResponse<any>
     }
   })
 }
+
+export const deleteByIds = (ids: number[]): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/feedback/delete',
+    data: {
+      ids
+    }
+  })
+}
