@@ -125,6 +125,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '充值卡操作'
         }
+      },
+      {
+        path: 'feedback',
+        component: () => import('@/views/Application/Feedback.vue'),
+        name: 'Application-Feedback',
+        meta: {
+          title: '用户反馈'
+        }
       }
     ]
   },
