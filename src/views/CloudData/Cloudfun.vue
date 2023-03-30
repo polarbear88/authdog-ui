@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TableColumn } from '@/types/table'
 import { ref } from 'vue'
-import { getList, deleteCloudfun } from '@/api/clouddata/cloudfun'
+import { getList, deleteCloudfun, runCloudfun } from '@/api/clouddata/cloudfun'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
 import { ElButton, ElEmpty, ElInput, ElMessage, ElMessageBox, ElTooltip } from 'element-plus'
@@ -82,6 +82,41 @@ const onDelete = async (data: any) => {
     })
     .catch(() => {})
 }
+
+let currentFun
+let argsInput = ref<string[]>([])
+
+const showRunCloudfun = ref(false)
+
+const onRunCloudfun = async (data: any) => {
+  argsInput.value = []
+  currentFun = data
+  showRunCloudfun.value = true
+}
+
+const onAddParam = () => {
+  argsInput.value.push('')
+}
+
+const onSubParam = () => {
+  argsInput.value.pop()
+}
+
+const run = async () => {
+  runCloudfun(currentFun.id, argsInput.value)
+    .then((res) => {
+      ElMessageBox.alert(res.data.result + '', '运行结果', {
+        confirmButtonText: '确定',
+        dangerouslyUseHTMLString: true
+      })
+    })
+    .catch((error) => {
+      ElMessageBox.alert(error.message, '发生错误', {
+        confirmButtonText: '确定',
+        dangerouslyUseHTMLString: true
+      })
+    })
+}
 </script>
 <template>
   <div>
@@ -111,6 +146,7 @@ const onDelete = async (data: any) => {
             {{ data.row.isGlobal ? '全局' : data.row.applicationName }}
           </template>
           <template #action="data">
+            <ElButton type="primary" size="small" @click="onRunCloudfun(data.row)">运行</ElButton>
             <ElButton size="small" @click="onUpdateCloudfun(data.row)">编辑</ElButton>
             <ElButton size="small" @click="onDelete(data.row)" type="danger">删除</ElButton>
           </template>
@@ -141,6 +177,24 @@ const onDelete = async (data: any) => {
           @success="getTableList()"
           @closedialog="showUpdateCloudfun = false"
         />
+      </Dialog>
+      <Dialog v-model="showRunCloudfun" title="测试运行">
+        <h2 style="color: #f56c6c"
+          >注意：测试运行脚本$getUser将返回空对象，$reduceUserBalance不会执行任何操作</h2
+        >
+        <ElInput
+          style="margin-top: 10px"
+          v-for="(_item, index) in argsInput"
+          :key="index"
+          v-model="argsInput[index]"
+        >
+          <template #prepend>参数{{ index + 1 }}</template>
+        </ElInput>
+        <div style="margin-top: 10px">
+          <ElButton @click="onAddParam">增加参数</ElButton>
+          <ElButton @click="onSubParam">减少参数</ElButton>
+          <ElButton type="primary" @click="run">运行</ElButton>
+        </div>
       </Dialog>
     </div>
   </div>

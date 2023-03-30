@@ -82,7 +82,7 @@ var arg1 = $0; // $0 是 传入的第一个参数
 var arg2 = $1; // $1 是 传入的第二个参数
 // ... 以此类推
 var user = $getUser(); // 获取当前用户信息(设备模式下则获取当前设备信息)
-$reduceUserBalance(100); // 扣除当前用户100次，异步的 无返回值
+$reduceUserBalance(100, '扣减原因'); // 扣除当前用户100次，异步的 无返回值 第一个参数为数量，第二个为原因
 
 return "hello world"; // 返回给调用者的结果
 `)
@@ -91,12 +91,12 @@ const cmComponentRef = ref<CmComponentRef>(null)
 const cminstance = ref<Editor>()
 
 const cmOptions = reactive({
-  autorefresh: true,
+  // autorefresh: true,
   tabSize: 4,
   mode: 'text/javascript',
-  line: true,
-  viewportMargin: Infinity, //处理高度自适应时搭配使用
-  highlightDifferences: true,
+  // line: true,
+  // viewportMargin: Infinity, //处理高度自适应时搭配使用
+  // highlightDifferences: true,
   autofocus: true,
   indentUnit: 2,
   smartIndent: true,

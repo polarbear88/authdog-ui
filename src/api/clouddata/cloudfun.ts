@@ -19,3 +19,13 @@ export const deleteCloudfun = (id: number): Promise<IResponse<any>> => {
 export const getScript = (id: number): Promise<IResponse<any>> => {
   return request.get({ url: '/developer/cloudfun/get-script?id=' + id })
 }
+
+export const runCloudfun = (id: number, args: string[]): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/cloudfun/run',
+    data: {
+      id,
+      args
+    }
+  })
+}
