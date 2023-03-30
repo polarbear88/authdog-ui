@@ -46,7 +46,7 @@ const schema = reactive<FormSchema[]>([
     },
     component: 'Input',
     componentProps: {
-      placeholder: '请输入卡号前缀'
+      placeholder: '请输入卡号前缀 可空'
     },
     value: props.isUpdate ? props.data.prefix : ''
   },

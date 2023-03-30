@@ -509,7 +509,7 @@ const schemaDesc = reactive([
             <ElEmpty description="暂时没有设备哦" />
           </template>
           <template #deviceName="data">
-            {{ data.row.brand || '' + '-' + data.row.model || '' }}
+            {{ (data.row.brand || '') + '-' + (data.row.model || '') }}
           </template>
           <template #status="data">
             <ElTag v-if="data.row.status === 'normal'" type="success">正常</ElTag>

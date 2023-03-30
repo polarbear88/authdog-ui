@@ -173,6 +173,28 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/saler',
+    component: Layout,
+    redirect: '/saler/list',
+    name: 'Saler',
+    meta: {
+      title: '代理',
+      icon: 'bi:people-fill',
+      alwaysShow: true
+    },
+    roles: ['developer'],
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/Saler/SalerList.vue'),
+        name: 'Saler-List',
+        meta: {
+          title: '代理管理'
+        }
+      }
+    ]
   }
 
   // {

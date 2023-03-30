@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, unref } from 'vue'
-import { getList, getCount, setStatus, deleteByIds } from '@/api/feedback'
+import { getList, createSaler } from '@/api/saler'
 import {
   ElButton,
-  ElCol,
   ElDropdown,
   ElDropdownItem,
   ElDropdownMenu,
@@ -26,41 +25,34 @@ import { StringUtils } from '@/utils/stringUtils'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useTable } from '@/hooks/web/useTable'
 import { Descriptions } from '@/components/Descriptions'
+import { NumberUtils } from '@/utils/numberUtils'
 
 const rTable = useTable()
 
 const columns: TableColumn[] = [
   {
-    field: 'appName',
-    label: '应用'
+    field: 'name',
+    label: '代理名'
   },
   {
-    field: 'appVersion',
-    label: '版本'
+    field: 'parentName',
+    label: '上级'
   },
   {
     field: 'status',
     label: '状态'
   },
   {
-    field: 'userName',
-    label: '用户'
+    field: 'mobile',
+    label: '手机号'
   },
   {
-    field: 'deviceName',
-    label: '设备名称'
+    field: 'balance',
+    label: '余额'
   },
   {
-    field: 'osType',
-    label: '系统'
-  },
-  {
-    field: 'createdAt',
-    label: '提交时间'
-  },
-  {
-    field: 'content',
-    label: '内容'
+    field: 'apps',
+    label: '授权应用'
   },
   {
     field: 'action',
@@ -82,20 +74,13 @@ const currentActionIds = ref<Array<number>>([])
 
 const batchAction = ref(false)
 
-const statCount = reactive({
-  pending: 0,
-  resolved: 0,
-  rejected: 0
-})
-
 const getTableList = async () => {
   loading.value = true
   const { getFormData } = methods
   const formData = await getFormData()
   const data = StringUtils.deleteObjectEmptyProperty(formData)
-  if (data.appid === 0) {
-    delete data.appid
-  }
+  DateUtils.formatDateTimeAll(data, ['createdAtStart', 'createdAtEnd'])
+  NumberUtils.allToNumber(data, ['balanceLessOrEq', 'balanceThanOrEq'])
   data.page = currentPage.value
   data.pageSize = pageSize.value
   getList(data)
@@ -113,41 +98,31 @@ const getTableList = async () => {
 
 onMounted(() => {
   getTableList()
-  getCount()
-    .catch(() => {})
-    .then((res) => {
-      if (res) {
-        statCount.pending = res.data.pending
-        statCount.resolved = res.data.resolved
-        statCount.rejected = res.data.rejected
-      }
-    })
 })
 
 const schema = reactive<FormSchema[]>([
   {
-    field: 'appid',
-    label: '应用',
-    component: 'ApplicationSelect',
-    value: 0,
+    field: 'name',
+    label: '代理名',
+    component: 'Input',
     componentProps: {
-      zeroname: '全局'
+      placeholder: '代理名'
     }
   },
   {
-    field: 'appVersion',
-    label: '版本',
+    field: 'parentName',
+    label: '上级',
     component: 'Input',
     componentProps: {
-      placeholder: '版本'
+      placeholder: '上级代理名称'
     }
   },
   {
-    field: 'userName',
-    label: '用户',
+    field: 'mobile',
+    label: '手机号',
     component: 'Input',
     componentProps: {
-      placeholder: '用户'
+      placeholder: '手机号'
     }
   },
   {
@@ -158,18 +133,50 @@ const schema = reactive<FormSchema[]>([
       placeholder: '不筛选',
       options: [
         {
-          label: '未处理',
-          value: 'pending'
+          label: '正常',
+          value: 'normal'
         },
         {
-          label: '已处理',
-          value: 'resolved'
-        },
-        {
-          label: '已拒绝',
-          value: 'rejected'
+          label: '禁用',
+          value: 'disabled'
         }
       ]
+    }
+  },
+  {
+    field: 'balanceThanOrEq',
+    label: '余额大于',
+    component: 'Input',
+    componentProps: {
+      placeholder: '余额大于等于',
+      type: 'number'
+    }
+  },
+  {
+    field: 'balanceLessOrEq',
+    label: '余额小于',
+    component: 'Input',
+    componentProps: {
+      placeholder: '余额小于等于',
+      type: 'number'
+    }
+  },
+  {
+    field: 'createdAtStart',
+    label: '注册开始',
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: '注册开始',
+      type: 'datetime'
+    }
+  },
+  {
+    field: 'createdAtEnd',
+    label: '注册结束',
+    component: 'DatePicker',
+    componentProps: {
+      placeholder: '注册结束',
+      type: 'datetime'
     }
   },
   {
@@ -192,23 +199,23 @@ const resetForm = () => {
 }
 
 const onSetStatus = (status: string, ids: Array<number>) => {
-  setStatus(ids, status).then(() => {
-    ElMessage.success('操作成功')
-    getTableList()
-    getCount()
-      .catch(() => {})
-      .then((res) => {
-        if (res) {
-          statCount.pending = res.data.pending
-          statCount.resolved = res.data.resolved
-          statCount.rejected = res.data.rejected
-        }
-      })
-  })
+  // setStatus(ids, status).then(() => {
+  //   ElMessage.success('操作成功')
+  //   getTableList()
+  //   getCount()
+  //     .catch(() => {})
+  //     .then((res) => {
+  //       if (res) {
+  //         statCount.pending = res.data.pending
+  //         statCount.resolved = res.data.resolved
+  //         statCount.rejected = res.data.rejected
+  //       }
+  //     })
+  // })
 }
 
-const onAction = async (feedback: any, item: string, isBatch = false) => {
-  currentItem.value = feedback
+const onAction = async (saler: any, item: string, isBatch = false) => {
+  currentItem.value = saler
   batchAction.value = isBatch
   if (isBatch) {
     currentActionIds.value = (await rTable.methods.getSelections()).map((item: any) => item.id)
@@ -217,75 +224,66 @@ const onAction = async (feedback: any, item: string, isBatch = false) => {
       return
     }
   }
-  if (item === 'resolved') {
-    onSetStatus('resolved', isBatch ? currentActionIds.value : [feedback.id])
-  }
-  if (item === 'rejected') {
-    onSetStatus('rejected', isBatch ? currentActionIds.value : [feedback.id])
-  }
-  if (item === 'delete') {
-    ElMessageBox.confirm('确定删除?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      deleteByIds(isBatch ? currentActionIds.value : [feedback.id]).then(() => {
-        ElMessage.success('删除成功')
-        getTableList()
-        getCount()
-          .catch(() => {})
-          .then((res) => {
-            if (res) {
-              statCount.pending = res.data.pending
-              statCount.resolved = res.data.resolved
-              statCount.rejected = res.data.rejected
-            }
-          })
-      })
-    })
-  }
+
+  // if (item === 'delete') {
+  //   ElMessageBox.confirm('确定删除?', '提示', {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消',
+  //     type: 'warning'
+  //   }).then(() => {
+  //     deleteByIds(isBatch ? currentActionIds.value : [feedback.id]).then(() => {
+  //       ElMessage.success('删除成功')
+  //       getTableList()
+  //       getCount()
+  //         .catch(() => {})
+  //         .then((res) => {
+  //           if (res) {
+  //             statCount.pending = res.data.pending
+  //             statCount.resolved = res.data.resolved
+  //             statCount.rejected = res.data.rejected
+  //           }
+  //         })
+  //     })
+  //   })
+  // }
 }
 
 const schemaDesc = reactive([
   {
-    field: 'appName',
-    label: '应用'
+    field: 'name',
+    label: '代理名称'
+  },
+  {
+    field: 'parentName',
+    label: '上级代理'
   },
   {
     field: 'createdAt',
-    label: '提交时间'
+    label: '注册时间'
   },
   {
     field: 'status',
     label: '状态'
   },
   {
-    field: 'brand',
-    label: '设备品牌'
+    field: 'mobile',
+    label: '手机号'
   },
   {
-    field: 'model',
-    label: '设备型号'
+    field: 'lastLoginTime',
+    label: '最后登录'
   },
   {
-    field: 'osType',
-    label: '系统类型'
+    field: 'balance',
+    label: '余额'
   },
   {
-    field: 'appVersion',
-    label: '版本'
+    field: 'registerIp',
+    label: '注册IP'
   },
   {
-    field: 'userName',
-    label: '用户'
-  },
-  {
-    field: 'deviceId',
-    label: '设备ID'
-  },
-  {
-    field: 'content',
-    label: '内容'
+    field: 'registerIAP',
+    label: 'IP归属'
   }
 ])
 </script>
@@ -293,21 +291,12 @@ const schemaDesc = reactive([
 <template>
   <div>
     <div>
-      <ContentWrap>
-        <div>
-          <ElRow>
-            <ElCol :span="8" style="text-align: center">{{ statCount.pending }}个未处理</ElCol>
-            <ElCol :span="8" style="text-align: center">{{ statCount.resolved }}个已处理</ElCol>
-            <ElCol :span="8" style="text-align: center">{{ statCount.rejected }}个已拒绝</ElCol>
-          </ElRow>
-        </div>
-      </ContentWrap>
       <ContentWrap style="margin-top: 10px">
         <div>
           <Form
-            :isCol="false"
-            :inline="true"
-            labelWidth="40px"
+            :isCol="true"
+            :inline="false"
+            labelWidth="80px"
             :schema="schema"
             label-position="left"
             hide-required-asterisk
@@ -352,19 +341,16 @@ const schemaDesc = reactive([
             expand
           >
             <template #empty>
-              <ElEmpty description="暂时没有用户反馈哦" />
-            </template>
-            <template #deviceName="data">
-              {{ (data.row.brand || '') + '-' + (data.row.model || '') }}
+              <ElEmpty description="暂时没有代理哦" />
             </template>
             <template #status="row">
-              <ElTag type="info" v-if="row.row.status === 'rejected'">已拒绝</ElTag>
-              <ElTag type="success" v-if="row.row.status === 'resolved'">已处理</ElTag>
-              <ElTag v-if="row.row.status === 'pending'">未处理</ElTag>
+              <ElTag v-if="row.row.status === 'normal'" type="success">正常</ElTag>
+              <ElTag v-if="row.row.status !== 'normal'" type="danger">禁用</ElTag>
             </template>
             <template #createdAt="data">
               {{ DateUtils.formatDateTime(data.row.createdAt) }}
             </template>
+            <template #apps="row"> {{ row.row.apps.length }} 个 </template>
             <template #action="data">
               <ElDropdown @command="(item) => onAction(data.row, item)" trigger="click">
                 <span class="el-dropdown-link">
@@ -391,10 +377,18 @@ const schemaDesc = reactive([
                 <template #createdAt="row">
                   {{ DateUtils.formatDateTime(row.row.createdAt) }}
                 </template>
+                <template #lastLoginTime="row">
+                  {{ DateUtils.formatDateTime(row.row.lastLoginTime) }}
+                </template>
                 <template #status="row">
-                  <ElTag type="info" v-if="row.row.status === 'rejected'">已拒绝</ElTag>
-                  <ElTag type="success" v-if="row.row.status === 'resolved'">已处理</ElTag>
-                  <ElTag v-if="row.row.status === 'pending'">未处理</ElTag>
+                  <ElTag v-if="row.row.status === 'normal'" type="success">正常</ElTag>
+                  <ElTag v-if="row.row.status !== 'normal'" type="danger">禁用</ElTag>
+                </template>
+                <template #registerIp="row">
+                  {{ row.row.ip.ipv4 }}
+                </template>
+                <template #registerIAP="row">
+                  {{ row.row.ip.city + '-' + row.row.ip.isp }}
                 </template>
               </Descriptions></template
             >
