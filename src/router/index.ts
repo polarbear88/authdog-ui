@@ -193,6 +193,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '代理管理'
         }
+      },
+      {
+        path: 'entry-link',
+        component: () => import('@/views/Saler/EntryLink.vue'),
+        name: 'Saler-EntryLink',
+        meta: {
+          title: '入口链接'
+        }
       }
     ]
   }

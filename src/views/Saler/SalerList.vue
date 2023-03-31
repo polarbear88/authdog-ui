@@ -66,6 +66,10 @@ const columns: TableColumn[] = [
     label: '授权应用'
   },
   {
+    field: 'fromToken',
+    label: '来自'
+  },
+  {
     field: 'action',
     label: '操作'
   }
@@ -138,6 +142,14 @@ const schema = reactive<FormSchema[]>([
     component: 'Input',
     componentProps: {
       placeholder: '手机号'
+    }
+  },
+  {
+    field: 'fromToken',
+    label: '来自',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入token'
     }
   },
   {
