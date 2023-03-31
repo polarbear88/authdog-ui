@@ -70,7 +70,7 @@ const schema = reactive<FormSchema[]>([
           value: 'login'
         },
         {
-          label: '注册',
+          label: '注册和登录',
           value: 'register'
         }
       ]
@@ -85,10 +85,8 @@ const schema = reactive<FormSchema[]>([
   }
 ])
 
-const getlink = (token: string, type: string) => {
-  return `${window.location.origin}/#/${
-    type === 'login' ? 'salerLogin' : 'salerRegister'
-  }?token=${token}`
+const getlink = (token: string) => {
+  return `${window.location.origin}/#/saler-login?token=${token}`
 }
 
 const handleDeleteEntryLink = (token: string) => {
@@ -126,11 +124,11 @@ const handleDeleteEntryLink = (token: string) => {
           <div style="margin-top: 8px" v-for="(item, index) in linkArr" :key="index">
             <span>名称：{{ item.name }}</span>
             <span style="margin-left: 10px">{{
-              item.type === 'login' ? '   登录链接：' : '注册链接：'
+              item.type === 'login' ? '   登录链接：' : '注册和登录链接：'
             }}</span>
             <span
-              ><a style="color: #409eff" :href="getlink(item.token, item.type)">{{
-                getlink(item.token, item.type)
+              ><a target="_blank" style="color: #409eff" :href="getlink(item.token)">{{
+                getlink(item.token)
               }}</a></span
             >
             <span style="margin-left: 12px"

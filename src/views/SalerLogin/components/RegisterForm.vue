@@ -7,8 +7,15 @@ import { ElButton, ElInput, FormRules } from 'element-plus'
 import { useValidator } from '@/hooks/web/useValidator'
 import { FormSchema } from '@/types/form'
 import { RegisterType } from '@/api/login/types'
-import { registerApi } from '@/api/login'
+import { registerApi } from '@/api/salerApi/auth'
 import { ElMessage } from 'element-plus'
+
+const props = defineProps({
+  token: {
+    type: String,
+    required: true
+  }
+})
 
 const emit = defineEmits(['to-register-success', 'to-login'])
 
@@ -127,7 +134,13 @@ const loginRegister = async () => {
           ElMessage.error(t('login.passwordNotSame'))
           return
         }
-        const res = await registerApi(formData)
+        const data = {
+          ...formData,
+          token: props.token
+        }
+        data['name'] = data.username
+        // delete data['username']
+        const res = await registerApi(data)
         if (res) {
           // 注册成功
           toRegisterSuccess()
@@ -151,7 +164,7 @@ const loginRegister = async () => {
     @register="register"
   >
     <template #title>
-      <h2 class="text-2xl font-bold text-center w-[100%]">开发者注册</h2>
+      <h2 class="text-2xl font-bold text-center w-[100%]">代理注册</h2>
     </template>
 
     <template #code="form">

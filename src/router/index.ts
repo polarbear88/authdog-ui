@@ -10,10 +10,19 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard/analysis',
+    redirect: '/jump',
     name: 'Root',
     meta: {
       hidden: true
+    }
+  },
+  {
+    path: '/jump',
+    component: () => import('@/views/Dashboard/Jump.vue'),
+    name: 'Jump',
+    meta: {
+      hidden: true,
+      noTagsView: true
     }
   },
   {
@@ -52,6 +61,16 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
       title: '404',
       noTagsView: true
     }
+  },
+  {
+    path: '/saler-login',
+    component: () => import('@/views/SalerLogin/Login.vue'),
+    name: 'SalerLogin',
+    meta: {
+      hidden: true,
+      title: '代理登录',
+      noTagsView: true
+    }
   }
 ]
 
@@ -59,7 +78,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/dashboard',
     component: Layout,
-    redirect: '/dashboard/analysis',
+    redirect: '/jump',
     name: 'Dashboard',
     meta: {
       title: t('router.dashboard'),
@@ -68,23 +87,22 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
     },
     children: [
       {
-        path: 'analysis',
-        component: () => import('@/views/Dashboard/Analysis.vue'),
-        name: 'Dashboard-Analysis',
+        path: 'main',
+        component: () => import('@/views/DeveloperConsole/index.vue'),
+        name: 'Dashboard-Developer',
         meta: {
-          title: t('router.analysis'),
-          noCache: true,
-          affix: true
-        }
+          title: '首页'
+        },
+        roles: ['developer']
       },
       {
-        path: 'workplace',
-        component: () => import('@/views/Dashboard/Workplace.vue'),
-        name: 'Dashboard-Workplace',
+        path: 'main-saler',
+        component: () => import('@/views/SalerConsole/index.vue'),
+        name: 'Dashboard-Saler',
         meta: {
-          title: t('router.workplace'),
-          noCache: true
-        }
+          title: '首页'
+        },
+        roles: ['saler']
       }
     ]
   },
