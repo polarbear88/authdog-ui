@@ -163,6 +163,9 @@ const schema = reactive<FormSchema[]>([
     componentProps: {
       placeholder: '余额大于等于',
       type: 'number'
+    },
+    colProps: {
+      span: 6
     }
   },
   {
@@ -172,6 +175,9 @@ const schema = reactive<FormSchema[]>([
     componentProps: {
       placeholder: '余额小于等于',
       type: 'number'
+    },
+    colProps: {
+      span: 6
     }
   },
   {
@@ -463,13 +469,14 @@ const schemaDesc = reactive([
     <div>
       <div>
         <Form
-          :isCol="true"
-          :inline="false"
-          labelWidth="80px"
+          :isCol="false"
+          :inline="true"
+          labelWidth="70px"
           :schema="schema"
           label-position="left"
           hide-required-asterisk
           @register="register"
+          :itemStyle="'width: 300px'"
         >
           <template #submit>
             <div>

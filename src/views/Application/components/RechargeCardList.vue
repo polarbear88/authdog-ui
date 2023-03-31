@@ -441,13 +441,14 @@ const schemaDesc = reactive([
     <div>
       <div>
         <Form
-          :isCol="true"
-          :inline="false"
-          labelWidth="80px"
+          :isCol="false"
+          :inline="true"
+          labelWidth="70px"
           :schema="schema"
           label-position="left"
           hide-required-asterisk
           @register="register"
+          :itemStyle="'width: 300px'"
         >
           <template #submit>
             <div>

@@ -46,7 +46,8 @@ export default defineComponent({
     // 是否自定义内容
     isCustom: propTypes.bool.def(false),
     // 表单label宽度
-    labelWidth: propTypes.oneOfType([String, Number]).def('auto')
+    labelWidth: propTypes.oneOfType([String, Number]).def('auto'),
+    itemStyle: propTypes.string.def('')
   },
   emits: ['register'],
   setup(props, { slots, expose, emit }) {
@@ -209,7 +210,12 @@ export default defineComponent({
         }
       }
       return (
-        <ElFormItem {...(item.formItemProps || {})} prop={item.field} label={item.label || ''}>
+        <ElFormItem
+          style={props.itemStyle}
+          {...(item.formItemProps || {})}
+          prop={item.field}
+          label={item.label || ''}
+        >
           {{
             ...formItemSlots,
             default: () => {
