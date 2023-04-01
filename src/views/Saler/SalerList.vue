@@ -345,6 +345,10 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
     onChangeBanlance(saler)
   }
   if (item === 'setapps') {
+    if (saler.topSalerId) {
+      ElMessage.error('非顶级代理无法设置应用，因为他跟随顶级代理的应用')
+      return
+    }
     appListloading.value = true
     getListForApp()
       .then((res) => {
@@ -568,7 +572,9 @@ const onCreateSaler = async () => {
             <template #createdAt="data">
               {{ DateUtils.formatDateTime(data.row.createdAt) }}
             </template>
-            <template #apps="row"> {{ row.row.apps.length }} 个 </template>
+            <template #apps="row">
+              {{ row.row.topSalerId ? '跟随顶级' : row.row.apps.length + '个' }}
+            </template>
             <template #action="data">
               <ElDropdown @command="(item) => onAction(data.row, item)" trigger="click">
                 <span class="el-dropdown-link">

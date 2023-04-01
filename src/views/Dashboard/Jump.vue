@@ -9,6 +9,8 @@ const appStore = useAppStoreWithOut()
 const userInfo = wsCache.get(appStore.getUserInfo)
 const router = useRouter()
 
+// console.log('enter jump')
+
 let isJump = false
 
 if (userInfo.role === 'developer') {
@@ -16,7 +18,7 @@ if (userInfo.role === 'developer') {
   isJump = true
 }
 if (userInfo.role === 'saler') {
-  console.log(router)
+  // console.log(router)
   router.push({ name: 'Dashboard-Saler' })
   isJump = true
 }

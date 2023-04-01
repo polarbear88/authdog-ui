@@ -103,6 +103,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '首页'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-make-card',
+        component: () => import('@/views/SalerView/CreateRechargeCard/CreateRechargeCard.vue'),
+        name: 'Saler-CreateRechargeCard',
+        meta: {
+          title: '制作充值卡'
+        },
+        roles: ['saler']
       }
     ]
   },

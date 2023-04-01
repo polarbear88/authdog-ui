@@ -34,8 +34,8 @@ const columns: TableColumn[] = [
     label: '价格'
   },
   {
-    field: 'salerPrice',
-    label: '代理价格'
+    field: 'salerProfit',
+    label: '代理利润'
   },
   {
     field: 'prefix',
@@ -118,6 +118,7 @@ const onDelete = (data: any) => {
         <template #isNeedPassword="data">
           <ElSwitch :before-change="() => false" v-model="data.row.isNeedPassword" />
         </template>
+        <template #salerProfit="data"> {{ data.row.salerProfit }}% </template>
         <template #action="data">
           <ElButton size="small" @click="showUpdateDialog(data.row)">编辑</ElButton>
           <ElButton size="small" @click="onDelete(data.row)" type="danger">删除</ElButton>

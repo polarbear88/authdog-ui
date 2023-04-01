@@ -34,7 +34,7 @@ const appStore = useAppStore()
 
 const permissionStore = usePermissionStore()
 
-const { currentRoute, addRoute, push } = useRouter()
+const { currentRoute, addRoute } = useRouter()
 
 const { wsCache } = useCache()
 
@@ -145,7 +145,8 @@ const signIn = async () => {
               addRoute(route as RouteRecordRaw) // 动态添加可访问路由表
             })
             permissionStore.setIsAddRouters(true)
-            push({ path: redirect.value || permissionStore.addRouters[0].path })
+            window.location.href = '/'
+            // push({ path: redirect.value || permissionStore.addRouters[0].path })
           }
         }
       } finally {

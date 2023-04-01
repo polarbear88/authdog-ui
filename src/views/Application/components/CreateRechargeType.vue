@@ -20,7 +20,7 @@ const { required } = useValidator()
 const rules = {
   name: [required()],
   price: [required()],
-  salerPrice: [required()]
+  salerProfit: [required()]
 }
 
 const emit = defineEmits(['closedialog', 'success'])
@@ -97,17 +97,20 @@ const schema = reactive<FormSchema[]>([
     value: props.isUpdate ? props.data.price + '' : ''
   },
   {
-    field: 'salerPrice',
-    label: '代理价格',
+    field: 'salerProfit',
+    label: '代理利润百分比 0 - 100',
     colProps: {
       span: 12
     },
     component: 'Input',
     componentProps: {
-      placeholder: '请输入代理价格',
-      type: 'number'
+      placeholder: '请输入代理利润百分比 0 - 100',
+      type: 'number',
+      slots: {
+        append: true
+      }
     },
-    value: props.isUpdate ? props.data.salerPrice + '' : ''
+    value: props.isUpdate ? props.data.salerProfit + '' : ''
   }
 ])
 
@@ -126,7 +129,7 @@ const submit = async () => {
     const formData = await getFormData()
     let data = { ...formData }
     data = StringUtils.deleteObjectEmptyProperty(data)
-    NumberUtils.allToNumber(data, ['price', 'salerPrice', 'money', 'time'])
+    NumberUtils.allToNumber(data, ['price', 'salerProfit', 'money', 'time'])
     if (data.money === undefined) {
       data.money = 0
     }
@@ -171,7 +174,9 @@ if (props.isUpdate) {
       label-position="top"
       hide-required-asterisk
       @register="register"
-    />
+    >
+      <template #salerProfit-append> % </template>
+    </Form>
     <div style="right: 20px; bottom: 10px; position: absolute">
       <ElButton @click="emit('closedialog')">取消</ElButton>
       <ElButton :loading="loading" type="primary" @click="submit"> 确认 </ElButton>
