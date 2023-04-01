@@ -13,3 +13,10 @@ export const getRechargeCardPrice = (appid: string, typeid: string): Promise<IRe
     url: '/saler/recharge-card/get-recharge-card-price?appid=' + appid + '&typeid=' + typeid
   })
 }
+
+export const createRecharge = (data: any): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/saler/recharge-card/create',
+    data
+  })
+}
