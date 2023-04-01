@@ -228,6 +228,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '入口链接'
         }
+      },
+      {
+        path: 'saler-roles',
+        component: () => import('@/views/Saler/SalerRoles.vue'),
+        name: 'Saler-Roles',
+        meta: {
+          title: '代理角色'
+        }
       }
     ]
   }

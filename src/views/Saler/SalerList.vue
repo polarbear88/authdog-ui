@@ -3,12 +3,14 @@ import { onMounted, reactive, ref, unref } from 'vue'
 import {
   getList,
   changePasswordSaler,
-  setStatusPasswordSaler,
+  setStatusSaler,
   addBanlanceSaler,
   setApps,
-  createSaler
+  createSaler,
+  setRolesSaler
 } from '@/api/saler'
 import { getList as getListForApp } from '@/api/application'
+import { getList as getRoleList } from '@/api/saler/SalerRoles'
 import {
   ElButton,
   ElDropdown,
@@ -18,7 +20,9 @@ import {
   ElIcon,
   ElMessage,
   ElMessageBox,
+  ElOption,
   ElPagination,
+  ElSelect,
   ElTag
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
@@ -44,6 +48,10 @@ const columns: TableColumn[] = [
   {
     field: 'name',
     label: '代理名'
+  },
+  {
+    field: 'role',
+    label: '角色'
   },
   {
     field: 'parentName',
@@ -189,6 +197,14 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
+    field: 'salerRoleName',
+    label: '角色名称',
+    component: 'Input',
+    componentProps: {
+      placeholder: '角色名称'
+    }
+  },
+  {
     field: 'createdAtStart',
     label: '注册开始',
     component: 'DatePicker',
@@ -232,7 +248,7 @@ const onSetStatus = (status: string, ids: Array<number>) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    setStatusPasswordSaler(ids, status).then(() => {
+    setStatusSaler(ids, status).then(() => {
       ElMessage.success(`${status === 'normal' ? '启用' : '禁用'}成功`)
       getTableList()
     })
@@ -317,6 +333,22 @@ const handleSelectApps = async () => {
     })
 }
 
+const showSetRole = ref(false)
+
+const onSetRole = () => {
+  setRolesSaler(
+    batchAction.value ? currentActionIds.value : [currentItem.value.id],
+    parseInt(currentRole.value)
+  )
+    .then(() => {
+      ElMessage.success('修改成功')
+      getTableList()
+    })
+    .finally(() => {
+      showSetRole.value = false
+    })
+}
+
 const onAction = async (saler: any, item: string, isBatch = false) => {
   currentItem.value = saler
   batchAction.value = isBatch
@@ -369,6 +401,10 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
       })
     showSelectApps.value = true
   }
+  if (item === 'setrole') {
+    currentRole.value = ''
+    showSetRole.value = true
+  }
 
   // if (item === 'delete') {
   //   ElMessageBox.confirm('确定删除?', '提示', {
@@ -397,6 +433,10 @@ const schemaDesc = reactive([
   {
     field: 'name',
     label: '代理名称'
+  },
+  {
+    field: 'role',
+    label: '角色'
   },
   {
     field: 'parentName',
@@ -433,6 +473,7 @@ const schemaDesc = reactive([
 ])
 
 const showAddSaler = ref(false)
+const currentRole = ref<any>('')
 
 const { required } = useValidator()
 const addSalerRules = {
@@ -498,6 +539,16 @@ const onCreateSaler = async () => {
       })
   })
 }
+
+const roleList = ref<any[]>([])
+
+getRoleList()
+  .then((res) => {
+    if (res) {
+      roleList.value = res.data
+    }
+  })
+  .catch(() => {})
 </script>
 
 <template>
@@ -536,6 +587,7 @@ const onCreateSaler = async () => {
               <ElDropdownMenu>
                 <ElDropdownItem command="disable">禁用</ElDropdownItem>
                 <ElDropdownItem command="enable">解禁</ElDropdownItem>
+                <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
                 <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
                   >删除</ElDropdownItem
                 > -->
@@ -562,6 +614,9 @@ const onCreateSaler = async () => {
             row-key="id"
             expand
           >
+            <template #role="row">
+              {{ row.row.salerRoleName ? row.row.salerRoleName : '未设置' }}
+            </template>
             <template #empty>
               <ElEmpty description="暂时没有代理哦" />
             </template>
@@ -588,6 +643,7 @@ const onCreateSaler = async () => {
                     <ElDropdownItem divided command="addBanlance">充值余额</ElDropdownItem>
                     <ElDropdownItem command="subBanlance">扣减余额</ElDropdownItem>
                     <ElDropdownItem divided command="setapps">设置授权应用</ElDropdownItem>
+                    <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
                     <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
                       >删除</ElDropdownItem
                     > -->
@@ -618,6 +674,9 @@ const onCreateSaler = async () => {
                 <template #registerIAP="row">
                   {{ row.row.ip.city + '-' + row.row.ip.isp }}
                 </template>
+                <template #role="row">
+                  {{ row.row.salerRoleName ? row.row.salerRoleName : '未设置' }}
+                </template>
               </Descriptions></template
             >
           </Table>
@@ -634,6 +693,25 @@ const onCreateSaler = async () => {
         </ContentWrap>
       </ContentWrap>
     </div>
+    <Dialog v-model="showSetRole" title="设置角色">
+      <p
+        >您正在为{{
+          batchAction ? currentActionIds.length + '个代理' : currentItem.name
+        }}设置角色</p
+      >
+      <p style="color: #f56c6c; margin-top: 5px">非顶级代理将不会成功设置</p>
+      <ElSelect style="margin-top: 20px" v-model="currentRole" placeholder="请选择角色">
+        <ElOption
+          v-for="item in roleList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id + ''"
+        />
+      </ElSelect>
+      <div>
+        <ElButton style="margin-top: 20px" type="primary" @click="onSetRole">确定设置</ElButton>
+      </div>
+    </Dialog>
     <Dialog style="max-width: 650px" v-model="showAddSaler" title="添加代理">
       <Form
         :rules="addSalerRules"

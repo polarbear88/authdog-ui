@@ -35,7 +35,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'salerProfit',
-    label: '代理利润'
+    label: '顶级代理利润'
   },
   {
     field: 'prefix',

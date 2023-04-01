@@ -19,7 +19,7 @@ export const changePasswordSaler = (id: number, password: string): Promise<IResp
   })
 }
 
-export const setStatusPasswordSaler = (ids: number[], status: string): Promise<IResponse<any>> => {
+export const setStatusSaler = (ids: number[], status: string): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/saler/set-status',
     data: {
@@ -48,6 +48,16 @@ export const setApps = (
     data: {
       id,
       apps
+    }
+  })
+}
+
+export const setRolesSaler = (ids: number[], roleId: number): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/set-roles',
+    data: {
+      ids,
+      roleId
     }
   })
 }

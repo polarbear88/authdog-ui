@@ -11,7 +11,9 @@ const props = defineProps({
   typelist: propTypes.array.def([]),
   zeroname: propTypes.string.def(''),
   size: propTypes.string.def('default'),
-  app: { type: Object as PropType<ApplicationInfo>, default: () => {} }
+  app: { type: Object as PropType<ApplicationInfo>, default: () => {} },
+  notShowRefresh: propTypes.bool.def(false),
+  isWatchApp: propTypes.bool.def(false)
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -29,6 +31,7 @@ watch(value, (val) => {
 const optionsData = ref<any[]>(props.typelist as any)
 
 const getTableList = (refresh = false) => {
+  if (!props.app.id) return
   getList(props.app.id).then((res) => {
     if (res) {
       optionsData.value = res.data
@@ -47,6 +50,16 @@ defineExpose({
   getTableList
 })
 
+if (props.isWatchApp) {
+  watch(
+    () => props.app,
+    () => {
+      console.log(12)
+      getTableList()
+    }
+  )
+}
+
 const onSelect = (val: string) => {
   emit('change', parseInt(val))
 }
@@ -63,7 +76,7 @@ const onSelect = (val: string) => {
         :label="item.name"
       />
     </ElSelect>
-    <span
+    <span v-if="!notShowRefresh"
       ><ElButton
         type="primary"
         style="font-size: 20px; margin-left: 5px"
