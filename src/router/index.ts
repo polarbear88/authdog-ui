@@ -112,6 +112,24 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '制作充值卡'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-recharge-list',
+        component: () => import('@/views/SalerView/RechargeCardList.vue'),
+        name: 'Saler-RechargeList',
+        meta: {
+          title: '充值卡管理'
+        },
+        roles: ['saler']
+      },
+      {
+        path: 'saler-fast-action',
+        component: () => import('@/views/SalerView/FastAction.vue'),
+        name: 'Saler-FastAction',
+        meta: {
+          title: '充值卡操作'
+        },
+        roles: ['saler']
       }
     ]
   },

@@ -4,12 +4,14 @@ import { getList } from '@/api/application'
 import { ref, watch } from 'vue'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ElSelect, ElOption } from 'element-plus'
+import { getAppList } from '@/api/salerApi/rechargeCard'
 
 const props = defineProps({
   modelValue: propTypes.number.def(0),
   applist: propTypes.array.def([]),
   zeroname: propTypes.string.def(''),
-  size: propTypes.string.def('default')
+  size: propTypes.string.def('default'),
+  isSaler: propTypes.bool.def(false)
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -27,7 +29,19 @@ watch(value, (val) => {
 const optionsData = ref<ApplicationInfo[]>(props.applist as any)
 
 const getTableList = () => {
+  if (props.isSaler) {
+    salerGetAppList()
+    return
+  }
   getList().then((res) => {
+    if (res) {
+      optionsData.value = res.data
+    }
+  })
+}
+
+const salerGetAppList = () => {
+  getAppList().then((res) => {
     if (res) {
       optionsData.value = res.data
     }
