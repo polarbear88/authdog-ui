@@ -139,6 +139,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '下级代理'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-entry-link',
+        component: () => import('@/views/SalerView/EntryLink.vue'),
+        name: 'Saler-EntryLink',
+        meta: {
+          title: '下级代理入口'
+        },
+        roles: ['saler']
       }
     ]
   },
