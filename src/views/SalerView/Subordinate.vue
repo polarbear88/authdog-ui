@@ -4,13 +4,9 @@ import {
   getList,
   changePasswordSaler,
   setStatusSaler,
-  addBanlanceSaler,
-  setApps,
   createSaler,
-  setRolesSaler
-} from '@/api/saler'
-import { getList as getListForApp } from '@/api/application'
-import { getList as getRoleList } from '@/api/saler/SalerRoles'
+  fundTransfer
+} from '@/api/salerApi/subordinate'
 import {
   ElButton,
   ElDropdown,
@@ -20,9 +16,7 @@ import {
   ElIcon,
   ElMessage,
   ElMessageBox,
-  ElOption,
   ElPagination,
-  ElSelect,
   ElTag
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
@@ -42,16 +36,11 @@ import { CirclePlus } from '@element-plus/icons-vue'
 import { useValidator } from '@/hooks/web/useValidator'
 
 const rTable = useTable()
-const bTable = useTable()
 
 const columns: TableColumn[] = [
   {
     field: 'name',
     label: '代理名'
-  },
-  {
-    field: 'role',
-    label: '角色'
   },
   {
     field: 'parentName',
@@ -68,10 +57,6 @@ const columns: TableColumn[] = [
   {
     field: 'balance',
     label: '余额'
-  },
-  {
-    field: 'apps',
-    label: '授权应用'
   },
   {
     field: 'fromToken',
@@ -96,10 +81,6 @@ const total = ref(0)
 const currentActionIds = ref<Array<number>>([])
 
 const batchAction = ref(false)
-
-const applications = ref<any[]>([])
-
-const appListloading = ref(false)
 
 const getTableList = async () => {
   loading.value = true
@@ -197,14 +178,6 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
-    field: 'salerRoleName',
-    label: '角色名称',
-    component: 'Input',
-    componentProps: {
-      placeholder: '角色名称'
-    }
-  },
-  {
     field: 'createdAtStart',
     label: '注册开始',
     component: 'DatePicker',
@@ -278,75 +251,34 @@ const onChangePassword = (user: any) => {
     .catch(() => {})
 }
 
-const isaddBanlance = ref(true)
-
-const showSelectApps = ref(false)
-
-const onChangeBanlance = (user: any) => {
-  ElMessageBox.confirm(
-    `您正为${user.name}${isaddBanlance.value ? '充值' : '扣减'}余额`,
-    (isaddBanlance.value ? '充值' : '扣减') + '代理余额',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      showInput: true,
-      inputPlaceholder: '金额',
-      inputType: 'number'
-    }
-  )
+const onFundTransfer = () => {
+  ElMessageBox.confirm(`您正在给代理${currentItem.value.name}转账`, '转账', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '请输入转账金额',
+    inputType: 'number'
+  })
     .then(async (res) => {
       if (res.value) {
-        const amount = Number(res.value)
-        if (amount < 0 || isNaN(amount)) {
-          ElMessage.error('请输入正确的整数')
+        if (res.value.length < 1) {
+          ElMessage.error('请输入金额')
           return
         }
-        addBanlanceSaler(user.id, isaddBanlance.value ? amount : -amount)
-          .then(() => {
-            getTableList()
-            ElMessage.success('修改成功')
-          })
-          .catch(() => {
-            ElMessage.success('修改失败')
-          })
+        const amount = Number(res.value)
+        if (amount <= 0 || isNaN(amount)) {
+          ElMessage.error('金额不能小于等于0')
+          return
+        }
+        fundTransfer(currentItem.value.id, amount).then(() => {
+          getTableList()
+          ElMessage.success('转账成功')
+        })
         return
       }
       ElMessage.error('请输入内容')
     })
     .catch(() => {})
-}
-
-const handleSelectApps = async () => {
-  const selectItem = (await bTable.methods.getSelections()).map((item: any) => {
-    return {
-      id: item.id,
-      name: item.name
-    }
-  })
-  setApps(currentItem.value.id, selectItem)
-    .then(() => {
-      getTableList()
-      ElMessage.success('修改成功')
-    })
-    .finally(() => {
-      showSelectApps.value = false
-    })
-}
-
-const showSetRole = ref(false)
-
-const onSetRole = () => {
-  setRolesSaler(
-    batchAction.value ? currentActionIds.value : [currentItem.value.id],
-    Number(currentRole.value)
-  )
-    .then(() => {
-      ElMessage.success('修改成功')
-      getTableList()
-    })
-    .finally(() => {
-      showSetRole.value = false
-    })
 }
 
 const onAction = async (saler: any, item: string, isBatch = false) => {
@@ -368,75 +300,15 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
   if (item === 'changePassword') {
     onChangePassword(saler)
   }
-  if (item === 'addBanlance') {
-    isaddBanlance.value = true
-    onChangeBanlance(saler)
+  if (item === 'fundTransfer') {
+    onFundTransfer()
   }
-  if (item === 'subBanlance') {
-    isaddBanlance.value = false
-    onChangeBanlance(saler)
-  }
-  if (item === 'setapps') {
-    if (saler.topSalerId) {
-      ElMessage.error('非顶级代理无法设置应用，因为他跟随顶级代理的应用')
-      return
-    }
-    appListloading.value = true
-    getListForApp()
-      .then((res) => {
-        if (res) {
-          applications.value = res.data
-          setTimeout(() => {
-            for (const item of currentItem.value.apps) {
-              unref(bTable.elTableRef)?.toggleRowSelection(
-                applications.value.find((app: any) => app.id === (item as any).id),
-                true
-              )
-            }
-          }, 50)
-        }
-      })
-      .finally(() => {
-        appListloading.value = false
-      })
-    showSelectApps.value = true
-  }
-  if (item === 'setrole') {
-    currentRole.value = ''
-    showSetRole.value = true
-  }
-
-  // if (item === 'delete') {
-  //   ElMessageBox.confirm('确定删除?', '提示', {
-  //     confirmButtonText: '确定',
-  //     cancelButtonText: '取消',
-  //     type: 'warning'
-  //   }).then(() => {
-  //     deleteByIds(isBatch ? currentActionIds.value : [feedback.id]).then(() => {
-  //       ElMessage.success('删除成功')
-  //       getTableList()
-  //       getCount()
-  //         .catch(() => {})
-  //         .then((res) => {
-  //           if (res) {
-  //             statCount.pending = res.data.pending
-  //             statCount.resolved = res.data.resolved
-  //             statCount.rejected = res.data.rejected
-  //           }
-  //         })
-  //     })
-  //   })
-  // }
 }
 
 const schemaDesc = reactive([
   {
     field: 'name',
     label: '代理名称'
-  },
-  {
-    field: 'role',
-    label: '角色'
   },
   {
     field: 'parentName',
@@ -473,14 +345,6 @@ const schemaDesc = reactive([
 ])
 
 const showAddSaler = ref(false)
-const currentRole = ref<any>('')
-
-const { required } = useValidator()
-const addSalerRules = {
-  name: [required()],
-  mobile: [required()],
-  password: [required()]
-}
 
 const addSalerSehema = reactive<FormSchema[]>([
   {
@@ -539,16 +403,12 @@ const onCreateSaler = async () => {
       })
   })
 }
-
-const roleList = ref<any[]>([])
-
-getRoleList()
-  .then((res) => {
-    if (res) {
-      roleList.value = res.data
-    }
-  })
-  .catch(() => {})
+const { required } = useValidator()
+const addSalerRules = {
+  name: [required()],
+  mobile: [required()],
+  password: [required()]
+}
 </script>
 
 <template>
@@ -587,10 +447,6 @@ getRoleList()
               <ElDropdownMenu>
                 <ElDropdownItem command="disable">禁用</ElDropdownItem>
                 <ElDropdownItem command="enable">解禁</ElDropdownItem>
-                <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
-                <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
-                  >删除</ElDropdownItem
-                > -->
               </ElDropdownMenu>
             </template>
           </ElDropdown>
@@ -601,7 +457,7 @@ getRoleList()
             link
             :icon="CirclePlus"
             @click="showAddSaler = true"
-            >添加代理</ElButton
+            >添加下级代理</ElButton
           >
 
           <Table
@@ -618,7 +474,7 @@ getRoleList()
               {{ row.row.salerRoleName ? row.row.salerRoleName : '未设置' }}
             </template>
             <template #empty>
-              <ElEmpty description="暂时没有代理哦" />
+              <ElEmpty description="暂时没有下级代理哦" />
             </template>
             <template #status="row">
               <ElTag v-if="row.row.status === 'normal'" type="success">正常</ElTag>
@@ -626,9 +482,6 @@ getRoleList()
             </template>
             <template #createdAt="data">
               {{ DateUtils.formatDateTime(data.row.createdAt) }}
-            </template>
-            <template #apps="row">
-              {{ row.row.topSalerId ? '跟随顶级' : row.row.apps.length + '个' }}
             </template>
             <template #action="data">
               <ElDropdown @command="(item) => onAction(data.row, item)" trigger="click">
@@ -640,13 +493,7 @@ getRoleList()
                     <ElDropdownItem command="disable">禁用</ElDropdownItem>
                     <ElDropdownItem command="enable">解禁</ElDropdownItem>
                     <ElDropdownItem divided command="changePassword">修改密码</ElDropdownItem>
-                    <ElDropdownItem divided command="addBanlance">充值余额</ElDropdownItem>
-                    <ElDropdownItem command="subBanlance">扣减余额</ElDropdownItem>
-                    <ElDropdownItem divided command="setapps">设置授权应用</ElDropdownItem>
-                    <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
-                    <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
-                      >删除</ElDropdownItem
-                    > -->
+                    <ElDropdownItem divided command="fundTransfer">资金划转</ElDropdownItem>
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>
@@ -674,9 +521,6 @@ getRoleList()
                 <template #registerIAP="row">
                   {{ row.row.ip.city + '-' + row.row.ip.isp }}
                 </template>
-                <template #role="row">
-                  {{ row.row.salerRoleName ? row.row.salerRoleName : '未设置' }}
-                </template>
               </Descriptions></template
             >
           </Table>
@@ -693,25 +537,6 @@ getRoleList()
         </ContentWrap>
       </ContentWrap>
     </div>
-    <Dialog v-model="showSetRole" title="设置角色">
-      <p
-        >您正在为{{
-          batchAction ? currentActionIds.length + '个代理' : currentItem.name
-        }}设置角色</p
-      >
-      <p style="color: #f56c6c; margin-top: 5px">非顶级代理将不会成功设置</p>
-      <ElSelect style="margin-top: 20px" v-model="currentRole" placeholder="请选择角色">
-        <ElOption
-          v-for="item in roleList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id + ''"
-        />
-      </ElSelect>
-      <div>
-        <ElButton style="margin-top: 20px" type="primary" @click="onSetRole">确定设置</ElButton>
-      </div>
-    </Dialog>
     <Dialog style="max-width: 650px" v-model="showAddSaler" title="添加代理">
       <Form
         :rules="addSalerRules"
@@ -726,28 +551,6 @@ getRoleList()
           </div>
         </template>
       </Form>
-    </Dialog>
-    <Dialog title="选择授权应用" v-model="showSelectApps">
-      <ElButton type="primary" @click="handleSelectApps">确定选择</ElButton>
-      <Table
-        style="margin-top: 10px"
-        @register="bTable.register"
-        :columns="[
-          {
-            field: 'id',
-            label: 'ID'
-          },
-          {
-            field: 'name'
-          }
-        ]"
-        :data="applications"
-        :loading="appListloading"
-      >
-        <template #empty>
-          <ElEmpty description="暂时没有应用哦" />
-        </template>
-      </Table>
     </Dialog>
   </div>
 </template>

@@ -42,9 +42,9 @@ export class DateUtils {
 
   public static DHMSSum(data: { days: string; hours: string; minutes: string }) {
     const { days, hours, minutes } = data
-    const daysInMinutes = parseInt(days) * 1440
-    const hoursInMinutes = parseInt(hours) * 60
-    const minutesInMinutes = parseInt(minutes)
+    const daysInMinutes = Number(days) * 1440
+    const hoursInMinutes = Number(hours) * 60
+    const minutesInMinutes = Number(minutes)
     return daysInMinutes + hoursInMinutes + minutesInMinutes
   }
 

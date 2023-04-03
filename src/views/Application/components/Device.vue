@@ -296,7 +296,7 @@ const onChangeCount = (device: any) => {
   )
     .then(async (res) => {
       if (res.value) {
-        const count = parseInt(res.value)
+        const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
           ElMessage.error('请输入正确的整数')
           return

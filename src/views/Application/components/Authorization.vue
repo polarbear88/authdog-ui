@@ -261,7 +261,7 @@ const onSetUnbindDeductCount = () => {
   })
     .then(async (res) => {
       if (res.value) {
-        const count = parseInt(res.value)
+        const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
           ElMessage.error('请输入正确的次数')
           return
@@ -285,7 +285,7 @@ const onSetMaxUnbindCount = () => {
   })
     .then(async (res) => {
       if (res.value) {
-        const count = parseInt(res.value)
+        const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
           ElMessage.error('请输入正确的次数')
           return
@@ -341,7 +341,7 @@ const onSetMaxMultiDevice = () => {
   })
     .then(async (res) => {
       if (res.value) {
-        const count = parseInt(res.value)
+        const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
           ElMessage.error('请输入正确的整数')
           return
@@ -365,7 +365,7 @@ const onsetTrialCount = () => {
   })
     .then(async (res) => {
       if (res.value) {
-        const count = parseInt(res.value)
+        const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
           ElMessage.error('请输入正确的整数')
           return

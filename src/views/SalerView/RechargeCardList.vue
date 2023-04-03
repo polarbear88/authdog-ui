@@ -125,9 +125,9 @@ const getTableList = async () => {
     'createdAtEnd'
   ])
   if (currentApp.value) {
-    data.appid = parseInt(currentApp.value)
+    data.appid = Number(currentApp.value)
     if (currentCardType.value) {
-      data.cardTypeId = parseInt(currentCardType.value)
+      data.cardTypeId = Number(currentCardType.value)
     }
   }
   //   NumberUtils.allToNumber(data, ['balanceLessOrEq', 'balanceThanOrEq'])

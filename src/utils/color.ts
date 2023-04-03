@@ -42,7 +42,7 @@ export const hexToRGB = (hex: string, opacity?: number) => {
     }
     const sColorChange: number[] = []
     for (let i = 1; i < 7; i += 2) {
-      sColorChange.push(parseInt('0x' + sHex.slice(i, i + 2)))
+      sColorChange.push(Number('0x' + sHex.slice(i, i + 2)))
     }
     return opacity
       ? 'RGBA(' + sColorChange.join(',') + ',' + opacity + ')'
@@ -98,7 +98,7 @@ export const lighten = (color: string, amount: number) => {
  * @returns {string} The processed part of the color
  */
 const addLight = (color: string, amount: number) => {
-  const cc = parseInt(color, 16) + amount
+  const cc = Number(color, 16) + amount
   const c = cc > 255 ? 255 : cc
   return c.toString(16).length > 1 ? c.toString(16) : `0${c.toString(16)}`
 }
@@ -147,7 +147,7 @@ export const calculateBestTextColor = (hexColor: string) => {
  * @returns {string} The processed part of the color
  */
 const subtractLight = (color: string, amount: number) => {
-  const cc = parseInt(color, 16) - amount
+  const cc = Number(color, 16) - amount
   const c = cc < 0 ? 0 : cc
   return c.toString(16).length > 1 ? c.toString(16) : `0${c.toString(16)}`
 }

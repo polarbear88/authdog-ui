@@ -3,7 +3,7 @@ export class NumberUtils {
     for (const key of parr) {
       if (data[key]) {
         if (data[key]) {
-          data[key] = parseInt(data[key])
+          data[key] = Number(data[key])
         }
       }
     }

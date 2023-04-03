@@ -25,7 +25,7 @@ if (!props.zeroname && value.value === '0') {
 }
 
 watch(value, (val) => {
-  emit('update:modelValue', parseInt(val))
+  emit('update:modelValue', Number(val))
 })
 
 const optionsData = ref<any[]>(props.typelist as any)
@@ -61,7 +61,7 @@ if (props.isWatchApp) {
 }
 
 const onSelect = (val: string) => {
-  emit('change', parseInt(val))
+  emit('change', Number(val))
 }
 </script>
 

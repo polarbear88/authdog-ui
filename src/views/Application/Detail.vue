@@ -53,7 +53,7 @@ const getAppData = (val?: number) => {
 }
 
 const getCurrentAppId = () => {
-  return parseInt(router.currentRoute.value.params.id + '')
+  return Number(router.currentRoute.value.params.id + '')
 }
 
 const currentId = ref(getCurrentAppId())

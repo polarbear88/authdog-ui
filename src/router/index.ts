@@ -130,6 +130,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '充值卡操作'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-subordinate',
+        component: () => import('@/views/SalerView/Subordinate.vue'),
+        name: 'Saler-Subordinate',
+        meta: {
+          title: '下级代理'
+        },
+        roles: ['saler']
       }
     ]
   },

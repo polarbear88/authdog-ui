@@ -94,7 +94,7 @@ const onSave = () => {
     return {
       appid: item.appid,
       cardTypeId: item.cardTypeId,
-      salerProfit: parseInt(item.salerProfit)
+      salerProfit: Number(item.salerProfit)
     }
   })
 

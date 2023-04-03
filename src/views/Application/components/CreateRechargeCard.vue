@@ -71,7 +71,7 @@ const loading = ref(false)
 const onCreate = (formData: any) => {
   loading.value = true
   const data = { ...formData }
-  data.count = parseInt(data.count)
+  data.count = Number(data.count)
   createRechargeCard(props.app.id, data)
     .then((res) => {
       let str = ''

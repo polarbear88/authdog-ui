@@ -34,9 +34,9 @@ const onCreate = (data: any) => {
 
 const submit = async () => {
   const data = {
-    appid: parseInt(currentApp.value),
-    typeId: parseInt(currentCardType.value),
-    count: parseInt(countInput.value),
+    appid: Number(currentApp.value),
+    typeId: Number(currentCardType.value),
+    count: Number(countInput.value),
     description: descriptionInput.value
   }
   if (isNaN(data.appid) || isNaN(data.typeId) || isNaN(data.count)) {
@@ -107,7 +107,7 @@ const onSelectCardType = (val: string) => {
 const totalPrice = ref(0)
 
 const sumPrice = (val: string) => {
-  totalPrice.value = parseInt(val) * cardTypePrice.value
+  totalPrice.value = Number(val) * cardTypePrice.value
 }
 </script>
 
