@@ -157,6 +157,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '下级代理价格'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-fundflow',
+        component: () => import('@/views/SalerView/FundFlow.vue'),
+        name: 'Saler-FundFlow',
+        meta: {
+          title: '资金明细'
+        },
+        roles: ['saler']
       }
     ]
   },
@@ -280,6 +289,36 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Saler-Roles',
         meta: {
           title: '代理角色'
+        }
+      }
+    ]
+  },
+  {
+    path: '/finance',
+    component: Layout,
+    redirect: '/finance/fund-flow',
+    name: 'Finance',
+    meta: {
+      title: '财务',
+      icon: 'icon-park-solid:finance',
+      alwaysShow: true
+    },
+    roles: ['developer'],
+    children: [
+      {
+        path: 'fund-flow',
+        component: () => import('@/views/Finance/FundFlow.vue'),
+        name: 'Finance-FundFlow',
+        meta: {
+          title: '资金明细'
+        }
+      },
+      {
+        path: 'user-financial',
+        component: () => import('@/views/Finance/UserFinancial.vue'),
+        name: 'Finance-UserFinancial',
+        meta: {
+          title: '用户明细'
         }
       }
     ]
