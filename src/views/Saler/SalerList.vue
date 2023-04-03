@@ -7,7 +7,8 @@ import {
   addBanlanceSaler,
   setApps,
   createSaler,
-  setRolesSaler
+  setRolesSaler,
+  deleteSaler
 } from '@/api/saler'
 import { getList as getListForApp } from '@/api/application'
 import { getList as getRoleList } from '@/api/saler/SalerRoles'
@@ -406,27 +407,18 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
     showSetRole.value = true
   }
 
-  // if (item === 'delete') {
-  //   ElMessageBox.confirm('确定删除?', '提示', {
-  //     confirmButtonText: '确定',
-  //     cancelButtonText: '取消',
-  //     type: 'warning'
-  //   }).then(() => {
-  //     deleteByIds(isBatch ? currentActionIds.value : [feedback.id]).then(() => {
-  //       ElMessage.success('删除成功')
-  //       getTableList()
-  //       getCount()
-  //         .catch(() => {})
-  //         .then((res) => {
-  //           if (res) {
-  //             statCount.pending = res.data.pending
-  //             statCount.resolved = res.data.resolved
-  //             statCount.rejected = res.data.rejected
-  //           }
-  //         })
-  //     })
-  //   })
-  // }
+  if (item === 'delete') {
+    ElMessageBox.confirm('删除代理将会删除其所有的下级代理，包含下级的下级，是否确认?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      deleteSaler(saler.id).then((res) => {
+        ElMessage.success('删除成功，影响' + res.data.affectedCount + '个代理')
+        getTableList()
+      })
+    })
+  }
 }
 
 const schemaDesc = reactive([
@@ -644,9 +636,9 @@ getRoleList()
                     <ElDropdownItem command="subBanlance">扣减余额</ElDropdownItem>
                     <ElDropdownItem divided command="setapps">设置授权应用</ElDropdownItem>
                     <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
-                    <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                    <ElDropdownItem divided style="color: #f56c6c" command="delete"
                       >删除</ElDropdownItem
-                    > -->
+                    >
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>

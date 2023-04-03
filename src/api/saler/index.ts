@@ -61,3 +61,9 @@ export const setRolesSaler = (ids: number[], roleId: number): Promise<IResponse<
     }
   })
 }
+
+export const deleteSaler = (id: number | string): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/saler/delete?id=' + id
+  })
+}
