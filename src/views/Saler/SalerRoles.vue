@@ -8,7 +8,7 @@ import {
 import { TableColumn } from '@/types/table'
 import { ElAlert, ElButton, ElEmpty, ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import { ref } from 'vue'
-import { CirclePlus } from '@element-plus/icons-vue'
+import { CirclePlus, CloseBold } from '@element-plus/icons-vue'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
 import { Dialog } from '@/components/Dialog'
@@ -87,6 +87,10 @@ const onAddConfig = () => {
   })
 }
 
+const onDelConfig = (index: number) => {
+  priceConfig.value.splice(index, 1)
+}
+
 const onSave = () => {
   // console.log(priceConfig.value)
 
@@ -118,11 +122,26 @@ const onSave = () => {
     }
   }
 
+  const uniqueValues = new Set()
+  data.filter((item) => {
+    if (uniqueValues.has(item['cardTypeId'])) {
+      return false
+    } else {
+      uniqueValues.add(item['cardTypeId'])
+      return true
+    }
+  })
+  if (uniqueValues.size !== data.length) {
+    ElMessage.error('配置重复，请检查')
+    return
+  }
+
   setSalerRoleConfig({
     id: currentItem.value.id,
     priceConfig: data
   })
     .then(() => {
+      ElMessage.success('保存成功')
       getTableList()
     })
     .catch(() => {})
@@ -188,6 +207,7 @@ const onDelete = (row: any) => {
             :applist="applist"
             :zeroname="''"
             v-model="priceConfig[index].appid"
+            :is-watch-app="true"
           /><RechargeCardTypeSelect
             style="display: inline-block; margin-left: 8px"
             :zeroname="''"
@@ -195,6 +215,7 @@ const onDelete = (row: any) => {
             :app="{ id: priceConfig[index].appid } as any"
             :notShowRefresh="true"
             :isWatchApp="true"
+            :is-watch-value="true"
           />
           <div style="display: inline-block; margin-left: 8px">
             <ElInput
@@ -205,6 +226,14 @@ const onDelete = (row: any) => {
               <template #append>%</template>
             </ElInput>
           </div>
+          <ElButton
+            @click="onDelConfig(index)"
+            style="margin-left: 8px"
+            size="small"
+            circle
+            type="danger"
+            :icon="CloseBold"
+          />
         </div>
         <div style="margin-left: 8px; margin-top: 15px">
           <ElButton @click="onAddConfig">添加配置</ElButton>

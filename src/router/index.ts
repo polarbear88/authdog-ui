@@ -148,6 +148,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '下级代理入口'
         },
         roles: ['saler']
+      },
+      {
+        path: 'saler-subordinatePrice',
+        component: () => import('@/views/SalerView/SubordinatePrice.vue'),
+        name: 'Saler-SubordinatePrice',
+        meta: {
+          title: '下级代理价格'
+        },
+        roles: ['saler']
       }
     ]
   },

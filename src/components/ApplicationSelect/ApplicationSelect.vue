@@ -11,7 +11,8 @@ const props = defineProps({
   applist: propTypes.array.def([]),
   zeroname: propTypes.string.def(''),
   size: propTypes.string.def('default'),
-  isSaler: propTypes.bool.def(false)
+  isSaler: propTypes.bool.def(false),
+  isWatchApp: propTypes.bool.def(false)
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -25,6 +26,15 @@ if (!props.zeroname && value.value === '0') {
 watch(value, (val) => {
   emit('update:modelValue', Number(val))
 })
+
+if (props.isWatchApp) {
+  watch(
+    () => props.modelValue,
+    (val) => {
+      value.value = val + ''
+    }
+  )
+}
 
 const optionsData = ref<ApplicationInfo[]>(props.applist as any)
 
