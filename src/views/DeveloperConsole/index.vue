@@ -6,19 +6,40 @@ import {
   ElCard,
   ElCol,
   ElIcon,
+  ElPagination,
   ElRadioButton,
   ElRadioGroup,
   ElRow,
   ElStatistic,
+  ElText,
   ElTooltip
 } from 'element-plus'
 import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
+import { getList } from '@/api/actionLog'
+import { DateUtils } from '@/utils/dateUtils'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
 const baseInfo = ref<any>({})
 const latelyInfo = ref<any>({})
+
+const page = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const actionLogList = ref<any[]>([])
+
+const getActionLog = () => {
+  getList({
+    page: page.value,
+    pageSize: pageSize.value
+  }).then((res) => {
+    actionLogList.value = res.data.list
+    total.value = res.data.total
+  })
+}
+
+getActionLog()
 
 const getBaseInfo = () => {
   getBase().then((res) => {
@@ -244,6 +265,30 @@ getLatelyInfo('today')
           </ElCard>
         </ElCol>
       </ElRow>
+    </ContentWrap>
+    <ContentWrap style="margin-top: 15px" title="操作日志">
+      <div v-for="(item, index) in actionLogList" :key="index" style="margin-top: 3px">
+        <ElText>
+          <span style="color: #999"
+            >{{ DateUtils.formatDateTime(item.createdAt, 'MM-DD HH:mm') }}[{{ item.ip }}]</span
+          >
+          <span style="margin-left: 10px; color: #409eff">操作</span>
+          <span style="margin-left: 10px">{{ item.action }}</span>
+          <span style="margin-left: 10px; color: #f56c6c">影响</span>
+          <span style="margin-left: 10px">{{ item.affected ? item.affected : '无' }}</span>
+          <span v-if="item.appname" style="margin-left: 10px; color: #e6a23c">应用</span>
+          <span v-if="item.appname" style="margin-left: 10px">{{ item.appname }}</span>
+        </ElText>
+      </div>
+      <ElPagination
+        style="margin-top: 15px"
+        layout="prev, pager, next, total"
+        v-model:total="total"
+        v-model:pageSize="pageSize"
+        v-model:currentPage="page"
+        @size-change="getActionLog"
+        @current-change="getActionLog"
+      />
     </ContentWrap>
   </div>
 </template>
