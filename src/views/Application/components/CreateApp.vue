@@ -68,6 +68,10 @@ const schema = reactive<FormSchema[]>([
         {
           label: 'ECDH加密「极高安全」',
           value: 'ecdh'
+        },
+        {
+          label: '__samenc_test',
+          value: 'samenc'
         }
       ]
     }

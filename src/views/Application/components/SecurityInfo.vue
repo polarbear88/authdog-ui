@@ -16,6 +16,8 @@ const getCryptMode = () => {
       return 'RSA加密「高安全」'
     case 'ecdh':
       return 'ECDH加密「极高安全」'
+    case 'samenc':
+      return '__samenc_test'
     default:
       return ''
   }
@@ -96,6 +98,7 @@ const onConfirmResetCryptoMode = () => {
           <ElOption label="AES加密「弱安全」" value="aes" />
           <ElOption label="RSA加密「高安全」" value="rsa" />
           <ElOption label="ECDH加密「极高安全」" value="ecdh" />
+          <ElOption label="__samenc_test" value="samenc" />
         </ElSelect>
         <div style="width: 100%; height: 40px"></div>
         <div style="right: 20px; bottom: 10px; position: absolute">
