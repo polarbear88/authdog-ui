@@ -11,3 +11,14 @@ export const getLately = (type: string): Promise<IResponse<any>> => {
     url: '/developer/statistics/lately?type=' + type
   })
 }
+export const getAreaStatistics = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/statistics/user-area'
+  })
+}
+
+export const getBrandStatistics = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/statistics/user-brand'
+  })
+}

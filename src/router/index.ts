@@ -96,6 +96,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         roles: ['developer']
       },
       {
+        path: 'analysis',
+        component: () => import('@/views/DeveloperConsole/Analysis.vue'),
+        name: 'Analysis-Developer',
+        meta: {
+          title: '分析'
+        },
+        roles: ['developer']
+      },
+      {
         path: 'main-saler',
         component: () => import('@/views/SalerConsole/index.vue'),
         name: 'Dashboard-Saler',
