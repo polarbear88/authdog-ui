@@ -9,6 +9,8 @@ import { FormSchema } from '@/types/form'
 import { RegisterType } from '@/api/login/types'
 import { registerApi } from '@/api/salerApi/auth'
 import { ElMessage } from 'element-plus'
+import { GeetestCaptcha } from '@/components/GeetestCaptcha'
+import { getManMachineInspectConfig } from '@/api/manMachineInspect'
 
 const props = defineProps({
   token: {
@@ -122,6 +124,8 @@ const toLogin = () => {
 
 const loading = ref(false)
 
+let submitData: any = {}
+
 const loginRegister = async () => {
   const formRef = unref(elFormRef)
   formRef?.validate(async (valid) => {
@@ -140,6 +144,15 @@ const loginRegister = async () => {
         }
         data['name'] = data.username
         // delete data['username']
+        if (manMachineInspectConfig.value.validate_enable_register) {
+          submitData = data
+          if ((window as any).captchaObj) {
+            ;(window as any).captchaObj.showCaptcha()
+          } else {
+            ElMessage.error('验证码未初始化')
+          }
+          return
+        }
         const res = await registerApi(data)
         if (res) {
           // 注册成功
@@ -151,39 +164,87 @@ const loginRegister = async () => {
     }
   })
 }
+
+const captchaHandler = (captchaObj: any) => {
+  ;(window as any).captchaObj = captchaObj
+  captchaObj
+    .appendTo('#captcha')
+    .onReady(function () {
+      console.log('ready')
+    })
+    .onNextReady(function () {
+      console.log('nextReady')
+    })
+    .onBoxShow(function () {
+      console.log('boxShow')
+    })
+    .onError(function (e: any) {
+      console.log(e)
+    })
+    .onSuccess(function () {
+      submitData.geetest_captcha = (window as any).captchaObj.getValidate()
+      registerApi(submitData).then((res) => {
+        if (res) {
+          // 注册成功
+          toRegisterSuccess()
+        }
+      })
+    })
+}
+
+const captchaConfig = reactive({
+  config: {
+    captchaId: '',
+    language: 'zh-cn',
+    product: 'bind'
+  },
+  handler: captchaHandler
+})
+
+const manMachineInspectConfig = ref<any>({})
+
+getManMachineInspectConfig().then((res) => {
+  manMachineInspectConfig.value = res.data
+  if (manMachineInspectConfig.value.validate_enable_register) {
+    captchaConfig.config.captchaId = res.data.geetest_id_register
+  }
+})
 </script>
 
 <template>
-  <Form
-    :schema="schema"
-    :rules="rules"
-    label-position="top"
-    hide-required-asterisk
-    size="large"
-    class="dark:(border-1 border-[var(--el-border-color)] border-solid)"
-    @register="register"
-  >
-    <template #title>
-      <h2 class="text-2xl font-bold text-center w-[100%]">代理注册</h2>
-    </template>
+  <div>
+    <Form
+      :schema="schema"
+      :rules="rules"
+      label-position="top"
+      hide-required-asterisk
+      size="large"
+      class="dark:(border-1 border-[var(--el-border-color)] border-solid)"
+      @register="register"
+    >
+      <template #title>
+        <h2 class="text-2xl font-bold text-center w-[100%]">代理注册</h2>
+      </template>
 
-    <template #code="form">
-      <div class="w-[100%] flex">
-        <ElInput v-model="form['code']" :placeholder="t('login.codePlaceholder')" />
-      </div>
-    </template>
+      <template #code="form">
+        <div class="w-[100%] flex">
+          <ElInput v-model="form['code']" :placeholder="t('login.codePlaceholder')" />
+        </div>
+      </template>
 
-    <template #register>
-      <div class="w-[100%]">
-        <ElButton type="primary" class="w-[100%]" :loading="loading" @click="loginRegister">
-          {{ t('login.register') }}
-        </ElButton>
-      </div>
-      <div class="w-[100%] mt-15px">
-        <ElButton class="w-[100%]" @click="toLogin">
-          {{ t('login.hasUser') }}
-        </ElButton>
-      </div>
-    </template>
-  </Form>
+      <template #register>
+        <div class="w-[100%]">
+          <ElButton type="primary" class="w-[100%]" :loading="loading" @click="loginRegister">
+            {{ t('login.register') }}
+          </ElButton>
+        </div>
+        <div class="w-[100%] mt-15px">
+          <ElButton class="w-[100%]" @click="toLogin">
+            {{ t('login.hasUser') }}
+          </ElButton>
+        </div>
+      </template>
+    </Form>
+    <div id="captcha"><GeetestCaptcha :captcha-config="captchaConfig" /></div>
+  </div>
 </template>
