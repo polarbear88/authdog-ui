@@ -22,3 +22,15 @@ export const getBrandStatistics = (): Promise<IResponse<any>> => {
     url: '/developer/statistics/user-brand'
   })
 }
+
+export const getPeriodic = (type: string, time: string): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/statistics/periodic?type=' + type + '&time=' + time
+  })
+}
+
+export const getUseRechargeType = (type: string): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/statistics/use-recharge-type?type=' + type
+  })
+}
