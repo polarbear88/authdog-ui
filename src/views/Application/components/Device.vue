@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, reactive, ref, unref } from 'vue'
-import { getList, addTime, addBanlance, setStatus } from '@/api/device'
+import { getList, addTime, addBalance, setStatus } from '@/api/device'
 import {
   ElButton,
   ElDropdown,
@@ -302,7 +302,7 @@ const onChangeCount = (device: any) => {
           return
         }
         const data = batchAction.value ? currentActionIds.value : [device.id]
-        addBanlance(props.app.id, data, isaddCount.value ? count : -count)
+        addBalance(props.app.id, data, isaddCount.value ? count : -count)
           .then((res) => {
             getTableList()
             ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')

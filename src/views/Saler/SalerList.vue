@@ -4,7 +4,7 @@ import {
   getList,
   changePasswordSaler,
   setStatusSaler,
-  addBanlanceSaler,
+  addBalanceSaler,
   setApps,
   createSaler,
   setRolesSaler,
@@ -279,14 +279,14 @@ const onChangePassword = (user: any) => {
     .catch(() => {})
 }
 
-const isaddBanlance = ref(true)
+const isaddBalance = ref(true)
 
 const showSelectApps = ref(false)
 
-const onChangeBanlance = (user: any) => {
+const onChangeBalance = (user: any) => {
   ElMessageBox.confirm(
-    `您正为${user.name}${isaddBanlance.value ? '充值' : '扣减'}余额`,
-    (isaddBanlance.value ? '充值' : '扣减') + '代理余额',
+    `您正为${user.name}${isaddBalance.value ? '充值' : '扣减'}余额`,
+    (isaddBalance.value ? '充值' : '扣减') + '代理余额',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -302,7 +302,7 @@ const onChangeBanlance = (user: any) => {
           ElMessage.error('请输入正确的整数')
           return
         }
-        addBanlanceSaler(user.id, isaddBanlance.value ? amount : -amount)
+        addBalanceSaler(user.id, isaddBalance.value ? amount : -amount)
           .then(() => {
             getTableList()
             ElMessage.success('修改成功')
@@ -369,13 +369,13 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
   if (item === 'changePassword') {
     onChangePassword(saler)
   }
-  if (item === 'addBanlance') {
-    isaddBanlance.value = true
-    onChangeBanlance(saler)
+  if (item === 'addBalance') {
+    isaddBalance.value = true
+    onChangeBalance(saler)
   }
-  if (item === 'subBanlance') {
-    isaddBanlance.value = false
-    onChangeBanlance(saler)
+  if (item === 'subBalance') {
+    isaddBalance.value = false
+    onChangeBalance(saler)
   }
   if (item === 'setapps') {
     if (saler.topSalerId) {
@@ -632,8 +632,8 @@ getRoleList()
                     <ElDropdownItem command="disable">禁用</ElDropdownItem>
                     <ElDropdownItem command="enable">解禁</ElDropdownItem>
                     <ElDropdownItem divided command="changePassword">修改密码</ElDropdownItem>
-                    <ElDropdownItem divided command="addBanlance">充值余额</ElDropdownItem>
-                    <ElDropdownItem command="subBanlance">扣减余额</ElDropdownItem>
+                    <ElDropdownItem divided command="addBalance">充值余额</ElDropdownItem>
+                    <ElDropdownItem command="subBalance">扣减余额</ElDropdownItem>
                     <ElDropdownItem divided command="setapps">设置授权应用</ElDropdownItem>
                     <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
                     <ElDropdownItem divided style="color: #f56c6c" command="delete"

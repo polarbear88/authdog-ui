@@ -32,13 +32,13 @@ export const addTime = (appid: number, ids: number[], minutes: number): Promise<
   })
 }
 
-export const addBanlance = (
+export const addBalance = (
   appid: number,
   ids: number[],
   money: number
 ): Promise<IResponse<any>> => {
   return request.post({
-    url: '/developer/user/add-banlance',
+    url: '/developer/user/add-balance',
     data: {
       appid,
       ids,

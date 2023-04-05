@@ -7,7 +7,7 @@ import {
   addTime,
   unbind,
   resetUnbindCount,
-  addBanlance,
+  addBalance,
   setStatus
 } from '@/api/user'
 import {
@@ -347,7 +347,7 @@ const onChangeCount = (user: any) => {
           return
         }
         const data = batchAction.value ? currentActionIds.value : [user.id]
-        addBanlance(props.app.id, data, isaddCount.value ? count : -count)
+        addBalance(props.app.id, data, isaddCount.value ? count : -count)
           .then((res) => {
             getTableList()
             ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
