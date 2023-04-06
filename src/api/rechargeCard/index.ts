@@ -110,3 +110,16 @@ export const deleteRechargeCardByCards = (
     }
   })
 }
+
+export const findRechargeCardByCards = (
+  appid: number,
+  cards: string[]
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/recharge-card/find-by-cards',
+    data: {
+      appid,
+      cards
+    }
+  })
+}

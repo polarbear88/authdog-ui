@@ -3,7 +3,8 @@ import { ApplicationSelect } from '@/components/ApplicationSelect'
 import { ContentWrap } from '@/components/ContentWrap'
 import { ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import { ref } from 'vue'
-import { setStatusByCards, rebuildByCards } from '@/api/salerApi/rechargeCard'
+import { setStatusByCards, rebuildByCards, findByCards } from '@/api/salerApi/rechargeCard'
+import { DateUtils } from '@/utils/dateUtils'
 
 const currentId = ref(0)
 const inputcard = ref('')
@@ -25,7 +26,9 @@ const getCardsArr = () => {
         resArr.push(item.substring(item.indexOf('卡号：') + 3).trim())
       }
     } else {
-      resArr.push(item.trim())
+      if (item.trim()) {
+        resArr.push(item.trim())
+      }
     }
   }
   return resArr
@@ -100,6 +103,46 @@ const onRebuild = () => {
     })
   })
 }
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'unused':
+      return '未使用'
+    case 'used':
+      return '已使用'
+    case 'frozen':
+      return '已冻结'
+    default:
+      return '未知'
+  }
+}
+
+const OnFind = () => {
+  if (!checkSelectApp()) return
+  const cardsArr = getCardsArr()
+  if (!cardsArr.length) {
+    ElMessage.error('请输入充值卡号')
+    return
+  }
+  findByCards(currentId.value, cardsArr).then((res) => {
+    const data = res.data || []
+    let str = ''
+    for (const card of cardsArr) {
+      const find = data.find((item: any) => item.card === card)
+      if (find) {
+        str += `卡号：${find.card}`
+        if (find.password) str += ` 密码：${find.password}`
+        str += ` 类型：${find.cardTypeName}`
+        str += ` 状态：${getStatusText(find.status)}`
+        if (find.status === 'used') str += ` 使用时间：${DateUtils.formatDateTime(find.useTime)}`
+        if (find.status === 'used') str += ` 使用者：${find.userName}`
+        str += '\n'
+      } else {
+        str += `卡号：${card} 未找到 \n`
+      }
+    }
+    inputcard.value = str
+  })
+}
 </script>
 
 <template>
@@ -129,6 +172,7 @@ const onRebuild = () => {
         >
         <br />
         <div style="margin-top: 10px">
+          <ElButton type="success" @click="OnFind">检查</ElButton>
           <ElButton type="primary" @click="onFrozen">冻结</ElButton>
           <ElButton type="success" @click="onUnFrozen">解除冻结</ElButton>
           <ElButton type="warning" @click="onRebuild">重新生成卡号</ElButton>

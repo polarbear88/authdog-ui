@@ -21,13 +21,13 @@ const { start, done } = useNProgress()
 
 const { loadStart, loadDone } = usePageLoading()
 
-const whiteList = ['/login', '/saler-login', '/saler-register', '/404'] // 不重定向白名单
+const whiteList = ['/login', '/saler-login', '/404'] // 不重定向白名单
 
 router.beforeEach(async (to, from, next) => {
   start()
   loadStart()
   if (wsCache.get(appStore.getUserInfo)) {
-    if (to.path === '/login') {
+    if (to.path === '/login' || to.path === '/saler-login') {
       next({ path: '/' })
     } else {
       if (permissionStore.getIsAddRouters) {
@@ -59,6 +59,16 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
+      const salerDomain = import.meta.env.VITE_SALER_DOMAIN
+      if (salerDomain) {
+        const isSaler = window.location.host === salerDomain
+        if (isSaler && to.path !== '/saler-login' && to.path !== '/404') {
+          console.log('代理域名请求不允许访问其他页面，有需要就搜索这段文字修改源码')
+          next('/saler-login')
+        } else {
+          next()
+        }
+      }
       next()
     } else {
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页

@@ -86,7 +86,13 @@ const schema = reactive<FormSchema[]>([
 ])
 
 const getlink = (token: string) => {
-  return `${window.location.origin}/#/saler-login?token=${token}`
+  let salerDomain = import.meta.env.VITE_SALER_DOMAIN
+  if (!salerDomain) {
+    salerDomain = window.location.origin
+  } else {
+    salerDomain = window.location.protocol + '//' + salerDomain
+  }
+  return `${salerDomain}/#/saler-login?token=${token}`
 }
 
 const handleDeleteEntryLink = (token: string) => {

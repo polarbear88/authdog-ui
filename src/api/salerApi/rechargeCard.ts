@@ -91,3 +91,13 @@ export const rebuildByCards = (
     }
   })
 }
+
+export const findByCards = (appid: number, cards: string[]): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/saler/recharge-card/find-by-cards',
+    data: {
+      appid,
+      cards
+    }
+  })
+}
