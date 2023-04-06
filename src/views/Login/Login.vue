@@ -75,7 +75,8 @@ const toRegisterSuccess = () => {
         </div>
         <Transition appear enter-active-class="animate__animated animate__bounceInRight">
           <div
-            class="h-full flex items-center m-auto w-[100%] @2xl:max-w-500px @xl:max-w-500px @md:max-w-500px @lg:max-w-500px"
+            style="overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none"
+            class="scrollable-div h-full flex items-center m-auto w-[100%] @2xl:max-w-500px @xl:max-w-500px @md:max-w-500px @lg:max-w-500px"
           >
             <LoginForm
               v-if="isLogin && !isRegisterSuccess"
@@ -118,5 +119,9 @@ const toRegisterSuccess = () => {
       content: '';
     }
   }
+}
+
+.scrollable-div::-webkit-scrollbar {
+  display: none;
 }
 </style>

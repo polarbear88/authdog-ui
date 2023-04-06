@@ -244,7 +244,8 @@ const submitSendSms = () => {
   disableSendSms.value = true
   sendSmsApi(data)
     .then(() => {
-      let count = 80
+      smsSubmitText.value = `79秒后重试`
+      let count = 79
       const timer = setInterval(() => {
         count--
         smsSubmitText.value = `${count}秒后重试`
