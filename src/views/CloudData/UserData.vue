@@ -2,6 +2,7 @@
 import { reactive, ref, unref } from 'vue'
 import { getList, deleteUserData } from '@/api/clouddata/userdata'
 import {
+  ElAlert,
   ElButton,
   ElDropdown,
   ElDropdownItem,
@@ -200,6 +201,9 @@ getTableList()
           </template>
         </Form>
       </div>
+      <ElAlert style="margin-top: 8px"
+        >用户数据功能允许您为用户存储一些用户产生的数据，其中包含三个字段(名称、值、唯一值)，可以通过API来增删改查这些数据</ElAlert
+      >
       <ContentWrap style="margin-top: 10px">
         <ElDropdown trigger="click" @command="(item) => onAction(null, item, true)">
           <span style="font-size: small" class="el-dropdown-link">

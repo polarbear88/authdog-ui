@@ -4,7 +4,15 @@ import { ref } from 'vue'
 import { getList, deleteCloudfun, runCloudfun } from '@/api/clouddata/cloudfun'
 import { ContentWrap } from '@/components/ContentWrap'
 import { Table } from '@/components/Table'
-import { ElButton, ElEmpty, ElInput, ElMessage, ElMessageBox, ElTooltip } from 'element-plus'
+import {
+  ElAlert,
+  ElButton,
+  ElEmpty,
+  ElInput,
+  ElMessage,
+  ElMessageBox,
+  ElTooltip
+} from 'element-plus'
 import { CirclePlus } from '@element-plus/icons-vue'
 import { Dialog } from '@/components/Dialog'
 import { CreateCloudfun, UpdateCloudfun } from './components'
@@ -136,6 +144,9 @@ const run = async () => {
       />
       <ElButton @click="getTableList()" style="margin-left: 10px" type="primary" :icon="Search" />
     </div>
+    <ElAlert style="margin-top: 8px"
+      >云函数允许您将一些不希望放在客户端的功能放到云上来执行并且可以在函数中扣减用户次数，目前仅支持js函数</ElAlert
+    >
     <div>
       <ContentWrap style="margin-top: 10px">
         <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
