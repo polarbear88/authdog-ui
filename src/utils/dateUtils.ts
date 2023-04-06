@@ -71,19 +71,19 @@ export class DateUtils {
     let formattedTime = ''
 
     if (years > 0) {
-      formattedTime += `${years}年`
+      formattedTime += `${Math.floor(years)}年`
     }
     if (months > 0) {
-      formattedTime += `${months}月`
+      formattedTime += `${Math.floor(months)}月`
     }
     if (days > 0) {
-      formattedTime += `${days}天`
+      formattedTime += `${Math.floor(days)}天`
     }
     if (hours > 0) {
-      formattedTime += `${hours}小时`
+      formattedTime += `${Math.floor(hours)}小时`
     }
     if (remainingMinutes > 0) {
-      formattedTime += `${remainingMinutes}分`
+      formattedTime += `${Math.floor(remainingMinutes)}分`
     }
 
     return formattedTime

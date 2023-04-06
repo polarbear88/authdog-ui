@@ -86,7 +86,7 @@ export default {
   },
   login: {
     welcome: '欢迎使用Authdog',
-    message: '免费强大的网络授权验证系统',
+    message: '免费强大的应用网络授权验证系统',
     username: '用户名/手机号',
     password: '密码',
     register: '注册',

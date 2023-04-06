@@ -255,11 +255,11 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       },
       {
-        path: 'collect',
-        component: () => import('@/views/CloudData/DataCollect.vue'),
-        name: 'Clouddata-Collect',
+        path: 'userdata',
+        component: () => import('@/views/CloudData/UserData.vue'),
+        name: 'Clouddata-UserData',
         meta: {
-          title: '数据收集'
+          title: '用户数据'
         }
       }
     ]

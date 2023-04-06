@@ -56,7 +56,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'expirationTime',
-    label: '到期时间'
+    label: '剩余时间'
   },
   {
     field: 'balance',
@@ -571,6 +571,16 @@ const schemaDesc = reactive([
     label: 'IP归属'
   }
 ])
+
+const getExpirationTime = (data: any) => {
+  const time = new Date(data.expirationTime)
+  if (new Date().getTime() > time.getTime()) {
+    return '已过期'
+  }
+  return DateUtils.convertMinutesToFormattedTime(
+    (time.getTime() - new Date().getTime()) / 1000 / 60
+  )
+}
 </script>
 
 <template>
@@ -631,7 +641,7 @@ const schemaDesc = reactive([
             <ElTag v-if="data.row.status !== 'normal'" type="danger">禁用</ElTag>
           </template>
           <template #expirationTime="data">
-            {{ DateUtils.formatDateTime(data.row.expirationTime) }}
+            {{ getExpirationTime(data.row) }}
           </template>
           <template #createdAt="data">
             {{ DateUtils.formatDateTime(data.row.createdAt) }}
