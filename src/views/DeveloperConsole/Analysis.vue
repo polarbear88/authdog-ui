@@ -293,8 +293,8 @@ onMounted(() => {
         tooltipMap[item.name] = item.value
         userDeviceTotal += parseInt(item.value)
       })
-      mYecharts()
     }
+    mYecharts()
   })
   getBrandStatistics().then((res) => {
     if (res.data) {
