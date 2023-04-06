@@ -7,7 +7,7 @@ import { ElButton, ElInput, FormRules } from 'element-plus'
 import { useValidator } from '@/hooks/web/useValidator'
 import { FormSchema } from '@/types/form'
 import { RegisterType } from '@/api/login/types'
-import { registerApi } from '@/api/login'
+import { registerApi, sendSmsApi } from '@/api/login'
 import { ElMessage } from 'element-plus'
 import { GeetestCaptcha } from '@/components/GeetestCaptcha'
 import { getManMachineInspectConfig } from '@/api/manMachineInspect'
@@ -132,6 +132,7 @@ const loginRegister = async () => {
           return
         }
         if (manMachineInspectConfig.value.validate_enable_register) {
+          currentCaptchaAction = 'register'
           submitData = formData
           if ((window as any).captchaObj) {
             ;(window as any).captchaObj.showCaptcha()
@@ -152,6 +153,9 @@ const loginRegister = async () => {
   })
 }
 
+let currentMobile = ''
+let currentCaptchaAction = ''
+
 const captchaHandler = (captchaObj: any) => {
   ;(window as any).captchaObj = captchaObj
   captchaObj
@@ -169,13 +173,18 @@ const captchaHandler = (captchaObj: any) => {
       console.log(e)
     })
     .onSuccess(function () {
-      submitData.geetest_captcha = (window as any).captchaObj.getValidate()
-      registerApi(submitData).then((res) => {
-        if (res) {
-          // 注册成功
-          toRegisterSuccess()
-        }
-      })
+      if (currentCaptchaAction === 'register') {
+        submitData.geetest_captcha = (window as any).captchaObj.getValidate()
+        registerApi(submitData).then((res) => {
+          if (res) {
+            // 注册成功
+            toRegisterSuccess()
+          }
+        })
+      }
+      if (currentCaptchaAction === 'send_sms') {
+        submitSendSms()
+      }
     })
 }
 
@@ -188,14 +197,88 @@ const captchaConfig = reactive({
   handler: captchaHandler
 })
 
+const smsSubmitText = ref('获取验证码')
+
 const manMachineInspectConfig = ref<any>({})
+
+const disableSendSms = ref(false)
 
 getManMachineInspectConfig().then((res) => {
   manMachineInspectConfig.value = res.data
-  if (manMachineInspectConfig.value.validate_enable_register) {
+  if (
+    manMachineInspectConfig.value.validate_enable_register ||
+    manMachineInspectConfig.value.validate_enable_sendsms
+  ) {
     captchaConfig.config.captchaId = res.data.geetest_id_register
   }
+  if (manMachineInspectConfig.value.developer_register_enable_sms) {
+    methods.addSchema(
+      {
+        field: 'smscode',
+        label: '验证码',
+        value: '',
+        component: 'Input',
+        colProps: {
+          span: 24
+        },
+        componentProps: {
+          placeholder: '请输入短信验证码',
+          type: 'number',
+          slots: {
+            suffix: true
+          }
+        }
+      },
+      3
+    )
+  }
 })
+
+const submitSendSms = () => {
+  const data: any = {
+    mobile: currentMobile
+  }
+  if (manMachineInspectConfig.value.validate_enable_sendsms) {
+    data.geetest_captcha = (window as any).captchaObj.getValidate()
+  }
+  disableSendSms.value = true
+  sendSmsApi(data)
+    .then(() => {
+      let count = 80
+      const timer = setInterval(() => {
+        count--
+        smsSubmitText.value = `${count}秒后重试`
+        if (count <= 0) {
+          clearInterval(timer)
+          smsSubmitText.value = '获取验证码'
+          disableSendSms.value = false
+        }
+      }, 1000)
+    })
+    .catch(() => {
+      disableSendSms.value = false
+    })
+}
+
+const onSendSms = async () => {
+  const { getFormData } = methods
+  const formData = await getFormData<RegisterType>()
+  if (!formData.mobile || !/^1[3456789]\d{9}$/.test(formData.mobile)) {
+    ElMessage.error('请输入正确手机号')
+    return
+  }
+  currentMobile = formData.mobile
+  if (manMachineInspectConfig.value.validate_enable_sendsms) {
+    currentCaptchaAction = 'send_sms'
+    if ((window as any).captchaObj) {
+      ;(window as any).captchaObj.showCaptcha()
+    } else {
+      ElMessage.error('验证码未初始化')
+    }
+    return
+  }
+  submitSendSms()
+}
 </script>
 
 <template>
@@ -205,8 +288,7 @@ getManMachineInspectConfig().then((res) => {
       :rules="rules"
       label-position="top"
       hide-required-asterisk
-      size="large"
-      class="dark:(border-1 border-[var(--el-border-color)] border-solid)"
+      class="dark:(border-[var(--el-border-color)] border-solid)"
       @register="register"
     >
       <template #title>
@@ -230,6 +312,11 @@ getManMachineInspectConfig().then((res) => {
             {{ t('login.hasUser') }}
           </ElButton>
         </div>
+      </template>
+      <template #smscode-suffix>
+        <ElButton :disabled="disableSendSms" @click="onSendSms" type="primary" link>{{
+          smsSubmitText
+        }}</ElButton>
       </template>
     </Form>
     <div id="captcha"><GeetestCaptcha :captcha-config="captchaConfig" /></div>

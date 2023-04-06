@@ -218,8 +218,7 @@ getManMachineInspectConfig().then((res) => {
       :rules="rules"
       label-position="top"
       hide-required-asterisk
-      size="large"
-      class="dark:(border-1 border-[var(--el-border-color)] border-solid)"
+      class="dark:(border-[var(--el-border-color)] border-solid)"
       @register="register"
     >
       <template #title>

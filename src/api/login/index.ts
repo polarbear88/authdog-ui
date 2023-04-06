@@ -13,6 +13,10 @@ export const registerApi = (data: RegisterType): Promise<IResponse<null>> => {
   return request.post({ url: '/developer/auth/register', data })
 }
 
+export const sendSmsApi = (data): Promise<IResponse<null>> => {
+  return request.post({ url: '/developer/auth/send-sms', data })
+}
+
 export const loginOutApi = (): Promise<IResponse> => {
   return request.get({ url: '/user/loginOut' })
 }
