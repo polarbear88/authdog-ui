@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ElPageHeader, ElTabPane, ElTabs } from 'element-plus'
+import { ElButton, ElMessageBox, ElPageHeader, ElTabPane, ElTabs } from 'element-plus'
 import { ref } from 'vue'
-import { getDetail } from '@/api/application'
+import { getDetail, deleteApp } from '@/api/application'
 import { useRouter } from 'vue-router'
 import {
   BaseInfo,
@@ -16,6 +16,7 @@ import {
 } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
+import md5 from 'blueimp-md5'
 
 const activeName = ref('info')
 const activeNameRecharge = ref('rechargeCard')
@@ -58,6 +59,30 @@ const getCurrentAppId = () => {
 
 const currentId = ref(getCurrentAppId())
 getAppData()
+
+const onDeleteApp = () => {
+  ElMessageBox.confirm(
+    `<p style="color: #f56c6c">注意：您正在删除应用${appinfo.value.name}，一旦删除应用则与之关联的数据都将被删除且无法找回，包括 用户、设备、用户数据、用户财产明细、充值卡、卡类型、用户反馈、用户设备统计等</p><p>确认请输入您的登录密码</p>`,
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      dangerouslyUseHTMLString: true,
+      showInput: true,
+      inputType: 'password',
+      inputPlaceholder: '确认请输入密码'
+    }
+  ).then((input) => {
+    deleteApp(appinfo.value.id, md5(input.value))
+      .then(() => {
+        router.push({
+          name: 'Application'
+        })
+      })
+      .catch(() => {})
+  })
+}
 </script>
 <template>
   <div>
@@ -84,6 +109,12 @@ getAppData()
           <ElTabPane label="应用信息" name="info">
             <BaseInfo @get-appdata="getAppData" :app="appinfo" />
             <VersionInfo @get-appdata="getAppData" :app="appinfo" />
+            <ElButton
+              @click="onDeleteApp"
+              style="float: right; margin-right: 8px; margin-top: 15px"
+              type="danger"
+              >删除应用</ElButton
+            >
           </ElTabPane>
           <ElTabPane label="授权" name="authorization">
             <Authorization @get-appdata="getAppData" :app="appinfo" />

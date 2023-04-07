@@ -135,3 +135,7 @@ export const setAllowForceLogin = (
     data: { appid: id, allowForceLogin }
   })
 }
+
+export const deleteApp = (id: number, password: string): Promise<IResponse<any>> => {
+  return request.post({ url: `/developer/app/delete`, data: { appid: id, password } })
+}
