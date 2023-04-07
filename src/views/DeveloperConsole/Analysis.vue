@@ -286,11 +286,12 @@ onMounted(() => {
   getAreaStatistics().then((res) => {
     if (res.data && res.data.length > 0) {
       res.data.forEach((item: any) => {
+        const name = getProvince(item.name)
         mapData.push({
-          name: getProvince(item.name),
+          name: name,
           value: parseInt(item.value)
         })
-        tooltipMap[item.name] = item.value
+        tooltipMap[name] = item.value
         userDeviceTotal += parseInt(item.value)
       })
     }
@@ -301,7 +302,7 @@ onMounted(() => {
       isEmptyBrand.value = res.data.length === 0
       res.data.forEach((item: any) => {
         brandMapData.push({
-          name: item.name,
+          name: item.name ? item.name : '未知',
           value: parseInt(item.value)
         })
         pieOptions.value = {
