@@ -182,7 +182,8 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Saler-ChangePassword',
         meta: {
           title: '修改密码'
-        }
+        },
+        roles: ['saler']
       }
     ]
   },
@@ -358,6 +359,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Account-ChangePassword',
         meta: {
           title: '修改密码'
+        }
+      },
+      {
+        path: 'jwt-token',
+        component: () => import('@/views/Account/JWTToken.vue'),
+        name: 'Account-JWTToken',
+        meta: {
+          title: 'jwt令牌'
         }
       }
     ]

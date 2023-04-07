@@ -12,3 +12,9 @@ export const changePassword = (
     }
   })
 }
+
+export const signJwtToken = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile/sign-jwt-token'
+  })
+}
