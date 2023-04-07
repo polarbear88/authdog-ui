@@ -2,7 +2,7 @@
 import { reactive, ref, unref, watch } from 'vue'
 import { Form } from '@/components/Form'
 import { useI18n } from '@/hooks/web/useI18n'
-import { ElButton, ElCheckbox, ElLink, ElMessage } from 'element-plus'
+import { ElButton, ElCheckbox, ElLink, ElMessage, ElMessageBox } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
 import { loginApi } from '@/api/salerApi/auth'
 import { useCache } from '@/hooks/web/useCache'
@@ -216,6 +216,10 @@ getManMachineInspectConfig().then((res) => {
 const toRegister = () => {
   emit('to-register')
 }
+
+const forgotPassword = () => {
+  ElMessageBox.alert('忘记密码请联系您的上级代理或开发者修改')
+}
 </script>
 
 <template>
@@ -236,7 +240,9 @@ const toRegister = () => {
       <template #tool>
         <div class="flex justify-between items-center w-[100%]">
           <ElCheckbox v-model="remember" :label="t('login.remember')" size="small" />
-          <ElLink type="primary" :underline="false">{{ t('login.forgetPassword') }}</ElLink>
+          <ElLink @click="forgotPassword" type="primary" :underline="false">{{
+            t('login.forgetPassword')
+          }}</ElLink>
         </div>
       </template>
 

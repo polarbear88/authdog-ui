@@ -12,3 +12,16 @@ export const setSubordinatePrice = (subordinatePrice: any): Promise<IResponse<an
     }
   })
 }
+
+export const changePassword = (
+  oldPassword: string,
+  newPassword: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/saler/profile/change-password',
+    data: {
+      oldPassword,
+      newPassword
+    }
+  })
+}

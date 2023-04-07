@@ -19,7 +19,7 @@ import { getManMachineInspectConfig } from '@/api/manMachineInspect'
 
 const { required } = useValidator()
 
-const emit = defineEmits(['to-register'])
+const emit = defineEmits(['to-register', 'to-forget-password'])
 
 const appStore = useAppStore()
 
@@ -223,7 +223,14 @@ const toRegister = () => {
       <template #tool>
         <div class="flex justify-between items-center w-[100%]">
           <ElCheckbox v-model="remember" :label="t('login.remember')" size="small" />
-          <ElLink type="primary" :underline="false">{{ t('login.forgetPassword') }}</ElLink>
+          <!-- 注册开启了短信验证才允许使用短信进行重置密码 -->
+          <ElLink
+            v-if="manMachineInspectConfig.developer_register_enable_sms"
+            @click="emit('to-forget-password')"
+            type="primary"
+            :underline="false"
+            >{{ t('login.forgetPassword') }}</ElLink
+          >
         </div>
       </template>
 

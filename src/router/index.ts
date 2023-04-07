@@ -175,6 +175,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '资金明细'
         },
         roles: ['saler']
+      },
+      {
+        path: 'change-password',
+        component: () => import('@/views/SalerView/ChangePassword.vue'),
+        name: 'Saler-ChangePassword',
+        meta: {
+          title: '修改密码'
+        }
       }
     ]
   },
@@ -328,6 +336,28 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Finance-UserFinancial',
         meta: {
           title: '用户明细'
+        }
+      }
+    ]
+  },
+  {
+    path: '/account',
+    component: Layout,
+    redirect: '/account/change-password',
+    name: 'Account',
+    meta: {
+      title: '账户',
+      icon: 'ic:baseline-account-circle',
+      alwaysShow: true
+    },
+    roles: ['developer'],
+    children: [
+      {
+        path: 'change-password',
+        component: () => import('@/views/Account/ChangePassword.vue'),
+        name: 'Account-ChangePassword',
+        meta: {
+          title: '修改密码'
         }
       }
     ]

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoginForm, RegisterForm, RegisterSuccess } from './components'
+import { LoginForm, RegisterForm, RegisterSuccess, ForgetPassword } from './components'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
 import { LocaleDropdown } from '@/components/LocaleDropdown'
 import { useI18n } from '@/hooks/web/useI18n'
@@ -18,19 +18,35 @@ const { t } = useI18n()
 
 const isLogin = ref(true)
 const isRegisterSuccess = ref(false)
+const isForgetPassword = ref(false)
+const isRegister = ref(false)
 
 const toRegister = () => {
   isLogin.value = false
   isRegisterSuccess.value = false
+  isForgetPassword.value = false
+  isRegister.value = true
 }
 
 const toLogin = () => {
   isLogin.value = true
   isRegisterSuccess.value = false
+  isForgetPassword.value = false
+  isRegister.value = false
 }
 
 const toRegisterSuccess = () => {
+  isLogin.value = false
   isRegisterSuccess.value = true
+  isForgetPassword.value = false
+  isRegister.value = false
+}
+
+const toForgetPassword = () => {
+  isLogin.value = false
+  isRegisterSuccess.value = false
+  isForgetPassword.value = true
+  isRegister.value = false
 }
 </script>
 
@@ -79,18 +95,24 @@ const toRegisterSuccess = () => {
             class="scrollable-div h-full flex items-center m-auto w-[100%] @2xl:max-w-500px @xl:max-w-500px @md:max-w-500px @lg:max-w-500px"
           >
             <LoginForm
-              v-if="isLogin && !isRegisterSuccess"
+              v-if="isLogin"
               class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
               @to-register="toRegister"
+              @to-forget-password="toForgetPassword"
             />
             <RegisterForm
-              v-if="!isLogin && !isRegisterSuccess"
+              v-if="isRegister"
               class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
               @to-register-success="toRegisterSuccess"
               @to-login="toLogin"
             />
             <RegisterSuccess
               v-if="isRegisterSuccess"
+              class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
+              @to-login="toLogin"
+            />
+            <ForgetPassword
+              v-if="isForgetPassword"
               class="p-20px h-auto m-auto <xl:(rounded-3xl light:bg-white)"
               @to-login="toLogin"
             />

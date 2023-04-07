@@ -17,6 +17,10 @@ export const sendSmsApi = (data): Promise<IResponse<null>> => {
   return request.post({ url: '/developer/auth/send-sms', data })
 }
 
+export const resetPasswordApi = (data): Promise<IResponse<null>> => {
+  return request.post({ url: '/developer/auth/reset-password', data })
+}
+
 export const loginOutApi = (): Promise<IResponse> => {
   return request.get({ url: '/user/loginOut' })
 }
