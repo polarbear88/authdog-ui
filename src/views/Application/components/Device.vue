@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, reactive, ref, unref } from 'vue'
-import { getList, addTime, addBalance, setStatus } from '@/api/device'
+import { getList, addTime, addBalance, setStatus, deleteUsers } from '@/api/device'
 import {
   ElButton,
   ElDropdown,
@@ -317,6 +317,18 @@ const onChangeCount = (device: any) => {
     .catch(() => {})
 }
 
+const onDelete = (user: any) => {
+  const data = batchAction.value ? currentActionIds.value : [user.id]
+  deleteUsers(props.app.id, data)
+    .then((res) => {
+      getTableList()
+      ElMessage.success('删除成功，影响' + res.data.affectedCount + '个用户')
+    })
+    .catch(() => {
+      ElMessage.success('未影响任何用户')
+    })
+}
+
 const onAction = async (device: any, item: string, isBatch = false) => {
   currentDevice.value = device
   batchAction.value = isBatch
@@ -352,6 +364,15 @@ const onAction = async (device: any, item: string, isBatch = false) => {
   if (item === 'setStatus') {
     currentDevice.value = device
     showSelectStatus.value = true
+  }
+  if (item === 'delete') {
+    ElMessageBox.confirm(`注意删除用户将会删除包括该用户的用户数据和财产明细数据`, '批量删除', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      onDelete(device)
+    })
   }
 }
 
@@ -508,6 +529,7 @@ const getExpirationTime = (data: any) => {
               <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
               <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
               <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
+              <ElDropdownItem divided style="color: #f56c6c" command="delete">删除</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -557,6 +579,9 @@ const getExpirationTime = (data: any) => {
                   <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
                   <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
                   <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
+                  <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                    >删除</ElDropdownItem
+                  >
                 </ElDropdownMenu>
               </template>
             </ElDropdown>

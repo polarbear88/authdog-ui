@@ -81,3 +81,13 @@ export const setStatus = (
     }
   })
 }
+
+export const deleteUsers = (appid: number, ids: number[]): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/user/delete',
+    data: {
+      appid,
+      ids
+    }
+  })
+}

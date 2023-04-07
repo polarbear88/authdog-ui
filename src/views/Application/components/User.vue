@@ -8,7 +8,8 @@ import {
   unbind,
   resetUnbindCount,
   addBalance,
-  setStatus
+  setStatus,
+  deleteUsers
 } from '@/api/user'
 import {
   ElButton,
@@ -435,6 +436,15 @@ const onAction = async (user: any, item: string, isBatch = false) => {
     currentUser.value = user
     showSelectStatus.value = true
   }
+  if (item === 'delete') {
+    ElMessageBox.confirm(`注意删除用户将会删除包括该用户的用户数据和财产明细数据`, '批量删除', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      onDelete(user)
+    })
+  }
 }
 
 const onSetStatus = () => {
@@ -471,6 +481,18 @@ const onUnbind = (user: any) => {
     .then((res) => {
       getTableList()
       ElMessage.success('修改成功，影响' + res.data.affectedCount + '个用户')
+    })
+    .catch(() => {
+      ElMessage.success('未影响任何用户')
+    })
+}
+
+const onDelete = (user: any) => {
+  const data = batchAction.value ? currentActionIds.value : [user.id]
+  deleteUsers(props.app.id, data)
+    .then((res) => {
+      getTableList()
+      ElMessage.success('删除成功，影响' + res.data.affectedCount + '个用户')
     })
     .catch(() => {
       ElMessage.success('未影响任何用户')
@@ -619,6 +641,7 @@ const getExpirationTime = (data: any) => {
               <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
               <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
               <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
+              <ElDropdownItem divided style="color: #f56c6c" command="delete">删除</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -668,6 +691,9 @@ const getExpirationTime = (data: any) => {
                   <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
                   <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
                   <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
+                  <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                    >删除</ElDropdownItem
+                  >
                 </ElDropdownMenu>
               </template>
             </ElDropdown>
