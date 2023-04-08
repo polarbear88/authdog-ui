@@ -100,6 +100,8 @@ if (props.isWatchValue) {
 }
 
 const onSelect = (val: string) => {
+  value.value = val
+  emit('update:modelValue', Number(val))
   emit('change', Number(val))
 }
 </script>

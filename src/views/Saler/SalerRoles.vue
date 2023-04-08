@@ -6,7 +6,7 @@ import {
   deleteSalerRoles
 } from '@/api/saler/SalerRoles'
 import { TableColumn } from '@/types/table'
-import { ElAlert, ElButton, ElEmpty, ElInput, ElMessage, ElMessageBox } from 'element-plus'
+import { ElAlert, ElButton, ElEmpty, ElInput, ElMessage, ElMessageBox, ElText } from 'element-plus'
 import { ref } from 'vue'
 import { CirclePlus, CloseBold } from '@element-plus/icons-vue'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -15,6 +15,7 @@ import { Dialog } from '@/components/Dialog'
 import { getList as getApplist } from '@/api/application'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
 import { RechargeCardTypeSelect } from '@/components/RechargeCardTypeSelect'
+import { getList as getRechargeCardType } from '@/api/rechargeCardType'
 
 const columns: TableColumn[] = [
   {
@@ -67,9 +68,33 @@ const currentItem = ref<any>({})
 const applist = ref<any[]>([])
 const priceConfig = ref<any[]>([])
 
+const cacheCardTypePrice = {}
+
+const getPrice = async (appid: number, cardTypeId: number) => {
+  if (!cardTypeId) {
+    return 0
+  }
+  if (cacheCardTypePrice[cardTypeId + '']) {
+    return cacheCardTypePrice[cardTypeId + '']
+  }
+  const res = await getRechargeCardType(parseInt(appid + ''))
+  if (res) {
+    const data = res.data
+    for (const item of data) {
+      cacheCardTypePrice[item.id + ''] = item.price
+    }
+  }
+  return cacheCardTypePrice[cardTypeId + '']
+}
+
 const onEdit = (row: any) => {
   currentItem.value = row
   priceConfig.value = JSON.parse(JSON.stringify(row.priceConfig))
+  for (let i = 0; i < priceConfig.value.length; i++) {
+    getPrice(priceConfig.value[i].appid, priceConfig.value[i].cardTypeId).then((res) => {
+      priceConfig.value[i].price = res
+    })
+  }
   showEdit.value = true
 }
 
@@ -83,12 +108,22 @@ const onAddConfig = () => {
   priceConfig.value.push({
     appid: 0,
     cardTypeId: 0,
-    salerProfit: 0
+    salerProfit: 0,
+    price: 0
   })
 }
 
 const onDelConfig = (index: number) => {
   priceConfig.value.splice(index, 1)
+}
+
+const onrechargeCardTypeChange = (index: number) => {
+  priceConfig.value[index].price = getPrice(
+    priceConfig.value[index].appid,
+    priceConfig.value[index].cardTypeId
+  ).then((res) => {
+    priceConfig.value[index].price = res
+  })
 }
 
 const onSave = () => {
@@ -151,9 +186,10 @@ const onSave = () => {
 }
 
 const appSelectChange = (index: number) => {
+  priceConfig.value[index].cardTypeId = 0
+  priceConfig.value[index].price = 0
   return (val: any) => {
     priceConfig.value[index].appid = val
-    priceConfig.value[index].cardTypeId = 0
   }
 }
 
@@ -216,6 +252,7 @@ const onDelete = (row: any) => {
             :notShowRefresh="true"
             :isWatchApp="true"
             :is-watch-value="true"
+            @change="onrechargeCardTypeChange(index)"
           />
           <div style="display: inline-block; margin-left: 8px">
             <ElInput
@@ -234,6 +271,15 @@ const onDelete = (row: any) => {
             type="danger"
             :icon="CloseBold"
           />
+          <br />
+          <ElText type="danger" style="margin-left: 8px; margin-top: 5px">
+            单价：{{ priceConfig[index].price }}元，代理制卡价：{{
+              (
+                priceConfig[index].price -
+                priceConfig[index].price * (Number(priceConfig[index].salerProfit) / 100)
+              ).toFixed(2)
+            }}
+          </ElText>
         </div>
         <div style="margin-left: 8px; margin-top: 15px">
           <ElButton @click="onAddConfig">添加配置</ElButton>
