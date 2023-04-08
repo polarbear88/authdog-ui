@@ -51,16 +51,8 @@ export class DateUtils {
   public static convertMinutesToFormattedTime(minutes: number) {
     let remainingMinutes = minutes
 
-    const minutesInYear = 525600
-    const minutesInMonth = 43800
     const minutesInDay = 1440
     const minutesInHour = 60
-
-    const years = Math.floor(remainingMinutes / minutesInYear)
-    remainingMinutes %= minutesInYear
-
-    const months = Math.floor(remainingMinutes / minutesInMonth)
-    remainingMinutes %= minutesInMonth
 
     const days = Math.floor(remainingMinutes / minutesInDay)
     remainingMinutes %= minutesInDay
@@ -70,12 +62,6 @@ export class DateUtils {
 
     let formattedTime = ''
 
-    if (years > 0) {
-      formattedTime += `${Math.floor(years)}年`
-    }
-    if (months > 0) {
-      formattedTime += `${Math.floor(months)}月`
-    }
     if (days > 0) {
       formattedTime += `${Math.floor(days)}天`
     }
