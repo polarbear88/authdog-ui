@@ -93,7 +93,7 @@ const schema = reactive<FormSchema[]>([
     },
     component: 'Input',
     componentProps: {
-      placeholder: '请输入面值次数'
+      placeholder: '请输入面值次数 可空'
     },
     value: props.isUpdate ? props.data.money + '' : ''
   },
