@@ -42,7 +42,7 @@ getAplicationpList()
           <ElCard shadow="hover" class="mb-20px">
             <div :class="`${prefixCls}__item flex justify-between`">
               <div class="flex flex-col justify-between">
-                <ElStatistic :prefix="'¥'" :value="userProfile.balance">
+                <ElStatistic :precision="2" :prefix="'¥'" :value="userProfile.balance">
                   <template #title>
                     <div style="display: inline-flex; align-items: center"> 余额 </div>
                   </template>

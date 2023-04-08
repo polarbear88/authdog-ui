@@ -79,7 +79,7 @@ getLatelyInfo('today')
           <ElCard shadow="hover" class="mb-20px">
             <div :class="`${prefixCls}__item flex justify-between`">
               <div class="flex flex-col justify-between">
-                <ElStatistic :prefix="'¥'" :value="baseInfo.income">
+                <ElStatistic :precision="2" :prefix="'¥'" :value="baseInfo.income">
                   <template #title>
                     <div style="display: inline-flex; align-items: center">
                       来自代理总利润
