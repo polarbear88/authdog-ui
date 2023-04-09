@@ -68,12 +68,17 @@ const getLatelyInfo = (type: string) => {
 }
 
 const handleRecharge = () => {
-  ElMessageBox.confirm('请输入充值卡号', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    showInput: true,
-    inputPlaceholder: '请输入充值卡号'
-  }).then((res) => {
+  ElMessageBox.confirm(
+    '<p style="color: #f56c6c">如果充值的类型与当前类型不符(非免费情况)，则会自动计算补偿时间并切换到目标类型</p>',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      showInput: true,
+      inputPlaceholder: '请输入充值卡号',
+      dangerouslyUseHTMLString: true
+    }
+  ).then((res) => {
     if (res.value) {
       recharge(res.value).then(() => {
         ElMessage.success('充值成功')
