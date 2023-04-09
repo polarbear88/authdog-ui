@@ -18,3 +18,15 @@ export const signJwtToken = (): Promise<IResponse<any>> => {
     url: '/developer/profile/sign-jwt-token'
   })
 }
+
+export const getProfile = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile'
+  })
+}
+
+export const recharge = (card: string): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile/recharge?card' + card
+  })
+}

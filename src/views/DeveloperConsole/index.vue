@@ -3,9 +3,12 @@ import { ContentWrap } from '@/components/ContentWrap'
 import { useDesign } from '@/hooks/web/useDesign'
 import { Warning } from '@element-plus/icons-vue'
 import {
+  ElButton,
   ElCard,
   ElCol,
   ElIcon,
+  ElMessage,
+  ElMessageBox,
   ElPagination,
   ElRadioButton,
   ElRadioGroup,
@@ -18,6 +21,7 @@ import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
 import { getList } from '@/api/actionLog'
 import { DateUtils } from '@/utils/dateUtils'
+import { getProfile, recharge } from '@/api/profile'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
@@ -39,6 +43,16 @@ const getActionLog = () => {
   })
 }
 
+const profileInfo = ref<any>({})
+
+const getProfileInfo = () => {
+  getProfile().then((res) => {
+    profileInfo.value = res.data
+  })
+}
+
+getProfileInfo()
+
 getActionLog()
 
 const getBaseInfo = () => {
@@ -50,6 +64,22 @@ const getBaseInfo = () => {
 const getLatelyInfo = (type: string) => {
   getLately(type).then((res) => {
     latelyInfo.value = res.data
+  })
+}
+
+const handleRecharge = () => {
+  ElMessageBox.confirm('请输入充值卡号', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '请输入充值卡号'
+  }).then((res) => {
+    if (res.value) {
+      recharge(res.value).then(() => {
+        ElMessage.success('充值成功')
+        getProfileInfo()
+      })
+    }
   })
 }
 
@@ -67,13 +97,49 @@ const onSelectLatelyType = (t: string) => {
   getLatelyInfo(type)
 }
 
+const buyurl = import.meta.env.VITE_BUY_URL
+
+const handleOpenBuyUrl = () => {
+  window.open(buyurl)
+}
+
 getBaseInfo()
 getLatelyInfo('today')
 </script>
 
 <template>
   <div>
-    <ContentWrap message="数据不实时，缓存60秒" title="基本数据">
+    <ContentWrap>
+      <h2 style="font-weight: bold"
+        >欢迎，{{ profileInfo.name }}
+        <ElButton type="primary" link style="margin-left: 10px" @click="handleRecharge"
+          >充值</ElButton
+        ><ElButton
+          v-if="buyurl"
+          type="primary"
+          link
+          style="margin-left: 10px"
+          @click="handleOpenBuyUrl"
+          >购买充值卡</ElButton
+        ></h2
+      >
+      <ElText
+        >您当前是{{ profileInfo?.quota?.chinaName
+        }}{{
+          profileInfo?.quota?.name && profileInfo?.quota?.name !== 'default'
+            ? '，到期时间：' + DateUtils.formatDateTime(profileInfo.quotaExpiredAt)
+            : ''
+        }}</ElText
+      >
+      <ElText style="margin-left: 10px"
+        >当前配额：[应用{{ profileInfo?.quota?.maxAppCount }}个][用户{{
+          profileInfo?.quota?.maxUserCount
+        }}个][云函数{{ profileInfo?.quota?.maxCloudfunCount }}个][用户数据{{
+          profileInfo?.quota?.maxUserDataCount
+        }}条][代理{{ profileInfo?.quota?.maxSalerCount }}个]</ElText
+      >
+    </ContentWrap>
+    <ContentWrap style="margin-top: 15px" message="数据不实时，缓存60秒" title="基本数据">
       <ElRow :gutter="20" :class="prefixCls">
         <ElCol :xl="6" :lg="6" :md="6" :sm="6" :xs="12">
           <ElCard shadow="hover" class="mb-20px">
