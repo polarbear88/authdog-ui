@@ -30,12 +30,8 @@ const columns: TableColumn[] = [
     label: '次数'
   },
   {
-    field: 'price',
-    label: '价格'
-  },
-  {
-    field: 'salerProfit',
-    label: '顶级代理利润'
+    field: 'topSalerPrice',
+    label: '顶级代理价格'
   },
   {
     field: 'prefix',
@@ -126,24 +122,14 @@ const onDelete = (data: any) => {
       </Table>
     </ContentWrap>
     <div>
-      <Dialog
-        :fullscreen="false"
-        style="width: 680px; max-width: 80%"
-        v-model="showCreate"
-        title="创建充值卡类型"
-      >
+      <Dialog v-model="showCreate" title="创建充值卡类型">
         <CreateRechargeType
           :app="props.app"
           @closedialog="showCreate = false"
           @success="getTableList"
         />
       </Dialog>
-      <Dialog
-        :fullscreen="false"
-        style="width: 680px; max-width: 80%"
-        v-model="showUpdate"
-        title="修改充值卡类型"
-      >
+      <Dialog v-model="showUpdate" title="修改充值卡类型">
         <CreateRechargeType
           :is-update="true"
           :data="currentUpdateData"

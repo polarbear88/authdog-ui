@@ -23,19 +23,19 @@ const rules = {
   salerProfit: [required()]
 }
 
-const currentPrice = ref(props.isUpdate ? props.data.price : 0)
-const currentSalerProfit = ref(props.isUpdate ? props.data.salerProfit : 0)
-const currentSalerPrice = ref(0)
+// const currentPrice = ref(props.isUpdate ? props.data.price : 0)
+// const currentSalerProfit = ref(props.isUpdate ? props.data.salerProfit : 0)
+// const currentSalerPrice = ref(0)
 
-const calcSalerPrice = () => {
-  currentSalerPrice.value =
-    currentPrice.value - currentPrice.value * (currentSalerProfit.value / 100)
-  if (!currentSalerPrice.value || !currentPrice.value || !currentSalerProfit.value) {
-    currentSalerPrice.value = 0
-  }
-}
+// const calcSalerPrice = () => {
+//   currentSalerPrice.value =
+//     currentPrice.value - currentPrice.value * (currentSalerProfit.value / 100)
+//   if (!currentSalerPrice.value || !currentPrice.value || !currentSalerProfit.value) {
+//     currentSalerPrice.value = 0
+//   }
+// }
 
-calcSalerPrice()
+// calcSalerPrice()
 
 const emit = defineEmits(['closedialog', 'success'])
 
@@ -68,7 +68,7 @@ const schema = reactive<FormSchema[]>([
     field: 'isNeedPassword',
     label: '需要密码',
     colProps: {
-      span: 24
+      span: 12
     },
     component: 'Switch',
     value: props.isUpdate ? props.data.isNeedPassword : false
@@ -98,41 +98,17 @@ const schema = reactive<FormSchema[]>([
     value: props.isUpdate ? props.data.money + '' : ''
   },
   {
-    field: 'price',
-    label: '价格',
+    field: 'topSalerPrice',
+    label: '顶级代理价格',
     colProps: {
       span: 12
     },
     component: 'Input',
     componentProps: {
-      placeholder: '请输入卡价格',
-      type: 'number',
-      onInput: (e: any) => {
-        currentPrice.value = e
-        calcSalerPrice()
-      }
+      placeholder: '请输入顶级代理价格',
+      type: 'number'
     },
     value: props.isUpdate ? props.data.price + '' : ''
-  },
-  {
-    field: 'salerProfit',
-    label: '代理利润百分比 0 - 99',
-    colProps: {
-      span: 12
-    },
-    component: 'Input',
-    componentProps: {
-      placeholder: '请输入代理利润百分比 0 - 99',
-      type: 'number',
-      slots: {
-        append: true
-      },
-      onInput: (e: any) => {
-        currentSalerProfit.value = e
-        calcSalerPrice()
-      }
-    },
-    value: props.isUpdate ? props.data.salerProfit + '' : ''
   }
 ])
 
@@ -199,13 +175,6 @@ if (props.isUpdate) {
     >
       <template #salerProfit-append> % </template>
     </Form>
-    <p style="color: #f56c6c; margin-left: 10px; margin-top: -5px"
-      >当前顶级代理制卡价格为 {{ currentSalerPrice }}元</p
-    >
-    <p style="margin-left: 10px"
-      >顶级代理制卡价格为 价格 - 价格 ✖️ (利润百分比 ➗
-      100)，顶级代理可以自定义下级代理的制卡价格</p
-    >
     <div style="right: 20px; bottom: 10px; position: absolute">
       <ElButton @click="emit('closedialog')">取消</ElButton>
       <ElButton :loading="loading" type="primary" @click="submit"> 确认 </ElButton>
