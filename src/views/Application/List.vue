@@ -96,11 +96,20 @@ const actionFn = (data: TableSlotDefault) => {
           {{ data.row.cryptoMode === 'none' ? '无' : data.row.cryptoMode.toUpperCase() }}
         </template>
         <template #status="data">
-          <ElTag v-if="data.row.status === 'published'" type="success">正常</ElTag>
-          <ElTag v-if="data.row.status === 'disabled'" type="danger">禁用</ElTag>
+          <ElTag v-if="data.row.status === 'published' && !data.row.deactivated" type="success"
+            >正常</ElTag
+          >
+          <ElTag v-if="data.row.status === 'disabled' && !data.row.deactivated" type="warning"
+            >禁用</ElTag
+          >
+          <ElTag v-if="data.row.deactivated" type="danger">停用</ElTag>
         </template>
         <template #action="data">
-          <ElButton size="small" type="primary" @click="actionFn(data as TableSlotDefault)"
+          <ElButton
+            v-if="!data.row.deactivated"
+            size="small"
+            type="primary"
+            @click="actionFn(data as TableSlotDefault)"
             >管理</ElButton
           >
         </template>
