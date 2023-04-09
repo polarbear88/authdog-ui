@@ -2,13 +2,13 @@
 import { defineComponent, computed } from 'vue'
 import { Collapse } from '@/components/Collapse'
 import { LocaleDropdown } from '@/components/LocaleDropdown'
-// import { SizeDropdown } from '@/components/SizeDropdown'
 import { UserInfo } from '@/components/UserInfo'
 import { Screenfull } from '@/components/Screenfull'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { useAppStore } from '@/store/modules/app'
 import { useDesign } from '@/hooks/web/useDesign'
 import { ThemeSwitch } from '@/components/ThemeSwitch'
+import { HelpDocument } from '@/components/HelpDocument'
 
 const { getPrefixCls, variables } = useDesign()
 
@@ -55,6 +55,7 @@ export default defineComponent({
           </div>
         ) : undefined}
         <div class="h-full flex items-center">
+          <HelpDocument></HelpDocument>
           <ThemeSwitch />
           {screenfull.value ? (
             <Screenfull class="hover-trigger" color="var(--top-header-text-color)"></Screenfull>
