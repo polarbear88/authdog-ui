@@ -13,6 +13,7 @@ import {
 import { getList as getListForApp } from '@/api/application'
 import { getList as getRoleList } from '@/api/saler/SalerRoles'
 import {
+  ElAlert,
   ElButton,
   ElDropdown,
   ElDropdownItem,
@@ -570,7 +571,8 @@ getRoleList()
             </template>
           </Form>
         </div>
-        <ContentWrap>
+        <ElAlert title="别忘记添加代理后要设置授权应用" type="warning" show-icon />
+        <ContentWrap style="margin-top: 10px">
           <ElDropdown trigger="click" @command="(item) => onAction(null, item, true)">
             <span style="font-size: small; float: left" class="el-dropdown-link">
               批量操作<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
