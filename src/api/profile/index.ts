@@ -27,6 +27,6 @@ export const getProfile = (): Promise<IResponse<any>> => {
 
 export const recharge = (card: string): Promise<IResponse<any>> => {
   return request.get({
-    url: '/developer/profile/recharge?card' + card
+    url: '/developer/profile/recharge?card=' + card
   })
 }
