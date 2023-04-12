@@ -127,7 +127,7 @@ const submit = async () => {
     const formData = await getFormData()
     let data = { ...formData }
     data = StringUtils.deleteObjectEmptyProperty(data)
-    NumberUtils.allToNumber(data, ['price', 'salerProfit', 'money', 'time'])
+    NumberUtils.allToNumber(data, ['topSalerPrice', 'salerProfit', 'money', 'time'])
     if (data.money === undefined) {
       data.money = 0
     }
