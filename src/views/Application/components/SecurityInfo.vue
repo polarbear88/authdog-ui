@@ -68,7 +68,7 @@ const onConfirmResetCryptoMode = () => {
             PKCS7加密 详见API文档</span
           >
           <span v-if="app.cryptoMode === 'rsa'" style="color: #f56c6c"
-            >RSA模式 rsa-2048 RSA_PKCS1_OAEP_PADDING 详见API文档</span
+            >RSA模式 rsa-2048 RSA_PKCS1_PADDING 详见API文档</span
           >
         </ElText>
       </div>
