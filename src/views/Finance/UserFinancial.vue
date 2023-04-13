@@ -285,7 +285,7 @@ const resetForm = () => {
             {{ data.row.direction === 'in' ? '入账' : '支出' }}
           </template>
           <template #value="data">
-            {{ data.row.value }}{{ data.row.type === 'time' ? '分' : '次' }}
+            {{ data.row.value }}{{ data.row.type === 'time' ? '分' : '点' }}
           </template>
         </Table>
         <ElPagination

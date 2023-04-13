@@ -61,7 +61,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'balance',
-    label: '次数'
+    label: '点数'
   },
   {
     field: 'mobile',
@@ -183,19 +183,19 @@ const schema = reactive<FormSchema[]>([
   },
   {
     field: 'balanceThanOrEq',
-    label: '余额大于',
+    label: '点数大于',
     component: 'Input',
     componentProps: {
-      placeholder: '余额大于等于',
+      placeholder: '点数大于等于',
       type: 'number'
     }
   },
   {
     field: 'balanceLessOrEq',
-    label: '余额小于',
+    label: '点数小于',
     component: 'Input',
     componentProps: {
-      placeholder: '余额小于等于',
+      placeholder: '点数小于等于',
       type: 'number'
     }
   },
@@ -330,13 +330,13 @@ const onChangeCount = (user: any) => {
   ElMessageBox.confirm(
     `您正为${
       batchAction.value ? `${currentActionIds.value.length}个用户` : currentUser.value.name
-    }${isaddCount.value ? '增加' : '减少'}次数`,
-    (isaddCount.value ? '增加' : '减少') + '用户次数',
+    }${isaddCount.value ? '增加' : '减少'}点数`,
+    (isaddCount.value ? '增加' : '减少') + '用户点数',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       showInput: true,
-      inputPlaceholder: '次数',
+      inputPlaceholder: '点数',
       inputType: 'number'
     }
   )
@@ -558,7 +558,7 @@ const schemaDesc = reactive([
   },
   {
     field: 'balance',
-    label: '剩余次数'
+    label: '剩余点数'
   },
   {
     field: 'currentDeviceId',
@@ -636,8 +636,8 @@ const getExpirationTime = (data: any) => {
             <ElDropdownMenu>
               <ElDropdownItem command="addTime">增加时间</ElDropdownItem>
               <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
-              <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
-              <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+              <ElDropdownItem divided command="addCount">增加点数</ElDropdownItem>
+              <ElDropdownItem command="subCount">减少点数</ElDropdownItem>
               <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
               <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
               <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
@@ -686,8 +686,8 @@ const getExpirationTime = (data: any) => {
                   <ElDropdownItem command="changePassword">修改密码</ElDropdownItem>
                   <ElDropdownItem divided command="addTime">增加时间</ElDropdownItem>
                   <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
-                  <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
-                  <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+                  <ElDropdownItem divided command="addCount">增加点数</ElDropdownItem>
+                  <ElDropdownItem command="subCount">减少点数</ElDropdownItem>
                   <ElDropdownItem divided command="unbind">解绑设备</ElDropdownItem>
                   <ElDropdownItem command="resetUnbindCount">重置解绑次数</ElDropdownItem>
                   <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>

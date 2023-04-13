@@ -62,7 +62,7 @@ const bindDeviceSchema_on = [
   },
   {
     field: 'unbindDeductCount',
-    label: '解绑扣次「启用按次模式有效」'
+    label: '解绑扣点「启用扣点模式有效」'
   },
   {
     field: 'maxUnbindCount',
@@ -90,15 +90,15 @@ const multiDeviceSchema = reactive([
 const countModeSchema = reactive([
   {
     field: 'useCountMode',
-    label: '按次收费'
+    label: '扣点收费'
   },
   {
     field: 'allowLoginWhenCountUsedUp',
-    label: '次数用尽后允许登录'
+    label: '点数用尽后允许登录'
   },
   {
     field: 'trialCount',
-    label: '试用次数'
+    label: '试用点数'
   }
 ])
 const getAuthModeTooltip = () => {
@@ -253,7 +253,7 @@ const onConfirmSetUnbindDeductTime = () => {
 }
 
 const onSetUnbindDeductCount = () => {
-  ElMessageBox.confirm('', '请输入解绑扣的次数：', {
+  ElMessageBox.confirm('', '请输入解绑扣的点数：', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     showInput: true,
@@ -263,7 +263,7 @@ const onSetUnbindDeductCount = () => {
       if (res.value) {
         const count = Number(res.value)
         if (count < 0 || isNaN(count)) {
-          ElMessage.error('请输入正确的次数')
+          ElMessage.error('请输入正确的点数')
           return
         }
         setUnbindDeductCount(props.app.id + '', count).then(() => {
@@ -452,7 +452,7 @@ const onSetAllowForceLogin = () => {
           /></ElButton>
         </template>
         <template #unbindDeductCount="data">
-          {{ data.row.unbindDeductCount ? data.row.unbindDeductCount + '次' : '不扣次' }}
+          {{ data.row.unbindDeductCount ? data.row.unbindDeductCount + '次' : '不扣点' }}
           <ElButton @click="onSetUnbindDeductCount" type="primary" link
             ><Icon icon="mdi:circle-edit-outline"
           /></ElButton>
@@ -493,7 +493,7 @@ const onSetAllowForceLogin = () => {
       </Descriptions>
     </div>
     <div>
-      <Descriptions :collapse="false" title="按次收费" :data="app" :schema="countModeSchema">
+      <Descriptions :collapse="false" title="扣点收费" :data="app" :schema="countModeSchema">
         <template #useCountMode="data">
           <ElSwitch @change="onSetUseCountMode" v-model="data.row.useCountMode" />
         </template>

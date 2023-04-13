@@ -56,7 +56,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'balance',
-    label: '次数'
+    label: '点数'
   },
   {
     field: 'createdAt',
@@ -158,10 +158,10 @@ const schema = reactive<FormSchema[]>([
   },
   {
     field: 'balanceThanOrEq',
-    label: '余额大于',
+    label: '点数大于',
     component: 'Input',
     componentProps: {
-      placeholder: '余额大于等于',
+      placeholder: '点数大于等于',
       type: 'number'
     },
     colProps: {
@@ -170,10 +170,10 @@ const schema = reactive<FormSchema[]>([
   },
   {
     field: 'balanceLessOrEq',
-    label: '余额小于',
+    label: '点数小于',
     component: 'Input',
     componentProps: {
-      placeholder: '余额小于等于',
+      placeholder: '点数小于等于',
       type: 'number'
     },
     colProps: {
@@ -284,13 +284,13 @@ const onChangeCount = (device: any) => {
   ElMessageBox.confirm(
     `您正为${batchAction.value ? `${currentActionIds.value.length}个设备` : device.deviceId}${
       isaddCount.value ? '增加' : '减少'
-    }次数`,
-    (isaddCount.value ? '增加' : '减少') + '设备次数',
+    }点数`,
+    (isaddCount.value ? '增加' : '减少') + '设备点数',
     {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       showInput: true,
-      inputPlaceholder: '次数',
+      inputPlaceholder: '点数',
       inputType: 'number'
     }
   )
@@ -460,7 +460,7 @@ const schemaDesc = reactive([
   },
   {
     field: 'balance',
-    label: '剩余次数'
+    label: '剩余点数'
   },
   {
     field: 'expirationTime',
@@ -526,8 +526,8 @@ const getExpirationTime = (data: any) => {
             <ElDropdownMenu>
               <ElDropdownItem command="addTime">增加时间</ElDropdownItem>
               <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
-              <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
-              <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+              <ElDropdownItem divided command="addCount">增加点数</ElDropdownItem>
+              <ElDropdownItem command="subCount">减少点数</ElDropdownItem>
               <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
               <ElDropdownItem divided style="color: #f56c6c" command="delete">删除</ElDropdownItem>
             </ElDropdownMenu>
@@ -576,8 +576,8 @@ const getExpirationTime = (data: any) => {
                 <ElDropdownMenu>
                   <ElDropdownItem command="addTime">增加时间</ElDropdownItem>
                   <ElDropdownItem command="subTime">减少时间</ElDropdownItem>
-                  <ElDropdownItem divided command="addCount">增加次数</ElDropdownItem>
-                  <ElDropdownItem command="subCount">减少次数</ElDropdownItem>
+                  <ElDropdownItem divided command="addCount">增加点数</ElDropdownItem>
+                  <ElDropdownItem command="subCount">减少点数</ElDropdownItem>
                   <ElDropdownItem divided command="setStatus">设置状态</ElDropdownItem>
                   <ElDropdownItem divided style="color: #f56c6c" command="delete"
                     >删除</ElDropdownItem

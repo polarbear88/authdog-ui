@@ -27,7 +27,7 @@ const columns: TableColumn[] = [
   },
   {
     field: 'money',
-    label: '次数'
+    label: '点数'
   },
   {
     field: 'topSalerPrice',
