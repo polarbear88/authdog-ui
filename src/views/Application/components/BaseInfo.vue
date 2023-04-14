@@ -75,7 +75,8 @@ const setNoticeApp = () => {
   ElMessageBox.confirm('', '请输入内容：', {
     confirmButtonText: t('common.ok'),
     cancelButtonText: t('common.cancel'),
-    showInput: true
+    showInput: true,
+    inputType: 'textarea'
   })
     .then(async (res) => {
       if (res.value) {

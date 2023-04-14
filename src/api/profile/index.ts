@@ -30,3 +30,13 @@ export const recharge = (card: string): Promise<IResponse<any>> => {
     url: '/developer/profile/recharge?card=' + card
   })
 }
+
+export const validateUserToken = (appid: number, token: string) => {
+  return request.post({
+    url: '/developer/profile/validate_user_token',
+    data: {
+      appid,
+      token
+    }
+  })
+}
