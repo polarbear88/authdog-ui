@@ -38,3 +38,13 @@ export const fundTransfer = (id: number, amount: number): Promise<IResponse<any>
     }
   })
 }
+
+export const setRolesSaler = (ids: number[], roleId: number): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/saler/subordinate/set-roles',
+    data: {
+      ids,
+      roleId
+    }
+  })
+}

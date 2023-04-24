@@ -539,6 +539,10 @@ getRoleList()
   .then((res) => {
     if (res) {
       roleList.value = res.data
+      roleList.value.unshift({
+        id: 0,
+        name: '清除角色'
+      })
     }
   })
   .catch(() => {})

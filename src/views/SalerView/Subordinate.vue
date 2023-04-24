@@ -5,8 +5,10 @@ import {
   changePasswordSaler,
   setStatusSaler,
   createSaler,
-  fundTransfer
+  fundTransfer,
+  setRolesSaler
 } from '@/api/salerApi/subordinate'
+import { getList as getRoleList } from '@/api/salerApi/roles'
 import {
   ElButton,
   ElDropdown,
@@ -16,7 +18,9 @@ import {
   ElIcon,
   ElMessage,
   ElMessageBox,
+  ElOption,
   ElPagination,
+  ElSelect,
   ElTag
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
@@ -41,6 +45,10 @@ const columns: TableColumn[] = [
   {
     field: 'name',
     label: '代理名'
+  },
+  {
+    field: 'role',
+    label: '角色'
   },
   {
     field: 'parentName',
@@ -69,6 +77,10 @@ const columns: TableColumn[] = [
 ]
 
 const loading = ref(true)
+
+const showSetRole = ref(false)
+
+const currentRole = ref<any>('')
 
 let tableDataList = ref<any[]>([])
 
@@ -228,6 +240,20 @@ const onSetStatus = (status: string, ids: Array<number>) => {
   })
 }
 
+const onSetRole = () => {
+  setRolesSaler(
+    batchAction.value ? currentActionIds.value : [currentItem.value.id],
+    Number(currentRole.value)
+  )
+    .then(() => {
+      ElMessage.success('修改成功')
+      getTableList()
+    })
+    .finally(() => {
+      showSetRole.value = false
+    })
+}
+
 const onChangePassword = (user: any) => {
   ElMessageBox.confirm(`您正在修改代理${user.name}的密码`, '修改用户密码', {
     confirmButtonText: '确定',
@@ -302,6 +328,10 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
   }
   if (item === 'fundTransfer') {
     onFundTransfer()
+  }
+  if (item === 'setrole') {
+    currentRole.value = ''
+    showSetRole.value = true
   }
 }
 
@@ -409,6 +439,20 @@ const addSalerRules = {
   mobile: [required()],
   password: [required()]
 }
+
+const roleList = ref<any[]>([])
+
+getRoleList()
+  .then((res) => {
+    if (res) {
+      roleList.value = res.data
+      roleList.value.unshift({
+        id: 0,
+        name: '清除角色'
+      })
+    }
+  })
+  .catch(() => {})
 </script>
 
 <template>
@@ -447,6 +491,7 @@ const addSalerRules = {
               <ElDropdownMenu>
                 <ElDropdownItem command="disable">禁用</ElDropdownItem>
                 <ElDropdownItem command="enable">解禁</ElDropdownItem>
+                <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
               </ElDropdownMenu>
             </template>
           </ElDropdown>
@@ -494,6 +539,7 @@ const addSalerRules = {
                     <ElDropdownItem command="enable">解禁</ElDropdownItem>
                     <ElDropdownItem divided command="changePassword">修改密码</ElDropdownItem>
                     <ElDropdownItem divided command="fundTransfer">资金划转</ElDropdownItem>
+                    <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>
@@ -537,6 +583,24 @@ const addSalerRules = {
         </ContentWrap>
       </ContentWrap>
     </div>
+    <Dialog v-model="showSetRole" title="设置角色">
+      <p
+        >您正在为{{
+          batchAction ? currentActionIds.length + '个代理' : currentItem.name
+        }}设置角色</p
+      >
+      <ElSelect style="margin-top: 20px" v-model="currentRole" placeholder="请选择角色">
+        <ElOption
+          v-for="item in roleList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id + ''"
+        />
+      </ElSelect>
+      <div>
+        <ElButton style="margin-top: 20px" type="primary" @click="onSetRole">确定设置</ElButton>
+      </div>
+    </Dialog>
     <Dialog style="max-width: 650px" v-model="showAddSaler" title="添加代理">
       <Form
         :rules="addSalerRules"

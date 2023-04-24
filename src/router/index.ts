@@ -112,9 +112,32 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '首页'
         },
         roles: ['saler']
+      }
+    ]
+  },
+  {
+    path: '/saler-recharge-card',
+    component: Layout,
+    redirect: '/saler-recharge-card/list',
+    name: 'Saler-RechargeCard',
+    meta: {
+      title: '充值卡管理',
+      icon: 'ic:round-credit-card',
+      alwaysShow: true
+    },
+    roles: ['saler'],
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/SalerView/RechargeCardList.vue'),
+        name: 'Saler-RechargeCardList',
+        meta: {
+          title: '充值卡管理'
+        },
+        roles: ['saler']
       },
       {
-        path: 'saler-make-card',
+        path: 'make-card',
         component: () => import('@/views/SalerView/CreateRechargeCard/CreateRechargeCard.vue'),
         name: 'Saler-CreateRechargeCard',
         meta: {
@@ -123,34 +146,39 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         roles: ['saler']
       },
       {
-        path: 'saler-recharge-list',
-        component: () => import('@/views/SalerView/RechargeCardList.vue'),
-        name: 'Saler-RechargeList',
-        meta: {
-          title: '充值卡管理'
-        },
-        roles: ['saler']
-      },
-      {
-        path: 'saler-fast-action',
+        path: 'fast-action',
         component: () => import('@/views/SalerView/FastAction.vue'),
         name: 'Saler-FastAction',
         meta: {
           title: '充值卡操作'
         },
         roles: ['saler']
-      },
+      }
+    ]
+  },
+  {
+    path: '/saler-subordinate',
+    component: Layout,
+    redirect: '/saler-subordinate/manage',
+    name: 'Saler-Subordinate',
+    meta: {
+      title: '下级代理',
+      icon: 'bi:people-fill',
+      alwaysShow: true
+    },
+    roles: ['saler'],
+    children: [
       {
-        path: 'saler-subordinate',
+        path: 'manage',
         component: () => import('@/views/SalerView/Subordinate.vue'),
-        name: 'Saler-Subordinate',
+        name: 'Saler-Subordinate-Manage',
         meta: {
-          title: '下级代理'
+          title: '下级代理管理'
         },
         roles: ['saler']
       },
       {
-        path: 'saler-entry-link',
+        path: 'entry-link',
         component: () => import('@/views/SalerView/EntryLink.vue'),
         name: 'Saler-EntryLink',
         meta: {
@@ -159,7 +187,7 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         roles: ['saler']
       },
       {
-        path: 'saler-subordinatePrice',
+        path: 'subordinate-price',
         component: () => import('@/views/SalerView/SubordinatePrice.vue'),
         name: 'Saler-SubordinatePrice',
         meta: {
@@ -168,7 +196,30 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         roles: ['saler']
       },
       {
-        path: 'saler-fundflow',
+        path: 'subordinate-roles',
+        component: () => import('@/views/SalerView/SalerRoles.vue'),
+        name: 'Saler-SubordinateRoles',
+        meta: {
+          title: '角色管理'
+        },
+        roles: ['saler']
+      }
+    ]
+  },
+  {
+    path: '/saler-account',
+    component: Layout,
+    redirect: '/saler-account/fundflow',
+    name: 'Saler-Account',
+    meta: {
+      title: '账户',
+      icon: 'ic:baseline-account-circle',
+      alwaysShow: true
+    },
+    roles: ['saler'],
+    children: [
+      {
+        path: 'fundflow',
         component: () => import('@/views/SalerView/FundFlow.vue'),
         name: 'Saler-FundFlow',
         meta: {
