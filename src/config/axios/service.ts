@@ -95,7 +95,7 @@ service.interceptors.response.use(
         wsCache.clear()
         tagsViewStore.delAllViews()
         resetRouter() // 重置静态路由表
-        window.location.href = '/login'
+        window.location.href = '/'
       }
       throw new Error(response.data.message)
     }
