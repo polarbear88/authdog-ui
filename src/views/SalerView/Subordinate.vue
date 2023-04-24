@@ -190,6 +190,14 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
+    field: 'salerRoleName',
+    label: '角色名称',
+    component: 'Input',
+    componentProps: {
+      placeholder: '角色名称'
+    }
+  },
+  {
     field: 'createdAtStart',
     label: '注册开始',
     component: 'DatePicker',
