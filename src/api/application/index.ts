@@ -139,3 +139,7 @@ export const setAllowForceLogin = (
 export const deleteApp = (id: number, password: string): Promise<IResponse<any>> => {
   return request.post({ url: `/developer/app/delete`, data: { appid: id, password } })
 }
+
+export const setCustomCryptFunId = (id: string, funid: number): Promise<IResponse<any>> => {
+  return request.post({ url: `/developer/app/set-custom-cryptfun`, data: { appid: id, funid } })
+}

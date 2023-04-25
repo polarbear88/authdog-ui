@@ -9,6 +9,7 @@ import RechargeCardType from './RechargeCardType.vue'
 import CreateRechargeType from './CreateRechargeType.vue'
 import CreateRechargeCard from './CreateRechargeCard.vue'
 import RechargeCardList from './RechargeCardList.vue'
+import CustomSecurity from './CustomSecurity.vue'
 
 export {
   BaseInfo,
@@ -21,5 +22,6 @@ export {
   RechargeCardType,
   CreateRechargeType,
   CreateRechargeCard,
-  RechargeCardList
+  RechargeCardList,
+  CustomSecurity
 }

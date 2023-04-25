@@ -12,7 +12,8 @@ import {
   Device,
   RechargeCardType,
   CreateRechargeCard,
-  RechargeCardList
+  RechargeCardList,
+  CustomSecurity
 } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
@@ -119,8 +120,11 @@ const onDeleteApp = () => {
           <ElTabPane label="授权" name="authorization">
             <Authorization @get-appdata="getAppData" :app="appinfo" />
           </ElTabPane>
-          <ElTabPane label="安全" name="security">
+          <ElTabPane label="通讯加密" name="security">
             <SecurityInfo @get-appdata="getAppData" :app="appinfo" />
+          </ElTabPane>
+          <ElTabPane label="自定义加密" name="custom_security">
+            <CustomSecurity @get-appdata="getAppData" :app="appinfo" />
           </ElTabPane>
         </ElTabs>
       </ElTabPane>
