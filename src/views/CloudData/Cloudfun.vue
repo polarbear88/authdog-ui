@@ -29,9 +29,13 @@ const columns: TableColumn[] = [
     label: '名称'
   },
   {
-    field: 'description',
-    label: '描述'
+    field: 'type',
+    label: '类型'
   },
+  // {
+  //   field: 'description',
+  //   label: '描述'
+  // },
   {
     field: 'ascription',
     label: '归属'
@@ -125,6 +129,19 @@ const run = async () => {
       })
     })
 }
+
+const getTypeName = (type: string) => {
+  switch (type) {
+    case 'VM-JS':
+      return '虚拟机JS'
+    case 'NODE-JS':
+      return 'NodeJS'
+    case 'NATIVE-LIB':
+      return '本机库'
+    default:
+      return '未知'
+  }
+}
 </script>
 <template>
   <div>
@@ -145,13 +162,16 @@ const run = async () => {
       <ElButton @click="getTableList()" style="margin-left: 10px" type="primary" :icon="Search" />
     </div>
     <ElAlert style="margin-top: 8px"
-      >云函数允许您将一些不希望放在客户端的功能放到云上来执行并且可以在函数中扣减用户次数，目前仅支持js函数</ElAlert
+      >云函数允许您将一些不希望放在客户端的功能放到云上来执行并且可以在函数中扣减用户点数</ElAlert
     >
     <div>
       <ContentWrap style="margin-top: 10px">
         <Table :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
           <template #empty>
             <ElEmpty description="快去添加云函数吧" />
+          </template>
+          <template #type="data">
+            {{ getTypeName(data.row.type) }}
           </template>
           <template #ascription="data">
             {{ data.row.isGlobal ? '全局' : data.row.applicationName }}

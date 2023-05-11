@@ -3,7 +3,7 @@ import { Form } from '@/components/Form'
 import { FormSchema } from '@/types/form'
 import { onMounted, reactive, ref } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
-import { ElTooltip, ElButton, ElMessage } from 'element-plus'
+import { ElTooltip, ElButton, ElMessage, ElInput } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
 import { unref } from 'vue'
 import { updateCloudfun, getScript } from '@/api/clouddata/cloudfun'
@@ -18,6 +18,9 @@ import 'codemirror/mode/javascript/javascript.js'
 import Codemirror, { CmComponentRef } from 'codemirror-editor-vue3'
 import type { Editor } from 'codemirror'
 
+const fileName = ref('')
+const funName = ref('')
+
 const { required } = useValidator()
 const rules = {
   name: [required()],
@@ -30,6 +33,7 @@ const props = defineProps({
     required: true
   }
 })
+const currentType = ref('VM-JS')
 
 const emit = defineEmits(['closedialog', 'success'])
 
@@ -47,13 +51,30 @@ const schema = reactive<FormSchema[]>([
     }
   },
   {
-    field: 'description',
-    label: '描述',
-    value: props.cloudfun.description,
-    component: 'Input',
+    field: 'type',
+    label: '类型',
+    component: 'Select',
     componentProps: {
-      placeholder: '请输入描述 可空'
+      clearable: false,
+      options: [
+        {
+          label: '虚拟机JS',
+          value: 'VM-JS'
+        },
+        {
+          label: 'NodeJS',
+          value: 'NODE-JS'
+        },
+        {
+          label: '本机库',
+          value: 'NATIVE-LIB'
+        }
+      ],
+      onChange: (val: string) => {
+        currentType.value = val
+      }
     },
+    value: props.cloudfun.type,
     colProps: {
       span: 8
     }
@@ -106,9 +127,19 @@ const cmOptions = reactive({
 })
 
 const submit = async () => {
-  if (!code.value) {
+  if (!code.value && currentType.value !== 'NATIVE-LIB') {
     ElMessage.error('请输入脚本')
     return
+  }
+  if (currentType.value === 'NATIVE-LIB') {
+    if (!fileName.value) {
+      ElMessage.error('请输入本机库文件路径和名称')
+      return
+    }
+    if (!funName.value) {
+      ElMessage.error('请输入本机库函数名称')
+      return
+    }
   }
   const formRef = unref(elFormRef)
   await formRef?.validate(async (isValid) => {
@@ -123,9 +154,11 @@ const submit = async () => {
       id: props.cloudfun.id,
       name: formData?.name,
       description: formData?.description,
-      script: code.value,
+      script: currentType.value === 'NATIVE-LIB' ? fileName.value : code.value,
       applicationId: formData?.applicationId,
-      isGlobal: formData?.applicationId === 0
+      isGlobal: formData?.applicationId === 0,
+      type: currentType.value,
+      funName: currentType.value === 'NATIVE-LIB' ? funName.value : undefined
     }
     updateCloudfun(data)
       .then(() => {
@@ -139,14 +172,23 @@ const submit = async () => {
   })
 }
 
-getScript(props.cloudfun.id).then((res) => {
-  code.value = res.data.script
-})
-
 onMounted(() => {
   cminstance.value = cmComponentRef.value?.cminstance
   cminstance.value?.focus()
   cminstance.value?.refresh()
+  currentType.value = props.cloudfun.type
+  console.log(props.cloudfun.type)
+  if (currentType.value === 'NATIVE-LIB') {
+    fileName.value = props.cloudfun.script
+    funName.value = props.cloudfun.funName
+  }
+})
+
+getScript(props.cloudfun.id).then((res) => {
+  code.value = res.data.script
+  if (currentType.value === 'NATIVE-LIB') {
+    fileName.value = res.data.script
+  }
 })
 </script>
 <template>
@@ -181,12 +223,31 @@ onMounted(() => {
       "
     >
       <Codemirror
+        v-if="currentType === 'VM-JS' || currentType === 'NODE-JS'"
         ref="cmComponentRef"
         style="height: calc(100% - 20px); width: 100%"
         v-model:value="code"
         :options="cmOptions"
         border
       />
+      <div>
+        <label>本机库文件: </label>
+        <ElInput
+          style="margin-top: 5px"
+          v-model="fileName"
+          v-if="currentType === 'NATIVE-LIB'"
+          placeholder="请输入本机库文件路径和名称"
+        />
+      </div>
+      <div style="margin-top: 20px">
+        <label>函数名称: </label>
+        <ElInput
+          style="margin-top: 5px"
+          v-model="funName"
+          v-if="currentType === 'NATIVE-LIB'"
+          placeholder="请输入本机库函数名称"
+        />
+      </div>
     </div>
     <div style="right: 20px; bottom: 10px; position: absolute">
       <ElButton @click="emit('closedialog')">取消</ElButton>
