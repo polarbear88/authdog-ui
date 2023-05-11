@@ -82,3 +82,18 @@ export const getNotice = (): Promise<IResponse<any>> => {
     url: '/developer/saler/get-notice'
   })
 }
+
+export const setNoticeTopSaler = (content: string): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/set-notice-topsaler',
+    data: {
+      content
+    }
+  })
+}
+
+export const getNoticeTopSaler = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/saler/get-notice-topsaler'
+  })
+}

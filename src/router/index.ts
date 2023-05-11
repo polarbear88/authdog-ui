@@ -375,6 +375,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '代理公告'
         }
+      },
+      {
+        path: 'saler-notice-topsaler',
+        component: () => import('@/views/Saler/SalerNoticeTopSaler.vue'),
+        name: 'Saler-Notice-TopSaler',
+        meta: {
+          title: '顶级代理公告'
+        }
       }
     ]
   },
