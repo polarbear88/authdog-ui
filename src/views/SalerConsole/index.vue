@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getProfile } from '@/api/salerApi/profile'
+import { getNotices, getProfile } from '@/api/salerApi/profile'
 import { getAppList } from '@/api/salerApi/rechargeCard'
 import { getBaseStatistics } from '@/api/salerApi/statistics'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -12,6 +12,8 @@ const prefixCls = getPrefixCls('panel')
 const userProfile = ref<any>({})
 const baseInfo = ref<any>({})
 const appList = ref<any>([])
+const developerNotice = ref<any>('')
+const parentNotice = ref<any>('')
 
 const getBaseInfo = async () => {
   const res = await getBaseStatistics()
@@ -28,6 +30,11 @@ const getUserProfile = async () => {
   res.data.balance = Number(res.data.balance)
   userProfile.value = res.data
 }
+
+getNotices().then((res) => {
+  developerNotice.value = res.data.developer || '无公告'
+  parentNotice.value = res.data.parent || '无公告'
+})
 
 getUserProfile()
 getBaseInfo()
@@ -92,6 +99,18 @@ getAplicationpList()
         </ElCol>
       </ElRow>
     </ContentWrap>
+    <ElRow>
+      <ElCol :span="12" style="padding-right: 4px">
+        <ContentWrap style="margin-top: 20px" title="开发者公告">
+          <div v-html="developerNotice"></div>
+        </ContentWrap>
+      </ElCol>
+      <ElCol :span="12" style="padding-left: 4px">
+        <ContentWrap style="margin-top: 20px" title="上级代理公告">
+          <div v-html="parentNotice"></div>
+        </ContentWrap>
+      </ElCol>
+    </ElRow>
     <ContentWrap style="margin-top: 20px" title="授权应用">
       <div v-for="(item, index) in appList" :key="index" style="margin-top: 10px">
         应用名称：{{ item.name }}

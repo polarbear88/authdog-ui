@@ -25,3 +25,7 @@ export const changePassword = (
     }
   })
 }
+
+export const getNotices = (): Promise<IResponse<any>> => {
+  return request.get({ url: '/saler/profile/get-notices' })
+}

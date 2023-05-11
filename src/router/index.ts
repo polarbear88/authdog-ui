@@ -203,6 +203,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '角色管理'
         },
         roles: ['saler']
+      },
+      {
+        path: 'subordinate-notice',
+        component: () => import('@/views/SalerView/SalerNotice.vue'),
+        name: 'Saler-SubordinateNotice',
+        meta: {
+          title: '下级代理公告'
+        }
       }
     ]
   },
@@ -358,6 +366,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Saler-Roles',
         meta: {
           title: '代理角色'
+        }
+      },
+      {
+        path: 'saler-notice',
+        component: () => import('@/views/Saler/SalerNotice.vue'),
+        name: 'Saler-Notice',
+        meta: {
+          title: '代理公告'
         }
       }
     ]

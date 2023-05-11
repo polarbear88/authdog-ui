@@ -48,3 +48,18 @@ export const setRolesSaler = (ids: number[], roleId: number): Promise<IResponse<
     }
   })
 }
+
+export const setNotice = (content: string): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/saler/subordinate/set-notice',
+    data: {
+      content
+    }
+  })
+}
+
+export const getNotice = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/saler/subordinate/get-notice'
+  })
+}

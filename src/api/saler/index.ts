@@ -67,3 +67,18 @@ export const deleteSaler = (id: number | string): Promise<IResponse<any>> => {
     url: '/developer/saler/delete?id=' + id
   })
 }
+
+export const setNotice = (content: string): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/set-notice',
+    data: {
+      content
+    }
+  })
+}
+
+export const getNotice = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/saler/get-notice'
+  })
+}
