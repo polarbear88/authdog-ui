@@ -102,12 +102,16 @@ getAplicationpList()
     <ElRow>
       <ElCol :span="12" style="padding-right: 4px">
         <ContentWrap style="margin-top: 20px" title="开发者公告">
-          <div v-html="developerNotice"></div>
+          <div class="scrollable-div">
+            <div class="scrollable-content" v-html="developerNotice"></div>
+          </div>
         </ContentWrap>
       </ElCol>
       <ElCol :span="12" style="padding-left: 4px">
         <ContentWrap style="margin-top: 20px" title="上级代理公告">
-          <div v-html="parentNotice"></div>
+          <div class="scrollable-div">
+            <div class="scrollable-content" v-html="parentNotice"></div>
+          </div>
         </ContentWrap>
       </ElCol>
     </ElRow>
@@ -137,3 +141,21 @@ getAplicationpList()
     </ContentWrap>
   </div>
 </template>
+
+<style lang="less" scoped>
+.scrollable-div {
+  height: 295px;
+  overflow: hidden;
+  position: relative;
+}
+.scrollable-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll; /* 允许内容纵向滚动 */
+  // padding-right: 17px; /* 增加右侧填充，以防止内容超出div时出现滚动条 */
+}
+
+.scrollable-div::-webkit-scrollbar {
+  display: none;
+}
+</style>

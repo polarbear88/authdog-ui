@@ -162,7 +162,13 @@ const getTypeName = (type: string) => {
       <ElButton @click="getTableList()" style="margin-left: 10px" type="primary" :icon="Search" />
     </div>
     <ElAlert style="margin-top: 8px"
-      >云函数允许您将一些不希望放在客户端的功能放到云上来执行并且可以在函数中扣减用户点数</ElAlert
+      >云函数允许您将一些不希望放在客户端的功能放到云上来执行
+      <a
+        style="color: var(--el-color-primary)"
+        target="_blank"
+        href="https://ronmbudjli.apifox.cn/doc-2299617"
+        >详细介绍</a
+      ></ElAlert
     >
     <div>
       <ContentWrap style="margin-top: 10px">

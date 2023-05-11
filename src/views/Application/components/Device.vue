@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
-import { PropType, reactive, ref, unref } from 'vue'
+import { PropType, h, reactive, ref, unref } from 'vue'
 import { getList, addTime, addBalance, setStatus, deleteUsers } from '@/api/device'
 import {
   ElButton,
@@ -87,6 +87,8 @@ const pageSize = ref(10)
 const currentPage = ref(1)
 
 const total = ref(0)
+
+const reason = ref('管理员操作')
 
 const currentActionIds = ref<Array<number>>([])
 
@@ -281,19 +283,59 @@ const resetForm = () => {
 const isaddCount = ref(true)
 
 const onChangeCount = (device: any) => {
-  ElMessageBox.confirm(
-    `您正为${batchAction.value ? `${currentActionIds.value.length}个设备` : device.deviceId}${
-      isaddCount.value ? '增加' : '减少'
-    }点数`,
-    (isaddCount.value ? '增加' : '减少') + '设备点数',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      showInput: true,
-      inputPlaceholder: '点数',
-      inputType: 'number'
-    }
-  )
+  const harr = [
+    h(
+      'div',
+      null,
+      `您正为${batchAction.value ? `${currentActionIds.value.length}个设备` : device.deviceId}${
+        isaddCount.value ? '增加' : '减少'
+      }点数`
+    )
+  ]
+  if (!batchAction.value) {
+    harr.push(
+      h(
+        'div',
+        {
+          style: 'margin-top: 10px'
+        },
+        '原因'
+      )
+    )
+    harr.push(
+      h(
+        'div',
+        {
+          class: 'el-input el-input--default',
+          style: 'margin-top: 10px'
+        },
+        h(
+          'div',
+          {
+            class: 'el-input__wrapper'
+          },
+          h('input', {
+            placeholder: '请输入原因',
+            class: 'el-input__inner',
+            value: reason.value,
+            ariaInvalid: false,
+            autocomplete: 'off',
+            tabindex: 0,
+            onInput: (e: any) => {
+              reason.value = e.target.value
+            }
+          })
+        )
+      )
+    )
+  }
+  ElMessageBox.confirm(h('div', null, harr), (isaddCount.value ? '增加' : '减少') + '设备点数', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '点数',
+    inputType: 'number'
+  })
     .then(async (res) => {
       if (res.value) {
         const count = Number(res.value)
@@ -302,7 +344,7 @@ const onChangeCount = (device: any) => {
           return
         }
         const data = batchAction.value ? currentActionIds.value : [device.id]
-        addBalance(props.app.id, data, isaddCount.value ? count : -count)
+        addBalance(props.app.id, data, isaddCount.value ? count : -count, reason.value)
           .then((res) => {
             getTableList()
             ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')
@@ -332,6 +374,7 @@ const onDelete = (user: any) => {
 const onAction = async (device: any, item: string, isBatch = false) => {
   currentDevice.value = device
   batchAction.value = isBatch
+  reason.value = '管理员操作'
   if (isBatch) {
     currentActionIds.value = (await rTable.methods.getSelections()).map((item: any) => item.id)
     if (currentActionIds.value.length === 0) {
@@ -415,7 +458,7 @@ const onConfirmChangeTime = () => {
   }
   const data = batchAction.value ? currentActionIds.value : [currentDevice.value.id]
 
-  addTime(props.app.id, data, time)
+  addTime(props.app.id, data, time, reason.value)
     .then((res) => {
       ElMessage.success('修改成功，影响' + res.data.affectedCount + '个设备')
       getTableList()
@@ -666,6 +709,10 @@ const getExpirationTime = (data: any) => {
         >
           <template #append>分</template>
         </ElInput>
+        <div v-if="!batchAction" style="margin-top: 10px">
+          <label>扣减原因</label>
+          <ElInput v-model="reason" style="margin-top: 8px" />
+        </div>
         <div style="width: 100%; height: 40px"></div>
         <div style="right: 20px; bottom: 10px; position: absolute">
           <ElButton @click="showSelectTime = false">取消</ElButton>

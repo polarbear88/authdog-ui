@@ -21,13 +21,19 @@ export const changePassword = (
   })
 }
 
-export const addTime = (appid: number, ids: number[], minutes: number): Promise<IResponse<any>> => {
+export const addTime = (
+  appid: number,
+  ids: number[],
+  minutes: number,
+  reason: string
+): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/add-time',
     data: {
       appid,
       ids,
-      minutes
+      minutes,
+      reason
     }
   })
 }
@@ -35,14 +41,16 @@ export const addTime = (appid: number, ids: number[], minutes: number): Promise<
 export const addBalance = (
   appid: number,
   ids: number[],
-  money: number
+  money: number,
+  reason: string
 ): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/user/add-balance',
     data: {
       appid,
       ids,
-      money
+      money,
+      reason
     }
   })
 }

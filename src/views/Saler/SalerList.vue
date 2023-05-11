@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, unref } from 'vue'
+import { h, onMounted, reactive, ref, unref } from 'vue'
 import {
   getList,
   changePasswordSaler,
@@ -284,18 +284,54 @@ const isaddBalance = ref(true)
 
 const showSelectApps = ref(false)
 
+const reason = ref('')
+
 const onChangeBalance = (user: any) => {
-  ElMessageBox.confirm(
-    `您正为${user.name}${isaddBalance.value ? '充值' : '扣减'}余额`,
-    (isaddBalance.value ? '充值' : '扣减') + '代理余额',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      showInput: true,
-      inputPlaceholder: '金额',
-      inputType: 'number'
-    }
+  reason.value = isaddBalance.value ? '后台充值' : '后台扣减'
+  const harr = [h('div', null, `您正为${user.name}${isaddBalance.value ? '充值' : '扣减'}余额`)]
+  harr.push(
+    h(
+      'div',
+      {
+        style: 'margin-top: 10px'
+      },
+      '原因'
+    )
   )
+  harr.push(
+    h(
+      'div',
+      {
+        class: 'el-input el-input--default',
+        style: 'margin-top: 10px'
+      },
+      h(
+        'div',
+        {
+          class: 'el-input__wrapper'
+        },
+        h('input', {
+          placeholder: '请输入原因',
+          class: 'el-input__inner',
+          value: reason.value,
+          ariaInvalid: false,
+          autocomplete: 'off',
+          tabindex: 0,
+          onInput: (e: any) => {
+            reason.value = e.target.value
+          }
+        })
+      )
+    )
+  )
+
+  ElMessageBox.confirm(h('div', null, harr), (isaddBalance.value ? '充值' : '扣减') + '代理余额', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '金额',
+    inputType: 'number'
+  })
     .then(async (res) => {
       if (res.value) {
         const amount = Number(res.value)
@@ -303,7 +339,7 @@ const onChangeBalance = (user: any) => {
           ElMessage.error('请输入正确的整数')
           return
         }
-        addBalanceSaler(user.id, isaddBalance.value ? amount : -amount)
+        addBalanceSaler(user.id, isaddBalance.value ? amount : -amount, reason.value)
           .then(() => {
             getTableList()
             ElMessage.success('修改成功')

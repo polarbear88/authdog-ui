@@ -29,12 +29,17 @@ export const setStatusSaler = (ids: number[], status: string): Promise<IResponse
   })
 }
 
-export const addBalanceSaler = (id: number, amount: number): Promise<IResponse<any>> => {
+export const addBalanceSaler = (
+  id: number,
+  amount: number,
+  reason: string
+): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/saler/add-balance',
     data: {
       id,
-      amount
+      amount,
+      reason
     }
   })
 }
