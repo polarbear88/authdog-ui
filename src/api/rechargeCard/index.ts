@@ -123,3 +123,18 @@ export const findRechargeCardByCards = (
     }
   })
 }
+
+export const retrieveByCards = (
+  appid: number,
+  cards: string[],
+  reason: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/recharge-card/retrieve-by-cards',
+    data: {
+      appid,
+      cards,
+      reason
+    }
+  })
+}

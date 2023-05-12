@@ -7,7 +7,8 @@ import {
   setStatusByCards,
   rebuildByCards,
   deleteRechargeCardByCards,
-  findRechargeCardByCards
+  findRechargeCardByCards,
+  retrieveByCards
 } from '@/api/rechargeCard'
 import { DateUtils } from '@/utils/dateUtils'
 
@@ -167,6 +168,51 @@ const OnFind = () => {
     inputcard.value = str
   })
 }
+
+const onRetrieve = () => {
+  if (!checkSelectApp()) return
+  const cardsArr = getCardsArr()
+  if (!cardsArr.length) {
+    ElMessage.error('请输入充值卡号')
+    return
+  }
+  ElMessageBox.confirm(`确定要追回？`, '追回充值卡', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+    showInput: true,
+    inputPlaceholder: '请输入追回原因',
+    inputValidator: (val: string) => {
+      if (!val) {
+        return '请输入追回原因'
+      }
+      return true
+    }
+  }).then((res) => {
+    retrieveByCards(currentId.value, cardsArr, res.value).then((res) => {
+      const data = res.data || []
+      let str = ''
+      for (const card of cardsArr) {
+        const find = data.find((item: any) => item.card === card)
+        if (find) {
+          if (find.retrieve) {
+            str += `已追回-`
+          }
+          str += `卡号：${find.card}`
+          if (find.password) str += ` 密码：${find.password}`
+          str += ` 类型：${find.cardTypeName}`
+          str += ` 状态：${getStatusText(find.status)}`
+          if (find.status === 'used') str += ` 使用时间：${DateUtils.formatDateTime(find.useTime)}`
+          if (find.status === 'used') str += ` 使用者：${find.userName}`
+          str += '\n'
+        } else {
+          str += `卡号：${card} 未找到 \n`
+        }
+      }
+      inputcard.value = str
+    })
+  })
+}
 </script>
 
 <template>
@@ -189,6 +235,9 @@ const OnFind = () => {
           >充值卡支持：`卡号：xx 密码：xx 类型：xx`，`卡号：xx
           类型：xx`，`卡号：xx`格式，或直接每行填入一个卡号</p
         >
+        <p style="color: #f56c6c; font-size: 14px; margin-top: 10px"
+          >追回功能会将你给出的充值卡将相应的卡使用者强行扣回充值卡面值</p
+        >
         <br />
         <div style="margin-top: 10px">
           <ElButton type="success" @click="OnFind">检查</ElButton>
@@ -196,6 +245,7 @@ const OnFind = () => {
           <ElButton type="success" @click="onUnFrozen">解除冻结</ElButton>
           <ElButton type="warning" @click="onRebuild">重新生成卡号</ElButton>
           <ElButton type="danger" @click="onDelete">删除</ElButton>
+          <ElButton type="danger" @click="onRetrieve">追回</ElButton>
         </div>
       </div>
     </ContentWrap>
