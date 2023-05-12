@@ -153,6 +153,15 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: '充值卡操作'
         },
         roles: ['saler']
+      },
+      {
+        path: 'recharge-record',
+        component: () => import('@/views/SalerView/RechargeRecord.vue'),
+        name: 'Saler-RechargeRecord',
+        meta: {
+          title: '充值记录'
+        },
+        roles: ['saler']
       }
     ]
   },
@@ -290,6 +299,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         name: 'Application-Feedback',
         meta: {
           title: '用户反馈'
+        }
+      },
+      {
+        path: 'recharge-record',
+        component: () => import('@/views/Application/RechargeRecord.vue'),
+        name: 'Application-RechargeRecord',
+        meta: {
+          title: '充值记录'
         }
       }
     ]
