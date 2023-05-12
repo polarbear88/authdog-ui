@@ -415,7 +415,7 @@ const onSetAllowForceLogin = () => {
         </template>
         <template #free-label>
           <ElTooltip
-            content="免费模式下任何用户或机器都可以成功授权，但按次模式不受影响"
+            content="免费模式下任何用户或机器都可以成功授权，但扣点模式不受影响"
             placement="top-start"
           >
             <span>是否免费<Icon style="margin-left: 3px" icon="entypo:info-with-circle" /></span>
@@ -511,7 +511,7 @@ const onSetAllowForceLogin = () => {
         </template>
       </Descriptions>
       <ElText type="danger" style="margin-left: 10px"
-        >按次收费允许您在按日期收费之外在进行扣点式收费，可用于额外的某项功能单独的收费，当应用为免费模式时按次收费不受影响</ElText
+        >扣点收费允许您在按日期收费之外在进行扣点式收费，可用于额外的某项功能单独的收费，当应用为免费模式时扣点收费不受影响</ElText
       >
     </div>
     <ElDialog

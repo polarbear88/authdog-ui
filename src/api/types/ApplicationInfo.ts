@@ -62,7 +62,7 @@ export type ApplicationInfo = {
   // 如果允许多设备登录，最大同时登录设备数
   maxMultiDevice: number
 
-  // 是否使用按次模式
+  // 是否使用扣点模式
   useCountMode: boolean
 
   // 次数用尽是否允许登录
