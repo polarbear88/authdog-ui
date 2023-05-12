@@ -21,7 +21,7 @@ import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
 import { getList } from '@/api/actionLog'
 import { DateUtils } from '@/utils/dateUtils'
-import { getProfile, recharge } from '@/api/profile'
+import { getAuthdogVersion, getProfile, recharge } from '@/api/profile'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
@@ -110,6 +110,16 @@ const handleOpenBuyUrl = () => {
 
 getBaseInfo()
 getLatelyInfo('today')
+
+const authdogVersion = ref({
+  currentVersion: '',
+  hasNew: false,
+  newVersion: ''
+})
+
+getAuthdogVersion().then((res) => {
+  authdogVersion.value = res.data
+})
 </script>
 
 <template>
@@ -143,6 +153,13 @@ getLatelyInfo('today')
           profileInfo?.quota?.maxUserDataCount
         }}条][代理{{ profileInfo?.quota?.maxSalerCount }}个]</ElText
       >
+      <div style="margin-top: 5px">
+        <ElText>当前系统版本：{{ authdogVersion.currentVersion }}</ElText>
+        <ElText v-if="authdogVersion.hasNew" type="danger" style="margin-left: 10px"
+          >有新版本 {{ authdogVersion.newVersion }}</ElText
+        >
+        <ElText v-if="!authdogVersion.hasNew" style="margin-left: 10px">已是最新</ElText>
+      </div>
     </ContentWrap>
     <ContentWrap style="margin-top: 15px" message="数据不实时，缓存60秒" title="基本数据">
       <ElRow :gutter="20" :class="prefixCls">

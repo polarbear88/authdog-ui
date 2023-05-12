@@ -40,3 +40,9 @@ export const validateUserToken = (appid: number, token: string) => {
     }
   })
 }
+
+export const getAuthdogVersion = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile/get-authdog-version'
+  })
+}
