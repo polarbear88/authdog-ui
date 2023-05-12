@@ -9,7 +9,8 @@ import {
   resetUnbindCount,
   addBalance,
   setStatus,
-  deleteUsers
+  deleteUsers,
+  getStat
 } from '@/api/user'
 import {
   ElButton,
@@ -25,7 +26,8 @@ import {
   ElDialog,
   ElInput,
   ElSelect,
-  ElOption
+  ElOption,
+  ElText
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -283,6 +285,11 @@ const inputDay = ref(0)
 const inputHour = ref(0)
 const inputMinute = ref(0)
 const currentUser = ref<any>(null)
+const statInfo = ref<any>({
+  tryCount: 0,
+  totalCount: 0,
+  unexpiredCount: 0
+})
 
 const isaddtime = ref(true)
 
@@ -646,6 +653,10 @@ const getExpirationTime = (data: any) => {
     (time.getTime() - new Date().getTime()) / 1000 / 60
   )
 }
+
+getStat(props.app.id).then((res) => {
+  statInfo.value = res.data
+})
 </script>
 
 <template>
@@ -670,6 +681,11 @@ const getExpirationTime = (data: any) => {
           </template>
         </Form>
       </div>
+      <ElText size="small">
+        统计：总用户{{ statInfo.totalCount }}人，试用中{{ statInfo.tryCount }}人，未过期{{
+          statInfo.unexpiredCount
+        }}人
+      </ElText>
       <ContentWrap style="margin-top: 10px">
         <ElDropdown trigger="click" @command="(item) => onAction(null, item, true)">
           <span style="font-size: small" class="el-dropdown-link">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { PropType, h, reactive, ref, unref } from 'vue'
-import { getList, addTime, addBalance, setStatus, deleteUsers } from '@/api/device'
+import { getList, addTime, addBalance, setStatus, deleteUsers, getStat } from '@/api/device'
 import {
   ElButton,
   ElDropdown,
@@ -16,7 +16,8 @@ import {
   ElDialog,
   ElInput,
   ElSelect,
-  ElOption
+  ElOption,
+  ElText
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -536,6 +537,16 @@ const getExpirationTime = (data: any) => {
     (time.getTime() - new Date().getTime()) / 1000 / 60
   )
 }
+
+const statInfo = ref<any>({
+  tryCount: 0,
+  totalCount: 0,
+  unexpiredCount: 0
+})
+
+getStat(props.app.id).then((res) => {
+  statInfo.value = res.data
+})
 </script>
 
 <template>
@@ -560,6 +571,11 @@ const getExpirationTime = (data: any) => {
           </template>
         </Form>
       </div>
+      <ElText size="small">
+        统计：总用户{{ statInfo.totalCount }}人，试用中{{ statInfo.tryCount }}人，未过期{{
+          statInfo.unexpiredCount
+        }}人
+      </ElText>
       <ContentWrap style="margin-top: 10px">
         <ElDropdown trigger="click" @command="(item) => onAction(null, item, true)">
           <span style="font-size: small" class="el-dropdown-link">
