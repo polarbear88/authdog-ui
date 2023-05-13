@@ -45,6 +45,10 @@ const onSetFunid = () => {
     <br />
     <ElText class="mx-1">2、数据字符串</ElText>
     <br />
+    <ElText type="danger"
+      >注意：出于性能原因，不可使用虚拟机JS类型的云函数作为自定义加密函数</ElText
+    >
+    <br />
     <br />
     <h2>当前设置的云函数ID：{{ props.app.customCryptFunId || '未设置' }}</h2>
     <div style="width: 100%; height: 15px"></div>
