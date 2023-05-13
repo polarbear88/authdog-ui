@@ -308,6 +308,14 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '充值记录'
         }
+      },
+      {
+        path: 'online-user-manager',
+        component: () => import('@/views/Application/OnlineUserManager.vue'),
+        name: 'Application-OnlineUserManager',
+        meta: {
+          title: '在线用户'
+        }
       }
     ]
   },

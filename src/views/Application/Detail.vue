@@ -13,7 +13,8 @@ import {
   RechargeCardType,
   CreateRechargeCard,
   RechargeCardList,
-  CustomSecurity
+  CustomSecurity,
+  OnlineUserManager
 } from './components'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { ApplicationSelect } from '@/components/ApplicationSelect'
@@ -110,6 +111,7 @@ const onDeleteApp = () => {
           <ElTabPane label="应用信息" name="info">
             <BaseInfo @get-appdata="getAppData" :app="appinfo" />
             <VersionInfo @get-appdata="getAppData" :app="appinfo" />
+            <OnlineUserManager @get-appdata="getAppData" :app="appinfo" />
             <ElButton
               @click="onDeleteApp"
               style="float: right; margin-right: 8px; margin-top: 15px"

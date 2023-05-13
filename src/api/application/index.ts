@@ -143,3 +143,13 @@ export const deleteApp = (id: number, password: string): Promise<IResponse<any>>
 export const setCustomCryptFunId = (id: string, funid: number): Promise<IResponse<any>> => {
   return request.post({ url: `/developer/app/set-custom-cryptfun`, data: { appid: id, funid } })
 }
+
+export const setOnlineUserManagerStatus = (
+  id: string,
+  status: boolean
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: `/developer/app/set-online-user-manager-status`,
+    data: { appid: id, status }
+  })
+}

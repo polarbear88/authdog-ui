@@ -3,7 +3,7 @@ import { Form } from '@/components/Form'
 import { FormSchema } from '@/types/form'
 import { onMounted, reactive, ref } from 'vue'
 import { useValidator } from '@/hooks/web/useValidator'
-import { ElTooltip, ElButton, ElMessage, ElInput } from 'element-plus'
+import { ElTooltip, ElButton, ElMessage, ElInput, ElText } from 'element-plus'
 import { useForm } from '@/hooks/web/useForm'
 import { unref } from 'vue'
 import { updateCloudfun, getScript } from '@/api/clouddata/cloudfun'
@@ -230,23 +230,22 @@ getScript(props.cloudfun.id).then((res) => {
         :options="cmOptions"
         border
       />
-      <div>
+      <div v-if="currentType === 'NATIVE-LIB'">
         <label>本机库文件: </label>
         <ElInput
           style="margin-top: 5px"
           v-model="fileName"
-          v-if="currentType === 'NATIVE-LIB'"
           placeholder="请输入本机库文件路径和名称"
         />
       </div>
-      <div style="margin-top: 20px">
+      <div style="margin-top: 20px" v-if="currentType === 'NATIVE-LIB'">
         <label>函数名称: </label>
-        <ElInput
-          style="margin-top: 5px"
-          v-model="funName"
-          v-if="currentType === 'NATIVE-LIB'"
-          placeholder="请输入本机库函数名称"
-        />
+        <ElInput style="margin-top: 5px" v-model="funName" placeholder="请输入本机库函数名称" />
+      </div>
+      <div v-if="currentType === 'NATIVE-LIB'" style="margin-top: 10px">
+        <ElText type="danger"
+          >为避免调用本机库云函数造成node主线程阻塞，本机库云函数是运行在线程池中，你应该避免出现线程安全问题</ElText
+        >
       </div>
     </div>
     <div style="right: 20px; bottom: 10px; position: absolute">

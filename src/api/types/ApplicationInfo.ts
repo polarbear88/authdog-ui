@@ -72,4 +72,6 @@ export type ApplicationInfo = {
   allowForceLogin: boolean
 
   customCryptFunId: number
+
+  enableOnlineUserMgr: boolean
 }
