@@ -1,49 +1,14 @@
 <script setup lang="ts">
-import { ContentWrap } from '@/components/ContentWrap'
-import { Table } from '@/components/Table'
 import { ref } from 'vue'
-import { ElButton, ElEmpty, ElTag } from 'element-plus'
-import { TableColumn, TableSlotDefault } from '@/types/table'
+import { ElButton, ElCard, ElCol, ElIcon, ElRow, ElSwitch, ElTag, ElText } from 'element-plus'
 import { ApplicationInfo } from '@/api/types/ApplicationInfo'
 import { getList } from '@/api/application'
 import { useRouter } from 'vue-router'
-import { CirclePlus } from '@element-plus/icons-vue'
+import { CirclePlus, VideoPause, VideoPlay } from '@element-plus/icons-vue'
 import { Dialog } from '@/components/Dialog'
 import { CreateApp } from './components'
-import { BaseInfo, VersionInfo } from './components'
+import { DateUtils } from '@/utils/dateUtils'
 
-const columns: TableColumn[] = [
-  {
-    field: 'id',
-    label: '应用ID'
-  },
-  {
-    field: 'name',
-    label: '应用名称'
-  },
-  {
-    field: 'version',
-    label: '版本'
-  },
-  {
-    field: 'status',
-    label: '状态'
-  },
-  {
-    field: 'cryptoMode',
-    label: '加密模式'
-  },
-  {
-    field: 'authMode',
-    label: '授权模式'
-  },
-  {
-    field: 'action',
-    label: '操作'
-  }
-]
-
-const loading = ref(true)
 const showCreateApp = ref(false)
 
 let tableDataList = ref<ApplicationInfo[]>([])
@@ -52,7 +17,7 @@ const getTableList = () => {
   getList()
     .catch(() => {})
     .finally(() => {
-      loading.value = false
+      // loading.value = false
     })
     .then((res) => {
       if (res) {
@@ -74,51 +39,121 @@ const toDetail = (id: number) => {
   })
 }
 
-const actionFn = (data: TableSlotDefault) => {
-  toDetail(data.row.id)
+const actionFn = (id: number) => {
+  toDetail(id)
 }
 </script>
 
 <template>
   <div>
-    <div>
-      <ElButton @click="showCreateApp = true" type="primary" :icon="CirclePlus">创建应用</ElButton>
+    <div
+      style="display: inline-block; padding-left: 10px; margin-top: 10px"
+      v-for="item in tableDataList"
+      :key="item.id"
+    >
+      <ElCard
+        style="width: 340px; height: 330px"
+        :body-style="{
+          paddingTop: '15px',
+          paddingLeft: '15px',
+          paddingBottom: '10px',
+          paddingRight: '15px'
+        }"
+        shadow="hover"
+      >
+        <ElRow>
+          <ElCol :span="24">
+            <ElText style="font-size: 18px; font-weight: 400" size="large"
+              ><ElIcon v-if="item.status === 'published'" style="margin-right: 5px; color: #409eff"
+                ><VideoPlay
+              /></ElIcon>
+              <ElIcon v-if="item.status !== 'published'" style="margin-right: 5px; color: #e6a23c">
+                <VideoPause
+              /></ElIcon>
+              {{ item.name }}</ElText
+            >
+          </ElCol>
+          <ElCol style="padding-top: 10px; margin-top: 10px">
+            <ElText size="small" style="float: left">应用ID</ElText>
+            <ElText size="small" style="float: right">{{ item.id }}</ElText>
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">状态</ElText>
+            <ElTag
+              size="small"
+              style="float: right"
+              v-if="item.status === 'published' && !item.deactivated"
+              type="success"
+              >正常</ElTag
+            >
+            <ElTag
+              size="small"
+              style="float: right"
+              v-if="item.status === 'disabled' && !item.deactivated"
+              type="warning"
+              >禁用</ElTag
+            >
+            <ElTag size="small" style="float: right" v-if="item.deactivated" type="danger"
+              >停用</ElTag
+            >
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">应用版本</ElText>
+            <ElText size="small" style="float: right">{{ item.version }}</ElText>
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">创建时间</ElText>
+            <ElText size="small" style="float: right">{{
+              DateUtils.formatDateTime(item.createdAt)
+            }}</ElText>
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">加密模式</ElText>
+            <ElText size="small" style="float: right">{{
+              item.cryptoMode === 'none' ? '无' : item.cryptoMode.toUpperCase()
+            }}</ElText>
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">授权模式</ElText>
+            <ElText size="small" style="float: right">{{
+              item.authMode === 'user' ? '用户模式' : '设备ID模式'
+            }}</ElText>
+          </ElCol>
+          <ElCol style="padding-top: 10px">
+            <ElText size="small" style="float: left">强制升级</ElText>
+            <ElSwitch
+              @change="() => (item.forceUpgrade = !item.forceUpgrade)"
+              v-model="item.forceUpgrade"
+              size="small"
+              style="float: right"
+            />
+          </ElCol>
+          <ElCol style="padding: 10px; margin-top: 10px">
+            <ElButton @click="actionFn(item.id)" style="width: 100%" type="primary">管理</ElButton>
+          </ElCol>
+        </ElRow>
+      </ElCard>
     </div>
-    <ContentWrap style="margin-top: 10px">
-      <Table expand :selection="false" :columns="columns" :data="tableDataList" :loading="loading">
-        <template #empty>
-          <ElEmpty description="快去创建应用吧" />
-        </template>
-        <template #authMode="data">
-          {{ data.row.authMode === 'user' ? '用户模式' : '设备ID模式' }}
-        </template>
-        <template #cryptoMode="data">
-          {{ data.row.cryptoMode === 'none' ? '无' : data.row.cryptoMode.toUpperCase() }}
-        </template>
-        <template #status="data">
-          <ElTag v-if="data.row.status === 'published' && !data.row.deactivated" type="success"
-            >正常</ElTag
+
+    <div style="display: inline-block; padding-left: 10px; margin-top: 10px">
+      <ElCard
+        style="width: 340px; height: 330px"
+        :body-style="{
+          paddingTop: '15px',
+          paddingLeft: '15px',
+          paddingBottom: '10px',
+          paddingRight: '15px'
+        }"
+        shadow="hover"
+      >
+        <div style="text-align: center; margin-top: 125px">
+          <ElButton @click="showCreateApp = true" link type="primary" :icon="CirclePlus"
+            >创建应用</ElButton
           >
-          <ElTag v-if="data.row.status === 'disabled' && !data.row.deactivated" type="warning"
-            >禁用</ElTag
-          >
-          <ElTag v-if="data.row.deactivated" type="danger">停用</ElTag>
-        </template>
-        <template #action="data">
-          <ElButton
-            v-if="!data.row.deactivated"
-            size="small"
-            type="primary"
-            @click="actionFn(data as TableSlotDefault)"
-            >管理</ElButton
-          >
-        </template>
-        <template #expand="data">
-          <BaseInfo notUpdate @get-appdata="getTableList" :app="data.row" />
-          <VersionInfo notUpdate @get-appdata="getTableList" :app="data.row" />
-        </template>
-      </Table>
-    </ContentWrap>
+        </div>
+      </ElCard>
+    </div>
+    <div style="height: 40px; width: 100%"></div>
     <div>
       <Dialog
         :fullscreen="false"
@@ -131,3 +166,5 @@ const actionFn = (data: TableSlotDefault) => {
     </div>
   </div>
 </template>
+
+<style lang="less" scoped></style>

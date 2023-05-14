@@ -74,4 +74,6 @@ export type ApplicationInfo = {
   customCryptFunId: number
 
   enableOnlineUserMgr: boolean
+
+  deactivated: boolean
 }
