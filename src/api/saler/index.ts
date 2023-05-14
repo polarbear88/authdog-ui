@@ -44,6 +44,21 @@ export const addBalanceSaler = (
   })
 }
 
+export const addBalanceSalerBatch = (
+  ids: number[],
+  amount: number,
+  reason: string
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/add-balance-batch',
+    data: {
+      ids,
+      amount,
+      reason
+    }
+  })
+}
+
 export const setApps = (
   id: number,
   apps: { id: number; name: string }[]
@@ -57,12 +72,34 @@ export const setApps = (
   })
 }
 
+export const setAppsBatch = (
+  ids: number[],
+  apps: { id: number; name: string }[]
+): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/set-apps-batch',
+    data: {
+      ids,
+      apps
+    }
+  })
+}
+
 export const setRolesSaler = (ids: number[], roleId: number): Promise<IResponse<any>> => {
   return request.post({
     url: '/developer/saler/set-roles',
     data: {
       ids,
       roleId
+    }
+  })
+}
+
+export const deleteSalerBatch = (ids: number[]): Promise<IResponse<any>> => {
+  return request.post({
+    url: '/developer/saler/delete-batch',
+    data: {
+      ids
     }
   })
 }

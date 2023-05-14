@@ -4,11 +4,11 @@ import {
   getList,
   changePasswordSaler,
   setStatusSaler,
-  addBalanceSaler,
-  setApps,
   createSaler,
   setRolesSaler,
-  deleteSaler
+  deleteSalerBatch,
+  setAppsBatch,
+  addBalanceSalerBatch
 } from '@/api/saler'
 import { getList as getListForApp } from '@/api/application'
 import { getList as getRoleList } from '@/api/saler/SalerRoles'
@@ -25,7 +25,8 @@ import {
   ElOption,
   ElPagination,
   ElSelect,
-  ElTag
+  ElTag,
+  ElText
 } from 'element-plus'
 import { TableColumn } from '@/types/table'
 import { ContentWrap } from '@/components/ContentWrap'
@@ -286,9 +287,17 @@ const showSelectApps = ref(false)
 
 const reason = ref('')
 
-const onChangeBalance = (user: any) => {
+const onChangeBalance = () => {
   reason.value = isaddBalance.value ? '后台充值' : '后台扣减'
-  const harr = [h('div', null, `您正为${user.name}${isaddBalance.value ? '充值' : '扣减'}余额`)]
+  const harr = [
+    h(
+      'div',
+      null,
+      `您正为${
+        batchAction.value ? currentActionIds.value.length + '个代理' : currentItem.value.name
+      }${isaddBalance.value ? '充值' : '扣减'}余额`
+    )
+  ]
   harr.push(
     h(
       'div',
@@ -339,7 +348,11 @@ const onChangeBalance = (user: any) => {
           ElMessage.error('请输入正确的整数')
           return
         }
-        addBalanceSaler(user.id, isaddBalance.value ? amount : -amount, reason.value)
+        addBalanceSalerBatch(
+          batchAction.value ? currentActionIds.value : [currentItem.value.id],
+          isaddBalance.value ? amount : -amount,
+          reason.value
+        )
           .then(() => {
             getTableList()
             ElMessage.success('修改成功')
@@ -361,7 +374,7 @@ const handleSelectApps = async () => {
       name: item.name
     }
   })
-  setApps(currentItem.value.id, selectItem)
+  setAppsBatch(batchAction.value ? currentActionIds.value : [currentItem.value.id], selectItem)
     .then(() => {
       getTableList()
       ElMessage.success('修改成功')
@@ -408,14 +421,14 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
   }
   if (item === 'addBalance') {
     isaddBalance.value = true
-    onChangeBalance(saler)
+    onChangeBalance()
   }
   if (item === 'subBalance') {
     isaddBalance.value = false
-    onChangeBalance(saler)
+    onChangeBalance()
   }
   if (item === 'setapps') {
-    if (saler.topSalerId) {
+    if (!isBatch && saler.topSalerId) {
       ElMessage.error('非顶级代理无法设置应用，因为他跟随顶级代理的应用')
       return
     }
@@ -424,14 +437,16 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
       .then((res) => {
         if (res) {
           applications.value = res.data
-          setTimeout(() => {
-            for (const item of currentItem.value.apps) {
-              unref(bTable.elTableRef)?.toggleRowSelection(
-                applications.value.find((app: any) => app.id === (item as any).id),
-                true
-              )
-            }
-          }, 50)
+          if (!isBatch) {
+            setTimeout(() => {
+              for (const item of currentItem.value.apps) {
+                unref(bTable.elTableRef)?.toggleRowSelection(
+                  applications.value.find((app: any) => app.id === (item as any).id),
+                  true
+                )
+              }
+            }, 50)
+          }
         }
       })
       .finally(() => {
@@ -445,12 +460,18 @@ const onAction = async (saler: any, item: string, isBatch = false) => {
   }
 
   if (item === 'delete') {
-    ElMessageBox.confirm('删除代理将会删除其所有的下级代理，包含下级的下级，是否确认?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
-      deleteSaler(saler.id).then((res) => {
+    ElMessageBox.confirm(
+      `您正在删除${
+        isBatch ? currentActionIds.value.length + '个代理' : currentItem.value.name
+      }，删除代理将会删除其所有的下级代理，包含下级的下级，是否确认?`,
+      '提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ).then(() => {
+      deleteSalerBatch(isBatch ? currentActionIds.value : [currentItem.value.id]).then((res) => {
         ElMessage.success('删除成功，影响' + res.data.affectedCount + '个代理')
         getTableList()
       })
@@ -621,7 +642,14 @@ getRoleList()
               <ElDropdownMenu>
                 <ElDropdownItem command="disable">禁用</ElDropdownItem>
                 <ElDropdownItem command="enable">解禁</ElDropdownItem>
+                <ElDropdownItem divided command="addBalance">充值余额</ElDropdownItem>
+                <ElDropdownItem command="subBalance">扣减余额</ElDropdownItem>
+                <ElDropdownItem divided command="setapps">设置授权应用</ElDropdownItem>
+
                 <ElDropdownItem divided command="setrole">设置角色</ElDropdownItem>
+                <ElDropdownItem divided style="color: #f56c6c" command="delete"
+                  >删除</ElDropdownItem
+                >
                 <!-- <ElDropdownItem divided style="color: #f56c6c" command="delete"
                   >删除</ElDropdownItem
                 > -->
@@ -763,6 +791,12 @@ getRoleList()
     </Dialog>
     <Dialog title="选择授权应用" v-model="showSelectApps">
       <ElButton type="primary" @click="handleSelectApps">确定选择</ElButton>
+      <span style="margin-left: 10px"
+        >您正在为{{
+          batchAction ? currentActionIds.length + '个代理' : currentItem.name
+        }}设置授权应用</span
+      >
+      <ElText style="margin-left: 10px" type="warning">注意: 非顶级代理不会进行操作</ElText>
       <Table
         style="margin-top: 10px"
         @register="bTable.register"
