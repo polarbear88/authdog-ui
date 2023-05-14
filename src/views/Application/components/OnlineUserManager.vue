@@ -34,7 +34,8 @@ const onSetStatus = () => {
     : '开启后该应用将具有在线用户管理器功能，但是当前在线用户会被强制下线，并且用户在超过4-5分钟左右没有心跳后会失去登录状态'
   ElMessageBox.confirm(msg, '确认操作', {
     confirmButtonText: t('common.ok'),
-    cancelButtonText: t('common.cancel')
+    cancelButtonText: t('common.cancel'),
+    type: 'warning'
   })
     .then(() => {
       setOnlineUserManagerStatus(props.app.id + '', !props.app.enableOnlineUserMgr)
