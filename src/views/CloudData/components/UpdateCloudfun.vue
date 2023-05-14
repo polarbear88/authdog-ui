@@ -90,6 +90,18 @@ const schema = reactive<FormSchema[]>([
     colProps: {
       span: 8
     }
+  },
+  {
+    field: 'description',
+    label: '描述',
+    component: 'Input',
+    componentProps: {
+      placeholder: '请输入描述 可空'
+    },
+    colProps: {
+      span: 24
+    },
+    value: props.cloudfun.description
   }
 ])
 
@@ -216,7 +228,7 @@ getScript(props.cloudfun.id).then((res) => {
         padding-right: 10px;
         position: absolute;
         bottom: 40px;
-        top: 80px;
+        top: 160px;
         left: 0;
         right: 0;
         direction: ltr;

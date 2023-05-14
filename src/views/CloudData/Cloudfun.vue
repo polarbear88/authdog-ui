@@ -32,10 +32,10 @@ const columns: TableColumn[] = [
     field: 'type',
     label: '类型'
   },
-  // {
-  //   field: 'description',
-  //   label: '描述'
-  // },
+  {
+    field: 'description',
+    label: '描述'
+  },
   {
     field: 'ascription',
     label: '归属'
