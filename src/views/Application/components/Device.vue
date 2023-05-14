@@ -291,45 +291,45 @@ const onChangeCount = (device: any) => {
       `您正为${batchAction.value ? `${currentActionIds.value.length}个设备` : device.deviceId}${
         isaddCount.value ? '增加' : '减少'
       }点数`
-    )
+    ),
+    h('div', null, '如果用户不足扣减数则只会扣减最大可扣减数')
   ]
-  if (!batchAction.value) {
-    harr.push(
+
+  harr.push(
+    h(
+      'div',
+      {
+        style: 'margin-top: 10px'
+      },
+      '原因'
+    )
+  )
+  harr.push(
+    h(
+      'div',
+      {
+        class: 'el-input el-input--default',
+        style: 'margin-top: 10px'
+      },
       h(
         'div',
         {
-          style: 'margin-top: 10px'
+          class: 'el-input__wrapper'
         },
-        '原因'
+        h('input', {
+          placeholder: '请输入原因',
+          class: 'el-input__inner',
+          value: reason.value,
+          ariaInvalid: false,
+          autocomplete: 'off',
+          tabindex: 0,
+          onInput: (e: any) => {
+            reason.value = e.target.value
+          }
+        })
       )
     )
-    harr.push(
-      h(
-        'div',
-        {
-          class: 'el-input el-input--default',
-          style: 'margin-top: 10px'
-        },
-        h(
-          'div',
-          {
-            class: 'el-input__wrapper'
-          },
-          h('input', {
-            placeholder: '请输入原因',
-            class: 'el-input__inner',
-            value: reason.value,
-            ariaInvalid: false,
-            autocomplete: 'off',
-            tabindex: 0,
-            onInput: (e: any) => {
-              reason.value = e.target.value
-            }
-          })
-        )
-      )
-    )
-  }
+  )
   ElMessageBox.confirm(h('div', null, harr), (isaddCount.value ? '增加' : '减少') + '设备点数', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -701,6 +701,7 @@ getStat(props.app.id).then((res) => {
               }减少时间`
         }}</h2>
         <h2 v-if="isaddtime">如果用户时间小于当前时间则会在当前时间基础上加时</h2>
+        <h2 v-if="!isaddtime">如果用户不足扣减数则只会扣减最大可扣减数</h2>
         <ElInput
           type="number"
           style="margin-top: 10px"
@@ -725,7 +726,7 @@ getStat(props.app.id).then((res) => {
         >
           <template #append>分</template>
         </ElInput>
-        <div v-if="!batchAction" style="margin-top: 10px">
+        <div style="margin-top: 10px">
           <label>扣减原因</label>
           <ElInput v-model="reason" style="margin-top: 8px" />
         </div>
