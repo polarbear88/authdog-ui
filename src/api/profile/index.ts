@@ -46,3 +46,9 @@ export const getAuthdogVersion = (): Promise<IResponse<any>> => {
     url: '/developer/profile/get-authdog-version'
   })
 }
+
+export const getIsOpenSourceUser = (): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile/is-open-source-user'
+  })
+}

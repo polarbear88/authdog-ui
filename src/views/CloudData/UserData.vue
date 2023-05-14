@@ -224,7 +224,6 @@ getTableList()
           :loading="loading"
           reserveSelection
           row-key="id"
-          expand
         >
           <template #empty>
             <ElEmpty description="暂时没有用户数据哦" />

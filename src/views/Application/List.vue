@@ -47,20 +47,11 @@ const actionFn = (id: number) => {
 <template>
   <div>
     <div
-      style="display: inline-block; padding-left: 10px; margin-top: 10px"
+      style="display: inline-block; padding-left: 15px; margin-top: 10px"
       v-for="item in tableDataList"
       :key="item.id"
     >
-      <ElCard
-        style="width: 340px; height: 330px"
-        :body-style="{
-          paddingTop: '15px',
-          paddingLeft: '15px',
-          paddingBottom: '10px',
-          paddingRight: '15px'
-        }"
-        shadow="hover"
-      >
+      <ElCard style="width: 340px; height: 330px" shadow="hover">
         <ElRow>
           <ElCol :span="24">
             <ElText style="font-size: 18px; font-weight: 400" size="large"
@@ -135,17 +126,8 @@ const actionFn = (id: number) => {
       </ElCard>
     </div>
 
-    <div style="display: inline-block; padding-left: 10px; margin-top: 10px">
-      <ElCard
-        style="width: 340px; height: 330px"
-        :body-style="{
-          paddingTop: '15px',
-          paddingLeft: '15px',
-          paddingBottom: '10px',
-          paddingRight: '15px'
-        }"
-        shadow="hover"
-      >
+    <div style="display: inline-block; padding-left: 15px; margin-top: 10px">
+      <ElCard style="width: 340px; height: 330px" shadow="hover">
         <div style="text-align: center; margin-top: 125px">
           <ElButton @click="showCreateApp = true" link type="primary" :icon="CirclePlus"
             >创建应用</ElButton

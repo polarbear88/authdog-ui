@@ -21,7 +21,7 @@ import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
 import { getList } from '@/api/actionLog'
 import { DateUtils } from '@/utils/dateUtils'
-import { getAuthdogVersion, getProfile, recharge } from '@/api/profile'
+import { getAuthdogVersion, getIsOpenSourceUser, getProfile, recharge } from '@/api/profile'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
@@ -32,6 +32,7 @@ const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
 const actionLogList = ref<any[]>([])
+const isOpenSourceUser = ref(true)
 
 const getActionLog = () => {
   getList({
@@ -50,6 +51,10 @@ const getProfileInfo = () => {
     profileInfo.value = res.data
   })
 }
+
+getIsOpenSourceUser().then((res) => {
+  isOpenSourceUser.value = !!res.data.isOpenSourceUser
+})
 
 getProfileInfo()
 
@@ -127,10 +132,15 @@ getAuthdogVersion().then((res) => {
     <ContentWrap>
       <h2 style="font-weight: bold"
         >欢迎，{{ profileInfo.name }}
-        <ElButton type="primary" link style="margin-left: 10px" @click="handleRecharge"
+        <ElButton
+          v-if="!isOpenSourceUser"
+          type="primary"
+          link
+          style="margin-left: 10px"
+          @click="handleRecharge"
           >充值</ElButton
         ><ElButton
-          v-if="buyurl"
+          v-if="buyurl && !isOpenSourceUser"
           type="primary"
           link
           style="margin-left: 10px"
