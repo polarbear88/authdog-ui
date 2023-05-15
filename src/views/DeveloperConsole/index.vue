@@ -40,7 +40,7 @@ const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
 const actionLogList = ref<any[]>([])
-const isOpenSourceUser = ref(true)
+const isOpenSourceUser = ref(false)
 
 const getActionLog = () => {
   getList({
@@ -337,7 +337,7 @@ getAuthdogVersion().then((res) => {
           <ElCard shadow="hover" class="mb-20px">
             <div :class="`${prefixCls}__item flex justify-between`">
               <div class="flex flex-col justify-between">
-                <ElStatistic suffix="个" :value="baseInfo.activatedByUserMode">
+                <ElStatistic suffix="个" :value="baseInfo.activatedByDeviceMode">
                   <template #title>
                     <div style="display: inline-flex; align-items: center"> 设备模式总已激活 </div>
                   </template>
@@ -350,7 +350,7 @@ getAuthdogVersion().then((res) => {
           <ElCard shadow="hover" class="mb-20px">
             <div :class="`${prefixCls}__item flex justify-between`">
               <div class="flex flex-col justify-between">
-                <ElStatistic suffix="个" :value="baseInfo.activatedByDeviceMode">
+                <ElStatistic suffix="个" :value="baseInfo.activatedByUserMode">
                   <template #title>
                     <div style="display: inline-flex; align-items: center"> 用户模式总已激活 </div>
                   </template>
