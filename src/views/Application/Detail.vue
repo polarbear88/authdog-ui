@@ -111,7 +111,11 @@ const onDeleteApp = () => {
           <ElTabPane label="应用信息" name="info">
             <BaseInfo @get-appdata="getAppData" :app="appinfo" />
             <VersionInfo @get-appdata="getAppData" :app="appinfo" />
-            <OnlineUserManager @get-appdata="getAppData" :app="appinfo" />
+            <OnlineUserManager
+              v-if="appinfo.authMode === 'user'"
+              @get-appdata="getAppData"
+              :app="appinfo"
+            />
             <ElButton
               @click="onDeleteApp"
               style="float: right; margin-right: 8px; margin-top: 15px"
