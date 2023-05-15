@@ -52,3 +52,9 @@ export const getIsOpenSourceUser = (): Promise<IResponse<any>> => {
     url: '/developer/profile/is-open-source-user'
   })
 }
+
+export const rechargePro = (card: string): Promise<IResponse<any>> => {
+  return request.get({
+    url: '/developer/profile/recharge-pro?card=' + card
+  })
+}

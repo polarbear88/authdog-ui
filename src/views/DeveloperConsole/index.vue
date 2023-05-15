@@ -3,6 +3,7 @@ import { ContentWrap } from '@/components/ContentWrap'
 import { useDesign } from '@/hooks/web/useDesign'
 import { Warning } from '@element-plus/icons-vue'
 import {
+  ElAlert,
   ElButton,
   ElCard,
   ElCol,
@@ -14,6 +15,7 @@ import {
   ElRadioGroup,
   ElRow,
   ElStatistic,
+  ElTag,
   ElText,
   ElTooltip
 } from 'element-plus'
@@ -21,7 +23,13 @@ import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
 import { getList } from '@/api/actionLog'
 import { DateUtils } from '@/utils/dateUtils'
-import { getAuthdogVersion, getIsOpenSourceUser, getProfile, recharge } from '@/api/profile'
+import {
+  getAuthdogVersion,
+  getIsOpenSourceUser,
+  getProfile,
+  recharge,
+  rechargePro
+} from '@/api/profile'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
@@ -93,6 +101,27 @@ const handleRecharge = () => {
   })
 }
 
+const handleRechargePro = () => {
+  ElMessageBox.confirm('', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    showInput: true,
+    inputPlaceholder: '请输入充值卡号',
+    dangerouslyUseHTMLString: true
+  }).then((res) => {
+    if (res.value) {
+      rechargePro(res.value).then(() => {
+        ElMessage.success('充值成功')
+        getProfileInfo()
+        getAuthdogVersion().then((res) => {
+          authdogVersion.value = res.data.version
+          proVersionInfo.value = res.data.proVersionInfo
+        })
+      })
+    }
+  })
+}
+
 const onSelectLatelyType = (t: string) => {
   let type = 'today'
   if (t === '昨日') {
@@ -113,17 +142,25 @@ const handleOpenBuyUrl = () => {
   window.open(buyurl)
 }
 
+const handleOpenBuyProUrl = () => {
+  window.open(proVersionInfo.value.buyUrl)
+}
+
 getBaseInfo()
 getLatelyInfo('today')
 
 const authdogVersion = ref({
   currentVersion: '',
   hasNew: false,
-  newVersion: ''
+  newVersion: '',
+  notice: ''
 })
 
+const proVersionInfo = ref<any>({})
+
 getAuthdogVersion().then((res) => {
-  authdogVersion.value = res.data
+  authdogVersion.value = res.data.version
+  proVersionInfo.value = res.data.proVersionInfo
 })
 </script>
 
@@ -169,6 +206,44 @@ getAuthdogVersion().then((res) => {
           >有新版本 {{ authdogVersion.newVersion }}</ElText
         >
         <ElText v-if="!authdogVersion.hasNew" style="margin-left: 10px">已是最新</ElText>
+      </div>
+    </ContentWrap>
+    <ContentWrap v-if="isOpenSourceUser" style="margin-top: 15px">
+      <h2 style="font-weight: bold">
+        <ElTag type="warning">Pro</ElTag>
+        <span style="margin-left: 5px">开源用户Pro版本</span></h2
+      >
+      <ElAlert style="margin-top: 5px" type="info" v-if="isOpenSourceUser"
+        >公告：{{ authdogVersion.notice }}</ElAlert
+      >
+      <div style="margin-top: 5px">
+        <ElText
+          >Pro版本目前支持 在线用户管理功能、NodeJs云函数和本机库云函数功能 更多功能开发中</ElText
+        >
+      </div>
+      <div style="margin-top: 5px">
+        <ElText
+          >您的Pro版本状态：<ElText type="success" v-if="proVersionInfo.auth">{{
+            proVersionInfo.isTryTime ? '试用中' : '已授权'
+          }}</ElText
+          ><ElText type="warning" v-if="!proVersionInfo.auth">未授权</ElText>
+          <ElText style="margin-left: 5px" v-if="proVersionInfo.auth"
+            >到期时间: {{ DateUtils.formatDateTime(proVersionInfo.expire) }}</ElText
+          >
+          <ElButton
+            type="primary"
+            link
+            style="margin-left: 10px; margin-top: -3px"
+            @click="handleRechargePro"
+            >充值</ElButton
+          ><ElButton
+            type="primary"
+            link
+            style="margin-left: 10px; margin-top: -3px"
+            @click="handleOpenBuyProUrl"
+            >购买充值卡</ElButton
+          >
+        </ElText>
       </div>
     </ContentWrap>
     <ContentWrap style="margin-top: 15px" message="数据不实时，缓存60秒" title="基本数据">
