@@ -3,7 +3,6 @@ import { ContentWrap } from '@/components/ContentWrap'
 import { useDesign } from '@/hooks/web/useDesign'
 import { Warning } from '@element-plus/icons-vue'
 import {
-  ElAlert,
   ElButton,
   ElCard,
   ElCol,
@@ -15,7 +14,6 @@ import {
   ElRadioGroup,
   ElRow,
   ElStatistic,
-  ElTag,
   ElText,
   ElTooltip
 } from 'element-plus'
@@ -23,13 +21,7 @@ import { getBase, getLately } from '@/api/statistics'
 import { ref } from 'vue'
 import { getList } from '@/api/actionLog'
 import { DateUtils } from '@/utils/dateUtils'
-import {
-  getAuthdogVersion,
-  getIsOpenSourceUser,
-  getProfile,
-  recharge,
-  rechargePro
-} from '@/api/profile'
+import { getProfile, recharge } from '@/api/profile'
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('panel')
 const getLatelyType = ref('今日')
@@ -40,7 +32,6 @@ const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
 const actionLogList = ref<any[]>([])
-const isOpenSourceUser = ref(false)
 
 const getActionLog = () => {
   getList({
@@ -59,10 +50,6 @@ const getProfileInfo = () => {
     profileInfo.value = res.data
   })
 }
-
-getIsOpenSourceUser().then((res) => {
-  isOpenSourceUser.value = !!res.data.isOpenSourceUser
-})
 
 getProfileInfo()
 
@@ -101,27 +88,6 @@ const handleRecharge = () => {
   })
 }
 
-const handleRechargePro = () => {
-  ElMessageBox.confirm('', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    showInput: true,
-    inputPlaceholder: '请输入充值卡号',
-    dangerouslyUseHTMLString: true
-  }).then((res) => {
-    if (res.value) {
-      rechargePro(res.value).then(() => {
-        ElMessage.success('充值成功')
-        getProfileInfo()
-        getAuthdogVersion().then((res) => {
-          authdogVersion.value = res.data.version
-          proVersionInfo.value = res.data.proVersionInfo
-        })
-      })
-    }
-  })
-}
-
 const onSelectLatelyType = (t: string) => {
   let type = 'today'
   if (t === '昨日') {
@@ -142,26 +108,8 @@ const handleOpenBuyUrl = () => {
   window.open(buyurl)
 }
 
-const handleOpenBuyProUrl = () => {
-  window.open(proVersionInfo.value.buyUrl)
-}
-
 getBaseInfo()
 getLatelyInfo('today')
-
-const authdogVersion = ref({
-  currentVersion: '',
-  hasNew: false,
-  newVersion: '',
-  notice: ''
-})
-
-const proVersionInfo = ref<any>({})
-
-getAuthdogVersion().then((res) => {
-  authdogVersion.value = res.data.version
-  proVersionInfo.value = res.data.proVersionInfo
-})
 </script>
 
 <template>
@@ -169,15 +117,10 @@ getAuthdogVersion().then((res) => {
     <ContentWrap>
       <h2 style="font-weight: bold"
         >欢迎，{{ profileInfo.name }}
-        <ElButton
-          v-if="!isOpenSourceUser"
-          type="primary"
-          link
-          style="margin-left: 10px"
-          @click="handleRecharge"
+        <ElButton type="primary" link style="margin-left: 10px" @click="handleRecharge"
           >充值</ElButton
         ><ElButton
-          v-if="buyurl && !isOpenSourceUser"
+          v-if="buyurl"
           type="primary"
           link
           style="margin-left: 10px"
@@ -200,15 +143,15 @@ getAuthdogVersion().then((res) => {
           profileInfo?.quota?.maxUserDataCount
         }}条][代理{{ profileInfo?.quota?.maxSalerCount }}个]</ElText
       >
-      <div style="margin-top: 5px">
+      <!-- <div style="margin-top: 5px">
         <ElText>当前系统版本：{{ authdogVersion.currentVersion }}</ElText>
         <ElText v-if="authdogVersion.hasNew" type="danger" style="margin-left: 10px"
           >有新版本 {{ authdogVersion.newVersion }}</ElText
         >
         <ElText v-if="!authdogVersion.hasNew" style="margin-left: 10px">已是最新</ElText>
-      </div>
+      </div> -->
     </ContentWrap>
-    <ContentWrap v-if="isOpenSourceUser" style="margin-top: 15px">
+    <!-- <ContentWrap v-if="isOpenSourceUser" style="margin-top: 15px">
       <h2 style="font-weight: bold">
         <ElTag type="warning">Pro</ElTag>
         <span style="margin-left: 5px">开源用户Pro版本</span></h2
@@ -245,7 +188,7 @@ getAuthdogVersion().then((res) => {
           >
         </ElText>
       </div>
-    </ContentWrap>
+    </ContentWrap> -->
     <ContentWrap style="margin-top: 15px" message="数据不实时，缓存60秒" title="基本数据">
       <ElRow :gutter="20" :class="prefixCls">
         <ElCol :xl="6" :lg="6" :md="6" :sm="6" :xs="12">

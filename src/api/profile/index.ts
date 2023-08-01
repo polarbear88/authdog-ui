@@ -41,20 +41,8 @@ export const validateUserToken = (appid: number, token: string) => {
   })
 }
 
-export const getAuthdogVersion = (): Promise<IResponse<any>> => {
-  return request.get({
-    url: '/developer/profile/get-authdog-version'
-  })
-}
-
 export const getIsOpenSourceUser = (): Promise<IResponse<any>> => {
   return request.get({
     url: '/developer/profile/is-open-source-user'
-  })
-}
-
-export const rechargePro = (card: string): Promise<IResponse<any>> => {
-  return request.get({
-    url: '/developer/profile/recharge-pro?card=' + card
   })
 }
